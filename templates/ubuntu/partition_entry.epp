@@ -1,0 +1,38 @@
+          <%= $min %> <%= $prio %> <%= $max %> <%= $fstype %> \
+                  <%- if $primary { -%>
+                  $primary{ }                             \
+                  <%- } -%>
+                  <%- if $bootable { -%>
+                  $bootable{ }                            \
+                  <%- } -%>
+                  <%- if $method == 'format' { -%>
+                  method{ format } format{ }     \
+                  <%- } -%>
+                  <%- if $method == 'swap' { -%>
+                  method{ swap } format{ }     \
+                  <%- } -%>
+                  <%- if $method == 'lvm' { -%>
+                  method{ lvm }                 \
+                  <%- } -%>
+                  <%- if $filesystem != '' { -%>
+                  use_filesystem{ } filesystem{ <%= $filesystem %> }    \
+                  <%- } -%>
+                  <%- if $label != '' { -%>
+                  label{ boot }                           \
+                  <%- } -%>
+                  <%- if $mountpoint != '' { -%>
+                  mountpoint{ <%= $mountpoint %> }                     \
+                  <%- } -%>
+                  <%- if $device != '' { -%>
+                  device{ <%= $device %> }                     \
+                  <%- } -%>
+                  <%- if $vgname != '' { -%>
+                  vg_name{ <%= $vgname %> }                          \
+                  <%- } -%>
+                  <%- if $lvname != '' { -%>
+                  lv_name{ <%= $lvname %> }                         \
+                  <%- } -%>
+                  <%- if $invg != '' { -%>
+                  $lvmok{ } in_vg{ <%= $invg %> }                  \
+                  <%- } -%>
+          . \

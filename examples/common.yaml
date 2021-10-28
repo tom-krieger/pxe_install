@@ -1,0 +1,367 @@
+---
+lookup_options:
+  '^pxe_install::challenge_password$':
+    convert_to: 'Sensitive'
+
+pxe_install::installserverip: 10.0.0.21
+pxe_install::installserver: pmaster.localdomain
+pxe_install::puppetmaster: pmaster.localdomain
+pxe_install::puppetmasterip: 10.0.0.21
+pxe_install::repo_server: repos.localdomain
+pxe_install::repo_server_ip: 10.0.0.21
+pxe_install::repos_dir: /var/repos
+pxe_install::repos_url: /repos
+pxe_install::kickstart_dir: '/export/repos/kickstart'
+pxe_install::kickstart_url: /kickstart
+pxe_install::scriptdir: /export/repos/pub
+pxe_install::scripturl: /pub
+pxe_install::documentroot: /export/repos/www
+pxe_install::create_aliases: true
+pxe_install::challenge_password: 'eyaml encrypted password'
+pxe_install::status_allow_from:
+  - 10.0.0.108/32 
+  - 10.0.0.109/32 
+  - 10.0.0.63/32 
+  - 10.0.0.62/32 
+  - 10.0.8.0/24
+  - 127.0.0.1
+pxe_install::ssl_cert: '/etc/pki/httpd/localdomain.de/localdomain.de.cer'
+pxe_install::ssl_key: '/etc/pki/httpd/localdomain.de/localdomain.de.key'
+pxe_install::ssl_chain: '/etc/pki/httpd/localdomain.de/fullchain.cer'
+pxe_install::ssl_certs_dir: '/etc/pki/httpd/localdomain.de/'
+pxe_install::debian_mirror: debian.intergenia.de
+pxe_install::debin_mirror_dir: "/debian"
+pxe_install::ubuntu_mirror: archive.ubuntu.com
+pxe_install::ubuntu_mirror_dir: "/ubuntu"
+pxe_install::centos_mirrors:
+  "6":
+    mirror: "https://repos.example.com"
+    mirror_dir: "/centos/6/base/x86_64"
+  "7":
+    mirror: "https://repos.example.com"
+    mirror_dir: "/centos/7/base/x86_64"
+  "8":
+    mirror: "https://repos.example.com"
+    mirror_dir: "/centos/8/BaseOS/x86_64/os"
+pxe_install::services:
+  tftpd:
+    packages:
+      - tftp-server
+      - xinetd
+    packages_ensure: installed
+    port: 69
+    user: root
+    group: root
+    directory: '/var/lib/tftpboot'
+    pxelinux: 'pxelinux.cfg'
+    address: 10.0.0.2
+    tftpserverbin: /usr/sbin/in.tftpd
+    service: xinetd
+    service_ensure: running
+    service_enable: true
+  dhcpd:
+    interfaces:
+      - eth0
+    omapiport: 7911
+    default_lease_time: 43200
+    max_lease_time: 86400
+    ddns_update_style: none
+    domain_names: 
+      - localdomain
+    dns_servers:
+      - 10.0.0.62
+      - 10.0.0.63
+    ntp_servers: ['none']
+    next_server: 10.0.0.2
+    logfacility: local7
+    option_code150_label: pxegrub
+    option_code150_value: text
+    default_filename: pxelinux.0
+    hosts:
+      test:
+        mac: 00:11:22:33:44:55
+        ip: 10.0.0.99
+        max_lease_time: 86400
+    pools:
+      internal:
+        network: 10.0.0.0
+        mask: 255.255.255.0
+        range:
+          - '10.0.0.180 10.0.0.199'
+        gateway: 10.0.0.12
+pxe_install::machines:
+  ct02:
+    ensure: absent
+    network:
+      mac: 00:11:22:33:44:66
+      prefix: ubuntu/18.04/amd64
+      fixedaddress: 10.0.0.68
+      ksdevice: eth0
+      gateway: 10.0.0.4
+      netmask: 255.255.255.0
+      dns: 
+        - 10.0.0.62
+    rootpw: '$6$X.....'
+    timezone: Europe/Berlin
+    ostype: ubuntu
+    keyboard: de(Macintosh, no dead keys)
+    keymap: de
+    language: de
+    country: DE
+    locale: en_US.UTF-8
+    parameter:
+      env: production
+      role: test
+      dc: test
+      agent: n
+    partitioning:
+      sda:
+        '/boot':
+          min: 1024 
+          prio: 1024 
+          max: 1024 
+          fstype: ext3
+          primary: true
+          bootable: true
+          format: true
+          label: boot
+          method: format
+        'vgos':
+          min: 100 
+          prio: 1000 
+          max: 1000000000 
+          fstype: ext4
+          primary: true
+          method: lvm
+          device: /dev/sda2
+          vgname: vgos
+        'swap':
+          min: 4096 
+          prio: 4096 +
+          max: 4096 
+          fstype: linux-swap
+          invg: vgos
+          method: swap
+          lvname: lvol_swap
+          lvol: true
+        '/':
+          min: 4096 
+          prio: 4096 
+          max: 4096 
+          fstype: ext4 
+          invg: vgos
+          lvname: lvol_root
+          method: format
+          label: root 
+  ct01:
+    ensure: present
+    network:
+      mac: 08:00:27:77:A4:40
+      prefix: centos/7/u9
+      fixedaddress: 10.0.0.66
+      ksdevice: eth0
+      gateway: 10.0.0.4
+      netmask: 255.255.255.0
+      dns: 
+        - 10.0.0.62
+    rootpw: '$1$XlmxMqOR$OvdmPRMDMpB6HCmmTYkY51'
+    timezone: Europe/Berlin
+    ostype: CentOS
+    osversion: "7"
+    keyboard: de-latin1-nodeadkeys/de(Macintosh, no dead keys)
+    keymap: de
+    language: de
+    country: DE
+    locale: en_US.UTF-8
+    parameter:
+      env: production
+      role: test
+      dc: test
+      agent: y
+    partitioning:
+      '/boot':
+        type: part
+        fstype: ext3
+        size: 1024
+        primary: true
+        ondisk: sda
+      'pv.01':
+        type: pvol
+        size: 1000
+        grow: true
+        primary: true
+        ondisk: sda
+      'vgos':
+        type: volgroup
+        pvol: pv.01
+      '/':
+        type: logvol
+        vgname: vgos
+        diskname: lvol_root
+        size: 2048
+        fstype: ext4
+      'swap':
+        type: logvol
+        vgname: vgos
+        diskname: lvol_swap
+        size: 4096
+  ct03:
+    ensure: present
+    network:
+      mac: 00:11:22:33:44:77
+      prefix: ubuntu/18.04/amd64
+      fixedaddress: 10.0.0.32
+      ksdevice: eth0
+      gateway: 10.0.0.4
+      netmask: 255.255.255.0
+      dns:
+        - 10.0.0.62
+        - 10.0.0.63
+        - 10.0.0.25
+    rootpw: "$6$pzoDeF..../"
+    timezone: Europe/Berlin
+    ostype: ubuntu
+    keyboard: de(Macintosh, no dead keys)
+    keymap: de
+    language: en
+    country: DE
+    locale: en_US.UTF-8
+    parameter:
+      env: production
+      role: ubuntu
+      dc: test
+      agent: y
+    user:
+      fullname: Thomas Krieger
+      username: kriegeth
+      password: "$5$h...."
+    partitioning:
+      sda:
+        "/boot":
+          min: 1024
+          prio: 1024
+          max: 1024
+          fstype: ext3
+          primary: true
+          bootable: true
+          label: boot
+          method: format
+          device: /dev/sda
+          order: 405
+        "vgos":
+          min: 100
+          prio: 1000
+          max: 1000000000
+          fstype: ext4
+          primary: true
+          bootable: false
+          method: lvm
+          device: /dev/sda
+          vgname: vgos
+          order: 406
+        "swap":
+          min: 4096
+          prio: 4096
+          max: 4096
+          fstype: linux-swap
+          primary: false
+          bootable: false
+          invg: vgos
+          method: swap
+          lvname: lvol_swap
+          order: 407
+        "/":
+          min: 4096
+          prio: 4096
+          max: 4096
+          fstype: ext4
+          invg: vgos
+          lvname: lvol_root
+          primary: false
+          bootable: false
+          method: format
+          label: root
+          order: 408
+        "/home":
+          min: 2048
+          prio: 2048
+          max: 2048
+          fstype: ext4
+          invg: vgos
+          lvname: lvol_home
+          primary: false
+          bootable: false
+          method: format
+          label: home
+          order: 409
+        "/var":
+          min: 10240
+          prio: 10240
+          max: 10240
+          fstype: ext4
+          invg: vgos
+          lvname: lvol_var
+          primary: false
+          bootable: false
+          label: var
+          order: 410
+        "/var/log":
+          min: 10240
+          prio: 10240
+          max: 10240
+          fstype: ext4
+          invg: vgos
+          lvname: lvol_var_log
+          primary: false
+          bootable: false
+          method: format
+          label: log
+          order: 411
+        "/var/log/audit":
+          min: 10240
+          prio: 10240
+          max: 10240
+          fstype: ext4
+          invg: vgos
+          lvname: lvol_var_log_audit
+          primary: false
+          bootable: false
+          method: format
+          label: audit
+          order: 412
+        "/usr":
+          min: 8192
+          prio: 8192
+          max: 8192
+          fstype: ext4
+          invg: vgos
+          lvname: lvol_usr
+          primary: false
+          bootable: false
+          method: format
+          label: usr
+          order: 413
+        "/tmp":
+          min: 2048
+          prio: 2048
+          max: 2048
+          fstype: ext4
+          invg: vgos
+          lvname: lvol_tmp
+          primary: false
+          bootable: false
+          method: format
+          label: tmp
+          order: 414
+        "/var/tmp":
+          min: 2048
+          prio: 2048
+          max: 2048
+          fstype: ext4
+          invg: vgos
+          lvname: lvol_var_tmp
+          primary: false
+          bootable: false
+          method: format
+          label: vartmp
+          order: 415

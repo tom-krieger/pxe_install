@@ -1,0 +1,377 @@
+---
+pxe_install::installserverip: 10.0.0.21
+pxe_install::installserver: pmaster.localdomain
+pxe_install::puppetmaster: pmaster.localdomain
+pxe_install::puppetmasterip: 10.0.0.21
+pxe_install::repo_server: repos.localdomain
+pxe_install::repos_dir: /var/repos
+pxe_install::repos_url: /repos
+pxe_install::kickstart_dir: '/export/repos/kickstart'
+pxe_install::kickstart_url: /kickstart
+pxe_install::scriptdir: /export/repos/pub
+pxe_install::scripturl: /pub
+pxe_install::status_allow_from:
+  - 10.0.0.108/32 
+  - 10.0.0.109/32 
+  - 10.0.0.63/32 
+  - 10.0.0.62/32 
+  - 10.0.8.0/24
+  - 127.0.0.1
+pxe_install::debian_mirror: debian.intergenia.de
+pxe_install::debin_mirror_dir: "/debian"
+pxe_install::ubuntu_mirror: archive.ubuntu.com
+pxe_install::ubuntu_mirror_dir: "/ubuntu"
+pxe_install::centos_mirrors:
+  "6":
+    mirror: "https://repos.example.com"
+    mirror_dir: "/centos/6/base/x86_64"
+  "7":
+    mirror: "https://repos.example.com"
+    mirror_dir: "/centos/7/base/x86_64"
+  "8":
+    mirror: "https://repos.example.com"
+    mirror_dir: "/centos/8/BaseOS/x86_64/os"
+pxe_install::services:
+  tftpd:
+    packages:
+      - tftp-server
+      - xinetd
+    packages_ensure: installed
+    port: 69
+    user: root
+    group: root
+    directory: '/var/lib/tftpboot'
+    pxelinux: 'pxelinux.cfg'
+    address: 10.0.0.2
+    tftpserverbin: /usr/sbin/in.tftpd
+    service: xinetd
+    service_ensure: running
+    service_enable: true
+  dhcpd:
+    interfaces:
+      - enp0s3
+    omapiport: 7911
+    default_lease_time: 43200
+    max_lease_time: 86400
+    ddns_update_style: none
+    domain_names: 
+      - localdomain
+    dns_servers:
+      - 10.0.0.62
+      - 10.0.0.63
+    ntp_servers: ['none']
+    next_server: 10.0.0.2
+    logfacility: local7
+    option_code150_label: pxegrub
+    option_code150_value: text
+    default_filename: pxelinux.0
+    hosts:
+      mg5250:
+        mac: 00:1E:8F:A2:B8:DD
+        ip: 10.0.0.99
+        max_lease_time: 86400
+      mrdroid2:
+        mac: F8:7B:7A:9A:BF:DC
+        ip: 10.0.0.98
+        max_lease_time: 86400
+      galaxys3:
+        mac: 88:30:8a:3a:30:ac
+        ip: 10.0.0.102
+        max_lease_time: 86400
+    pools:
+      internal:
+        network: 10.0.0.0
+        mask: 255.255.255.0
+        range:
+          - '10.0.0.180 10.0.0.199'
+        gateway: 10.0.0.12
+pxe_install::machines:
+  ct02:
+    ensure: present
+    network:
+      mac: 08:00:27:77:A4:41
+      prefix: ubuntu-installer/amd64
+      fixedaddress: 10.0.0.68
+      ksdevice: eth0
+      gateway: 10.0.0.4
+      netmask: 255.255.255.0
+      dns: 
+        - 10.0.0.62
+    rootpw: '$1$XlmxMqOR$OvdmPRMDMpB6HCmmTYkY51'
+    timezone: Europe/Berlin
+    ostype: ubuntu
+    keyboard: de(Macintosh, no dead keys)
+    keymap: de
+    language: de
+    country: DE
+    locale: en_US.UTF-8
+    path: 'ubuntu-installer/amd64/boot-screens'
+    parameter:
+      env: production
+      role: test
+      dc: test
+    partitioning:
+      sda:
+        '/boot':
+          min: 1024 
+          prio: 1024 
+          max: 1024 
+          fstype: ext3
+          primary: true
+          bootable: true
+          format: true
+          label: boot
+          method: format
+        'vgos':
+          min: 100 
+          prio: 1000 
+          max: 1000000000 
+          fstype: ext4
+          primary: true
+          method: lvm
+          device: /dev/sda2
+          vgname: vgos
+        'swap':
+          min: 4096 
+          prio: 4096 +
+          max: 4096 
+          fstype: linux-swap
+          invg: vgos
+          method: swap
+          lvname: lvol_swap
+          lvol: true
+        '/':
+          min: 4096 
+          prio: 4096 
+          max: 4096 
+          fstype: ext4 
+          invg: vgos
+          lvname: lvol_root
+          method: format
+          label: root 
+  ct01:
+    ensure: present
+    network:
+      mac: 08:00:27:77:A4:40
+      prefix: ubuntu-installer/amd6
+      fixedaddress: 10.0.0.66
+      ksdevice: eth0
+      gateway: 10.0.0.4
+      netmask: 255.255.255.0
+      dns: 
+        - 10.0.0.62
+    rootpw: '$1$XlmxMqOR$OvdmPRMDMpB6HCmmTYkY51'
+    timezone: Europe/Berlin
+    ostype: CentOS
+    osversion: "7"
+    keyboard: de-latin1-nodeadkeys/de(Macintosh, no dead keys)
+    keymap: de
+    language: de
+    country: DE
+    locale: en_US.UTF-8
+    parameter:
+      env: production
+      role: test
+      dc: test
+    partitioning:
+      '/boot':
+        type: part
+        fstype: ext3
+        size: 1024
+        primary: true
+        ondisk: sda
+      'pv.01':
+        type: pvol
+        size: 1000
+        grow: true
+        primary: true
+        ondisk: sda
+      'vgos':
+        type: volgroup
+        pvol: pv.01
+      '/':
+        type: logvol
+        vgname: vgos
+        diskname: lvol_root
+        size: 2048
+        fstype: ext4
+      '/var':
+        type: logvol
+        vgname: vgos
+        diskname: lvol_var
+        size: 10240
+        fstype: ext4
+      '/var/log':
+        type: logvol
+        vgname: vgos
+        diskname: lvol_var_log
+        size: 10240
+        fstype: ext4
+      '/var/log/audit':
+        type: logvol
+        vgname: vgos
+        diskname: lvol_var_log_audit
+        size: 10240
+        fstype: ext4
+      '/usr':
+        type: logvol
+        vgname: vgos
+        diskname: lvol_usr
+        size: 8192
+        fstype: ext4
+      '/home':
+        type: logvol
+        vgname: vgos
+        diskname: lvol_home
+        size: 2048
+        fstype: ext4
+      '/tmp':
+        type: logvol
+        vgname: vgos
+        diskname: lvol_tmp
+        size: 2048
+        fstype: ext4
+      '/var/tmp':
+        type: logvol
+        vgname: vgos
+        diskname: lvol_var_tmp
+        size: 2048
+        fstype: ext4
+      'swap':
+        type: logvol
+        vgname: vgos
+        diskname: lvol_swap
+        size: 4096
+  tk10:
+    ensure: present
+    network:
+      mac: 00:26:18:aa:63:78
+      prefix: ctos7u7
+      fixedaddress: 10.0.0.20
+      ksdevice: enp2s0
+      gateway: 10.0.0.4
+      netmask: 255.255.255.0
+      dns: 
+        - 10.0.0.62
+    rootpw: '$1$XlmxMqOR$OvdmPRMDMpB6HCmmTYkY51'
+    timezone: Europe/Berlin
+    ostype: CentOS
+    osversion: "7"
+    keyboard: de-latin1-nodeadkeys
+    keymap: de
+    language: de
+    country: DE
+    locale: en_US.UTF-8
+    parameter:
+      env: production
+      role: worker
+      dc: home
+    partitioning:
+      '/boot':
+        type: part
+        fstype: ext3
+        size: 1024
+        primary: true
+        ondisk: sda
+      'pv.01':
+        type: pvol
+        size: 1000
+        grow: true
+        primary: true
+        ondisk: sda
+      'vgos':
+        type: volgroup
+        pvol: pv.01
+      'raid.11':
+        type: part
+        size: 2048
+        grow: true
+        primary: true
+        ondisk: sdb
+      'raid.21':
+        type: part
+        size: 2048
+        grow: true
+        primary: true
+        ondisk: sdc
+      'pv.02':
+        type: raid
+        fstype: xfs
+        level: RAID1
+        disks:
+          - 'raid.11'
+          - 'raid.21'
+      'vgdata':
+        type: volgroup
+        pvol: 'pv.02'
+      '/':
+        type: logvol
+        vgname: vgos
+        diskname: lvol_root
+        size: 8192
+        fstype: ext4
+      '/var':
+        type: logvol
+        vgname: vgos
+        diskname: lvol_var
+        size: 15360
+        fstype: ext4
+      '/var/log':
+        type: logvol
+        vgname: vgos
+        diskname: lvol_var_log
+        size: 10240
+        fstype: ext4
+      '/var/log/audit':
+        type: logvol
+        vgname: vgos
+        diskname: lvol_var_log_audit
+        size: 10240
+        fstype: ext4
+      '/usr':
+        type: logvol
+        vgname: vgos
+        diskname: lvol_usr
+        size: 10240
+        fstype: ext4
+      '/home':
+        type: logvol
+        vgname: vgos
+        diskname: lvol_home
+        size: 2048
+        fstype: ext4
+      '/tmp':
+        type: logvol
+        vgname: vgos
+        diskname: lvol_tmp
+        size: 4096
+        fstype: ext4
+      '/var/tmp':
+        type: logvol
+        vgname: vgos
+        diskname: lvol_var_tmp
+        size: 2048
+        fstype: ext4
+      'swap':
+        type: logvol
+        vgname: vgos
+        diskname: lvol_swap
+        size: 8192
+      '/export':
+        type: logvol
+        vgname: 'vgdata'
+        diskname: lvol_export
+        size: 102400
+        fstype: ext4
+      '/var/lib/libvirt':
+        type: logvol
+        vgname: 'vgdata'
+        diskname: lvol_var_lib_libvirt
+        size: 307200
+        fstype: ext4
+      '/var/lib/docker':
+        type: logvol
+        vgname: 'vgdata'
+        diskname: lvol_var_lib_docker
+        size: 61440
+        fstype: ext4

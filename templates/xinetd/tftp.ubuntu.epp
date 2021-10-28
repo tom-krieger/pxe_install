@@ -1,0 +1,6 @@
+# /etc/default/tftpd-hpa
+
+TFTP_USERNAME="<%= $user %>"
+TFTP_DIRECTORY="<%= $tftpdirectory %>"
+TFTP_ADDRESS="<%= $address %>:<%= $port %>"
+TFTP_OPTIONS="--secure -4 -v -v -v -v -m <%= $mapfile %>"

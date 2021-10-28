@@ -1,0 +1,19 @@
+auth  --useshadow  --enablemd5
+bootloader --location=mbr
+zerombr
+clearpart --all --initlabel
+text
+firewall --disabled
+firstboot --disable
+keyboard <%= $keyboard %>
+lang <%= $lang %>
+logging --level=debug --host=<%= $loghost %>
+url --url=<%= $installserverurl %>
+network --bootproto=static --device=<%= $ksdevice %> --gateway=<%= $gateway %> --ip=<%= $ip %> --netmask=<%= $netmask %> --nameserver=<%= $dnsservers %> --hostname=<%= $fqdn %>
+reboot
+rootpw --iscrypted <%= $rootpw %>
+selinux --disabled
+skipx
+timezone --isUtc <%= $timezone %>
+install
+

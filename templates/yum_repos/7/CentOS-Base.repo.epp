@@ -1,0 +1,28 @@
+[base]
+name=CentOS-$releasever - Base
+baseurl=<%= $reposerver_uri %>/$releasever/base/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-$releasever
+
+#released updates 
+[updates]
+name=CentOS-$releasever - Updates
+baseurl=<%= $reposerver_uri %>/$releasever/updates/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-$releasever
+
+#additional packages that may be useful
+[extras]
+name=CentOS-$releasever - Extras
+baseurl=<%= $reposerver_uri %>/$releasever/extras/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-$releasever
+
+#additional packages that extend functionality of existing packages
+[centosplus]
+name=CentOS-$releasever - Plus
+baseurl=<%= $reposerver_uri %>/$releasever/centosplus/$basearch/
+gpgcheck=1
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-$releasever
+

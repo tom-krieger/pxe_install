@@ -1,0 +1,24 @@
+{
+    "description": "Maintain Ubuntu/Debian net installer",
+    "input_method": "environment",
+    "supports_noop": false,
+    "parameters": {
+      "tftp_basedir": {
+        "description": "The base directory of the tftpd server.",
+        "type": "String"
+      },
+      "archive": {
+          "description": "The full path and name of the net installer archive.",
+          "type": "String"
+      },
+      "os": {
+        "description": "The operating system",
+        "type": "Enum[ubuntu,debian,centos]"
+      },
+      "os_version": {
+        "description": "The os version",
+        "type": "String"
+      }
+    }
+  }
+ 

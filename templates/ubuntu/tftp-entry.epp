@@ -1,0 +1,10 @@
+path <%= $path %>
+prompt 0
+timeout 0
+default ks
+
+label ks
+        menu label ^ks
+        menu default
+        kernel <%= $prefix %>/linux
+        append noprompt url=<%= $ksurl %> priority=critical vga=788 initrd=<%= $prefix %>/initrd.gz interface=<%= $ksdevice %> auto=true log_host=<%= $loghost %> log_port=<%= $logport %> puppetenv=<%= $puppetenv %> role=<%= $puppetrole %> dc=<%= $datacenter %> ---

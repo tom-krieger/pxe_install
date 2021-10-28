@@ -1,0 +1,52 @@
+###############################################################################
+### Preinstall work
+###############################################################################
+d-i preseed/early_command string \
+	echo "<%= $puppetenv %>" > /tmp/puppetenv ; \
+	echo "<%= $puppetrole %>" > /tmp/puppetrole ; \
+	echo "<%= $datacenter %>" > /tmp/datacenter ;
+
+###############################################################################
+### Language selection
+###############################################################################
+d-i debian-installer/locale string <%= $locale %>
+d-i debian-installer/language string <%= $language %>
+d-i debian-installer/country string <%= $country %>
+
+###############################################################################
+### keyboard selection
+###############################################################################
+d-i console-setup/ask_detect boolean false
+d-i keyboard-configuration/xkb-keymap select <%= $keyboard %>
+
+###############################################################################
+### Network config
+###############################################################################
+d-i netcfg/choose_interface select auto
+d-i netcfg/disable_autoconfig boolean true
+d-i netcfg/get_ipaddress string <%= $ip %>
+d-i netcfg/get_netmask string <%= $netmask %>
+d-i netcfg/get_gateway string <%= $gateway %>
+d-i netcfg/get_nameservers string <%= $dnsservers %>
+d-i netcfg/confirm_static boolean true
+d-i netcfg/hostname string <%= $hostname %>
+
+###############################################################################
+### Root password
+###############################################################################
+d-i passwd/root-password-crypted password <%= $rootpw %>
+
+###############################################################################
+### User account
+###############################################################################
+d-i passwd/user-fullname string <%= $user['fullname'] %>
+d-i passwd/username string <%= $user['username'] %>
+d-i passwd/user-password-crypted password <%= $user['password'] %>
+d-i user-setup/allow-password-weak boolean true
+d-i user-setup/encrypt-home boolean false
+
+###############################################################################
+### Clock and timezone
+###############################################################################
+d-i clock-setup/utc boolean true
+d-i time/zone string <%= $timezone %>

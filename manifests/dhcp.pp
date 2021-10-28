@@ -1,0 +1,59 @@
+# @summary Setup DHCP server
+#
+# Configure DHCP server and add static DHCP entries, create pools
+#
+# @param dhcp
+#    A hash with al dhcp entries
+#
+# @example
+#   include pxe_install::dhcp
+#
+# @api private
+class pxe_install::dhcp (
+  Hash $dhcp
+){
+  if has_key($dhcp, 'default_filename') {
+    $pxefilename = $dhcp['default_filename']
+  } elsif $pxe_install::defaults['pxefile'] != '' {
+    $pxefilename = $pxe_install::defaults['pxefile']
+  } else {
+    # Default 
+    $pxefilename = 'pxelinux.0'
+  }
+
+  class { 'dhcp':
+    service_ensure       => running,
+    interfaces           => $dhcp['interfaces'],
+    nameservers          => $dhcp['dns_servers'],
+    ntpservers           => $dhcp['ntp_servers'],
+    pxeserver            => $dhcp['next_server'],
+    dnsdomain            => $dhcp['domain_names'],
+    pxefilename          => $pxefilename,
+    omapi_port           => $dhcp['omapiport'],
+    ddns_update_style    => $dhcp['ddns_update_style'],
+    max_lease_time       => $dhcp['max_lease_time'],
+    default_lease_time   => $dhcp['default_lease_time'],
+    logfacility          => $dhcp['logfacility'],
+    option_code150_label => $dhcp['option_code_50_label'],
+    option_code150_value => $dhcp['option_code150_value'],
+  }
+
+  # loop over subnets
+  if has_key($dhcp, 'pools') {
+    $dhcp['pools'].each |$pool_name, $pool_data| {
+      dhcp::pool { $pool_name:
+        * => $pool_data,
+      }
+    }
+  }
+
+  # loop over dhcp entried for dynamic ips
+  if has_key($dhcp, 'hosts') {
+    $dhcp['hosts'].each |$host_name, $host_data| {
+      dhcp::host { $host_name:
+        *       => $host_data,
+        comment => "dynamic ip entry for ${host_name}",
+      }
+    }
+  }
+}

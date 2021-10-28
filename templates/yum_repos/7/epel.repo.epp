@@ -1,0 +1,30 @@
+#####################################################################
+#                                                                   #
+# This file is under crontrol of puppet. Do not edit manually. Any  #
+# changes will be overwritten.                                      #
+#                                                                   #
+#####################################################################
+
+[epel]
+name=Extra Packages for Enterprise Linux 7 - $basearch
+baseurl=<%= $reposerver_uri %>/$releasever/epel/$basearch
+failovermethod=priority
+enabled=1
+gpgcheck=1
+gpgkey=https://fedoraproject.org/static/352C64E5.txt
+
+[epel-debuginfo]
+name=Extra Packages for Enterprise Linux 7 - $basearch - Debug
+baseurl=<%= $reposerver_uri %>/$releasever/epel/$basearch
+failovermethod=priority
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-$releasever
+gpgcheck=1
+
+[epel-source]
+name=Extra Packages for Enterprise Linux 7 - $basearch - Source
+baseurl=<%= $reposerver_uri %>/$releasever/epel/SRPMS
+failovermethod=priority
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-$releasever
+gpgcheck=1

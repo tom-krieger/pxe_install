@@ -1,0 +1,188 @@
+#!/bin/bash
+
+# set -x -v
+
+#------------------------------------------------------------------------#
+#                                                                        #
+# Script:    debian-post.sh                                              #
+# Date:      30.12.2020                                                  #
+# Version:   0.1                                                         #
+# Author:    Thomas Krieger <tom@tom-krieger.de>                         #
+#                                                                        #
+# History:                                                               #
+# --------                                                               #
+#                                                                        #
+# -----------+-------------------+-------------------------------------- #
+# Date       ! Who               ! Reason                                #
+# -----------+-------------------+-------------------------------------- #
+# 30.12.2020 ! Thomas Krieger    ! initial version                       #
+# -----------+-------------------+-------------------------------------- #
+#                                                                        #
+#------------------------------------------------------------------------#
+
+PEMASTER="<%= $puppetmaster %>"
+PEMASTERIP="<%= $puppetmasterip %>"
+INSTALLSERVERIP="<%= $installserverip %>"
+INSTALLSERVER="<%= $installserver %>"
+LOGGER="undef"
+
+if [ -f /etc/puppetlabs/puppet/install_agent ] ; then
+	install_puppet=`cat /etc/puppetlabs/puppet/install_agent`
+else 
+	install_puppet="y"
+fi
+
+if [ -x "/usr/bin/logger" ] ; then
+	LOGGER="/usr/bin/logger"
+elif [ -x "/bin/logger" ] ; then
+	LOGGER="/bin/logger"
+fi
+
+#------------------------------------------------------------------------#
+# send a log message to syslog
+#------------------------------------------------------------------------#
+
+function log () {
+
+	if [ ! -z "$1" ] ; then
+
+		if [ "$LOGGER" != "undef" ] ; then
+			$LOGGER -p daemon.info -t postinstall "$1"
+		fi
+
+	fi
+}
+
+#------------------------------------------------------------------------#
+# print out a success or failure message at column 65
+#------------------------------------------------------------------------#
+
+function printReturn () {
+	ret=$1
+	pos=$2
+	tput cup $pos 65 >/dev/tty5
+	if [ "$ret" = "0" ] ; then
+		echo "[ success ]" >/dev/tty5
+	else
+		echo "[ failure ]" >/dev/tty5
+	fi
+}
+
+#------------------------------------------------------------------------#
+# update all installed packages to their latest version
+#------------------------------------------------------------------------#
+
+function installUpdates () {
+	log "getting and installing all updates"
+
+	ret=0
+	/usr/bin/apt-get -y update
+	if [ "$?" != "0" ] ; then
+		ret=1
+	else
+	  /usr/bin/apt-get -y upgrade
+		if [ "$?" != "0" ] ; then
+		  ret = 1
+		fi
+	fi
+
+	if [ "$ret" != "0" ] ; then
+		log "error installing updates"
+	else
+		log "updates installed successfully"
+	fi
+}
+
+#------------------------------------------------------------------------#
+# install puppet
+#------------------------------------------------------------------------#
+
+function installPuppet () {
+	log "installing puppet"
+
+	/usr/bin/apt-get -y install tar curl net-tools
+	ret=$?
+	if [ "$install_puppet" = "y" ] ; then
+		if [ "$ret" = "0" ] ; then
+			if [ -f /etc/puppetlabs/puppet/puppetrole ] ; then
+				puppetrole=`cat /etc/puppetlabs/puppet/puppetrole`
+			else
+				puppetrole="default"
+			fi
+
+			if [ -f /etc/puppetlabs/puppet/puppetenv ] ; then
+				puppetenv=`cat /etc/puppetlabs/puppet/puppetenv`
+			else
+				puppetenv="production"
+			fi
+
+			if [ -f /etc/puppetlabs/puppet/datacenter ] ; then
+				datacenter=`cat /etc/puppetlabs/puppet/datacenter`
+			else
+				datacenter="none"
+			fi
+
+			if [ ! -d /etc/puppetlabs/puppet ]; then
+				echo "creating directory /etc/puppetlabs/puppet"
+				mkdir -p /etc/puppetlabs/puppet
+			fi
+
+			log "puppet environment ${puppetenv}, role ${puppetrole}"
+
+			cat > /etc/puppetlabs/puppet/csr_attributes.yaml << YAML
+custom_attributes:
+    1.2.840.113549.1.9.7: <%= unwrap($challenge_password) %>
+extension_requests:
+    pp_image_name:  Debian-${release}
+    pp_hostname: `hostname`
+    pp_datacenter: $datacenter
+    pp_role: $puppetrole
+    pp_environment: $puppetenv
+YAML
+
+			curl -k https://${PEMASTER}:8140/packages/current/install.bash | sudo bash
+			/usr/local/bin/puppet config set environment $puppetenv --section agent
+
+			sleep 2
+
+			systemctl enable puppet
+
+			while [ -f "/opt/puppetlabs/puppet/cache/state/agent_catalog_run.lock" ] ; do
+					log "puppet run currently on the way ..."
+					sleep 20
+			done
+		else
+			log "installation of curl pkg failed"
+		fi
+	else
+		log "puppet installation not required (install_puppet = ${install_puppet})"
+	fi
+}
+
+#------------------------------------------------------------------------#
+# check how we are called
+#------------------------------------------------------------------------#
+
+log "starting postinstall bootstrap script"
+
+osname=`cat /etc/os-release | grep NAME= | cut -f 2 -d = | sed -e 's/"//g'`
+release=`cat /etc/os-release | grep VERSION_ID | cut -f 2 -d = | sed -e 's/"//g'`
+ostype="Debian"
+release=${release:0:2}
+log "$ostype release is ${release}"
+
+<%- if $add_hosts_entries { -%>
+echo "${PEMASTERIP}    ${PEMASTER}" >> /etc/hosts
+echo "${INSTALLSERVERIP}"    ${INSTALLSERVER}" >> /etc/hosts"
+<%- } -%>
+
+installUpdates
+installPuppet
+
+sed -i '/debian-post/d' /etc/rc.local
+
+log "* finished postinstall bootstrap script, rebooting ..."
+reboot
+
+	
+exit 0

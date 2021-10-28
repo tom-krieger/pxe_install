@@ -1,0 +1,36 @@
+
+###############################################################################
+### Mirror settings
+###############################################################################
+d-i mirror/country string <%= $country %>
+d-i mirror/http/hostname string <%= $mirror %>
+d-i mirror/http/directory string <%= $mirror_dir %>
+d-i mirror/http/proxy string
+
+###############################################################################
+### Package selection
+###############################################################################
+d-i pkgsel/include string openssh-server gnupg2
+
+###############################################################################
+### Bootloader
+###############################################################################
+d-i grub-installer/only_debian boolean true
+d-i grub-installer/with_other_os boolean true
+d-i grub-installer/bootdev  string <%= $bootdevice %>
+
+###############################################################################
+### Finish
+###############################################################################
+
+d-i preseed/late_command string \
+	if [ -f /tmp/puppetenv ] ; then cp /tmp/puppetenv /target/tmp/ ; fi ; \
+	if [ -f /tmp/puppetrole ] ; then cp /tmp/puppetrole /target/tmp/ ; fi ; \
+	if [ -f /tmp/datacenter ] ; then cp /tmp/datacenter /target/tmp/ ; fi ; \
+	in-target ls -la /tmp ; \
+	in-target apt-get -y install curl bash ; \
+	in-target rm -f /tmp/ubuntu-post.sh ; \
+	in-target wget -O /tmp/ubuntu-post.sh http://<%= $reposerver %><%= $scripturl %>/ubuntu-post.sh ; \
+	in-target chmod 755 /tmp/ubuntu-post.sh ; \
+	in-target bash /tmp/ubuntu-post.sh <%= $agent %> 
+d-i finish-install/reboot_in_progress note
