@@ -16,13 +16,12 @@
 * `pxe_install::dhcp`: Setup DHCP server
 * `pxe_install::params`: Default parameters
 * `pxe_install::tftp`: Setup ftp server
-* `pxe_install::yum_repos`: Create yum repo files
 
 ### Defined types
 
 #### Public Defined types
 
-* [`pxe_installarent_dirs`](#pxe_installarent_dirs): Create directories recursivly
+* [`pxe_install::parent_dirs`](#pxe_installparent_dirs): Create directories recursivly
 
 #### Private Defined types
 
@@ -93,12 +92,8 @@ The following parameters are available in the `pxe_install` class:
 * [`ssl_certs_dir`](#ssl_certs_dir)
 * [`documentroot`](#documentroot)
 * [`create_aliases`](#create_aliases)
-* [`configure_repos`](#configure_repos)
-* [`sync_repos`](#sync_repos)
-* [`configure_sync_scripts`](#configure_sync_scripts)
 * [`challenge_password`](#challenge_password)
 * [`add_hosts_entries`](#add_hosts_entries)
-* [`install_resolv_conf`](#install_resolv_conf)
 * [`defaults`](#defaults)
 
 ##### <a name="installserverip"></a>`installserverip`
@@ -287,7 +282,7 @@ Default value: `'/etc/pki/httpd/repos.example.com/'`
 
 Data type: `Optional[String]`
 
-Document root for the webserver
+Document root for the webserver.
 
 Default value: `'/var/www/html'`
 
@@ -298,35 +293,6 @@ Data type: `Optional[Boolean]`
 Create webserver aliases
 
 Default value: ``true``
-
-##### <a name="configure_repos"></a>`configure_repos`
-
-Data type: `Optional[Boolean]`
-
-Configure repositories on install server
-
-Default value: ``true``
-
-##### <a name="sync_repos"></a>`sync_repos`
-
-Data type: `Optional[Hash]`
-
-hash containing all repos to be synced to the internal package repositories.
-
-Default value: `{
-    centos7 => true,
-    centos8 => true,
-    epel7   => true,
-    epel8   => true,
-  }`
-
-##### <a name="configure_sync_scripts"></a>`configure_sync_scripts`
-
-Data type: `Optional[Boolean]`
-
-If repository sync scripts should be installed and configured.
-
-Default value: ``false``
 
 ##### <a name="challenge_password"></a>`challenge_password`
 
@@ -342,14 +308,6 @@ Add install server and puppet server to /etc/hosts file.
 
 Default value: ``false``
 
-##### <a name="install_resolv_conf"></a>`install_resolv_conf`
-
-Data type: `Optional[Boolean]`
-
-Install a prepared resolv.conf file on the fresh installed system.
-
-Default value: ``false``
-
 ##### <a name="defaults"></a>`defaults`
 
 Data type: `Optional[Hash]`
@@ -360,7 +318,7 @@ Default value: `$pxe_install::params::defaults`
 
 ## Defined types
 
-### <a name="pxe_installarent_dirs"></a>`pxe_installarent_dirs`
+### <a name="pxe_installparent_dirs"></a>`pxe_install::parent_dirs`
 
 Create all missing directories
 
@@ -377,7 +335,7 @@ pxe_installarent_dirs{ 'create script dir':
 
 #### Parameters
 
-The following parameters are available in the `pxe_installarent_dirs` defined type:
+The following parameters are available in the `pxe_install::parent_dirs` defined type:
 
 * [`dir_path`](#dir_path)
 

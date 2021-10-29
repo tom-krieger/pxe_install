@@ -80,28 +80,16 @@
 #    Directory where all files for the cdertificates reside.
 #
 # @param documentroot
-#    Document root for the webserver
+#    Document root for the webserver.
 #
 # @param create_aliases
 #    Create webserver aliases
-#
-# @param configure_repos
-#    Configure repositories on install server
-#
-# @param sync_repos
-#    hash containing all repos to be synced to the internal package repositories.
-#
-# @param configure_sync_scripts
-#    If repository sync scripts should be installed and configured.
 #
 # @param challenge_password
 #    Sensitive challenge password for auto signing cert requests.
 #
 # @param add_hosts_entries
 #    Add install server and puppet server to /etc/hosts file.
-#
-# @param install_resolv_conf
-#    Install a prepared resolv.conf file on the fresh installed system.
 #
 # @param defaults
 #    Default values.
@@ -139,16 +127,7 @@ class pxe_install (
   Optional[String] $ssl_certs_dir             = '/etc/pki/httpd/repos.example.com/',
   Optional[String] $documentroot              = '/var/www/html',
   Optional[Boolean] $create_aliases           = true,
-  Optional[Boolean] $configure_repos          = true,
-  Optional[Boolean] $configure_sync_scripts   = false,
   Optional[Boolean] $add_hosts_entries        = false,
-  Optional[Boolean] $install_resolv_conf      = false,
-  Optional[Hash] $sync_repos                  = {
-    centos7 => true,
-    centos8 => true,
-    epel7   => true,
-    epel8   => true,
-  },
   Optional[Hash] $defaults                    = $pxe_install::params::defaults,
 ) inherits pxe_install::params {
 
@@ -162,17 +141,6 @@ class pxe_install (
 
   pxe_install::parent_dirs { 'create document root dir':
     dir_path => $documentroot,
-  }
-
-  file { $scriptdir:
-    ensure       => directory,
-    source       => 'puppet:///modules/pxe_install/install',
-    recurse      => true,
-    recurselimit => 3,
-    purge        => true,
-    owner        => 'root',
-    group        => 'root',
-    mode         => '0644',
   }
 
   file { "${scriptdir}/debian-post.sh":
@@ -222,19 +190,17 @@ class pxe_install (
   file { "${scriptdir}/redhat-post.sh":
     ensure  => file,
     content => epp('pxe_install/scripts/redhat-post.sh.epp', {
-      installserver       => $installserver,
-      installserverip     => $installserverip,
-      puppetmaster        => $puppetmaster,
-      puppetmasterip      => $puppetmasterip,
-      kickstart_url       => $kickstart_url,
-      repos_url           => $repos_url,
-      scripturl           => $scripturl,
-      reposerver          => $repo_server,
-      reposerverip        => $repo_server_ip,
-      challenge_password  => $challenge_password,
-      add_hosts_entries   => $add_hosts_entries,
-      install_resolv_conf => $install_resolv_conf,
-      configure_repos     => $configure_repos,
+      installserver      => $installserver,
+      installserverip    => $installserverip,
+      puppetmaster       => $puppetmaster,
+      puppetmasterip     => $puppetmasterip,
+      kickstart_url      => $kickstart_url,
+      repos_url          => $repos_url,
+      scripturl          => $scripturl,
+      reposerver         => $repo_server,
+      reposerverip       => $repo_server_ip,
+      challenge_password => $challenge_password,
+      add_hosts_entries  => $add_hosts_entries,
     }),
     owner   => 'root',
     group   => 'root',
@@ -284,82 +250,4 @@ class pxe_install (
     create_aliases    => $create_aliases,
   }
 
-  if $configure_repos {
-
-    $reposerver_uri = "https://${repo_server}/centos"
-    class { 'pxe_install::yum_repos':
-      reposerver_uri => $reposerver_uri,
-      install_dir    => "${scriptdir}/yum-repos",
-    }
-
-  }
-
-  if $configure_sync_scripts {
-
-    $repodir = "${repos_dir}/centos"
-    file { '/usr/local/sbin/sync_epel_7':
-      ensure  => file,
-      content => epp('pxe_install/scripts/adsEpelSync7.epp', {
-        repodir => $repodir,
-      }),
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0700',
-    }
-
-    file { '/usr/local/sbin/sync_epel_8':
-      ensure  => file,
-      content => epp('pxe_install/scripts/adsEpelSync8.epp', {
-        repodir => $repodir,
-      }),
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0700',
-    }
-
-    file { '/usr/local/sbin/sync_centos_7':
-      ensure  => file,
-      content => epp('pxe_install/scripts/adsRepoSyncCentos7.epp', {
-        repodir => $repodir,
-      }),
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0700',
-    }
-
-    file { '/usr/local/sbin/sync_centos_8':
-      ensure  => file,
-      content => epp('pxe_install/scripts/adsRepoSyncCentos8.epp', {
-        repodir => $repodir,
-      }),
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0700',
-    }
-
-    ensure_resource('file', '/root/cron', {
-      ensure => directory,
-      owner  => 'root',
-      group  => 'root',
-      mode   => '0755',
-    })
-
-    file { '/root/cron/reposync':
-      ensure  => file,
-      content => epp('pxe_install/scripts/reposync.epp', {
-        sync_repos => $sync_repos,
-      }),
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0700',
-    }
-
-    file { '/etc/cron.d/reposync.cron':
-      ensure  => file,
-      content => epp('pxe_install/scripts/reposync.cron.epp', {}),
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0644',
-    }
-  }
 }

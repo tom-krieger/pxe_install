@@ -4,9 +4,9 @@
   "author": "Thomas Krieger",
   "summary": "Setup CentOS install servert",
   "license": "Apache-2.0",
-  "source": "https://git.home.tom-krieger.de/puppet-modules/pxe_install.git",
-  "project_page": "https://git.home.tom-krieger.de/puppet-modules/pxe_install",
-  "issues_url": "https://git.home.tom-krieger.de/puppet-modules/pxe_install/-/issues",
+  "source": "https://github.com/tom-krieger/pxe_install.git",
+  "project_page": "https://github.com/tom-krieger/pxe_install/projects",
+  "issues_url": "https://github.com/tom-krieger/pxe_install/issues",
   "dependencies": [
     {
       "name": "puppetlabs-stdlib",

@@ -32,9 +32,7 @@ describe 'pxe_install' do
           'debian_mirror_dir' => '/debian',
           'ubuntu_mirror' => 'archive.ubuntu.com',
           'ubuntu_mirror_dir' => '/ubuntu',
-          'configure_repos' => false,
-          'configure_sync_scripts' => false,
-          'challenge_password' => 'ENC[PKCS7,MIIBeQYJKoZIhv]',
+          'challenge_password' => 'ENC[PKCS7,MIIBeQYJKoZIhvcNAQcDoIIBajCCAWYCAQAxggEhMIIBHQIBADAFMAACAQEwDQYJKoZIhvcNAQEBBQAEggEAgzi0LVncB8ZAMyPh0Wpk6B3L+cB8tzL+JS8J9Ujc9lp2Dum3adWk4OgCmW+jSLc2hD8Rg2eyWJZ6cr1/CTEpg7+BoTG6rA43UT2gFMAA0v+xa46BnOi9G3/nMO0bWfuT0dLy8c2Y8v8baY7GnS9xcwIzGuouvBSsy0vYo/TPRAMWt2otO2shZPMPTXOQpyYQblwckn6laTrj2Kh/4pxn03rKBUWStygw2uQajvkC]',
           'services' => {
             'tftpd' => {
               'packages' => ['tftp-server', 'xinetd'],
@@ -185,7 +183,7 @@ describe 'pxe_install' do
 
         is_expected.to contain_pxe_install__parent_dirs('create script dir')
           .with(
-            'dir_path' => '/export/repos/www',
+            'dir_path' => '/export/repos/www/pub',
           )
 
         is_expected.to contain_pxe_install__parent_dirs('create kickstart dirs')
@@ -199,28 +197,16 @@ describe 'pxe_install' do
           )
 
         is_expected.to contain_file('/export')
-          .with
+          .with()
 
         is_expected.to contain_file('/export/repos')
-          .with
+          .with()
 
         is_expected.to contain_file('/export/repos/www')
-          .with
+          .with()
 
         is_expected.to contain_file('/export/repos/www/kickstart')
-          .with
-
-        is_expected.to contain_file('/export/repos/www/pub')
-          .with(
-            'ensure'       => 'directory',
-            'source'       => 'puppet:///modules/pxe_install/install',
-            'recurse'      => true,
-            'recurselimit' => 3,
-            'purge'        => true,
-            'owner'        => 'root',
-            'group'        => 'root',
-            'mode'         => '0644',
-          )
+          .with()
 
         is_expected.to contain_file('/export/repos/www/pub/debian-post.sh')
           .with(
@@ -384,23 +370,6 @@ describe 'pxe_install' do
               'mode'   => '0644',
             )
         end
-
-        # is_expected.to contain_class('pxe_install::yum_repos')
-        #   .with(
-        #     'kickstart_dir'     => '/export/repos/www/kickstart',
-        #     'kickstart_url'     => '/kickstart',
-        #     'pub_dir'           => '/export/repos/www/pub',
-        #     'pub_url'           => '/pub',
-        #     'repos_dir'         => '/export/repos/www',
-        #     'repos_url'         => '/',
-        #     'servername'        => 'repo.local',
-        #     'status_allow_from' => ['127.0.0.1'],
-        #     'ssl_cert'          => '/etc/pki/httpd/cert.pem',
-        #     'ssl_key'           => '/etc/pki/httpd/key.pem',
-        #     'ssl_chain'         => '/etc/pki/httpd/chain.pem',
-        #     'documentroot'      => '/export/repos/www',
-        #     'create_aliases'    => true,
-        #   )
       end
     end
   end
