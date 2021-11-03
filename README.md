@@ -330,7 +330,7 @@ Unit tests are mainly covered by the main `pxe_install_spec.rb` file.
 
 ## Limitations
 
-This module is written for my private install server. Therefore it is limited to what I needed. Especually paritioning is limited to partitions and logical LVM volumes.
+This module is written for my private install server. Therefore it is limited to what I needed. Especially paritioning is limited to partitions and logical LVM volumes.
 
 ## Development
 
