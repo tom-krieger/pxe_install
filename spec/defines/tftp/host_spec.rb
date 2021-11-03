@@ -54,13 +54,13 @@ describe 'pxe_install::tftp::host' do
             'mode'   => '0644',
           )
 
-          is_expected.to contain_file('/tftpboot/pxelinux.0')
+        is_expected.to contain_file('/tftpboot/pxelinux.0')
           .with(
-            'ensure' => 'file',
-            'owner'  => 'root',
-            'group'  => 'root',
-            'mode'   => '0644',
-          )
+          'ensure' => 'file',
+          'owner'  => 'root',
+          'group'  => 'root',
+          'mode'   => '0644',
+        )
 
         is_expected.to contain_file('/tftpboot/pxelinux.cfg/default')
           .with(
