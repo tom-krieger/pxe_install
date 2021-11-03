@@ -286,14 +286,37 @@ define pxe_install::kickstart (
   }
 
   if $ensure == 'present' {
-    dhcp::host { $hostname:
+    $dhcp_base_data = {
       mac     => $network_data['mac'],
       ip      => $network_data['fixedaddress'],
-      options => {
-        'routers'   => $network_data['gateway'],
-        'host-name' => $hostname,
-      },
       comment => "Kickstart dhcp entry for ${hostname}",
+    }
+
+    if has_key($network_data, 'filename') {
+
+      $dhcp_file_data = {
+        options => {
+          'routers'   => $network_data['gateway'],
+          'host-name' => $hostname,
+          'filename' => $network_data['filename'],
+        },
+      }
+
+    } else {
+
+      $dhcp_file_data = {
+        options => {
+          'routers'   => $network_data['gateway'],
+          'host-name' => $hostname,
+        },
+      }
+
+    }
+
+    $dhcp_data = merge($dhcp_base_data, $dhcp_file_data)
+
+    dhcp::host { $hostname:
+      * => $dhcp_data,
     }
   }
 

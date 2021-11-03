@@ -111,6 +111,7 @@ pxe_install::machines:
     network:
       mac: 08:00:27:77:A4:40
       prefix: centos/7/u9
+      filename: '/tftpboot/test.0'
       fixedaddress: 10.0.0.66
       ksdevice: eth0
       gateway: 10.0.0.4

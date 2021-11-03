@@ -241,6 +241,7 @@ describe 'pxe_install' do
             'options' => {
               'routers'   => '10.0.0.4',
               'host-name' => 'ct01',
+              'filename' => '/tftpboot/test.0',
             },
             'comment' => 'Kickstart dhcp entry for ct01',
           )
@@ -283,6 +284,7 @@ describe 'pxe_install' do
                 'gateway' => '10.0.0.4',
                 'netmask' => '255.255.255.0',
                 'dns' => ['10.0.0.62'],
+                'filename' => '/tftpboot/test.0',
               },
               'ostype' => 'CentOS',
               'osversion' => '7',

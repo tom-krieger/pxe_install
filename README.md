@@ -97,6 +97,7 @@ The network configuration describes how the network of a node should be setup. Y
 |---|---|---|:---:|
 | network | mac | The MAC address of the node | - |
 | | prefix | The path within the tftpboot directory to find the boot kernel and initial ram disk. | - |
+| | filename | The pxefile to load with a full path | yes |
 | | fixedaddress | The IP address the host should use | - |
 | | ksdevice | The network device used for kickstart | - |
 | | gateway | The default gateway to use | - |
