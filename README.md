@@ -18,8 +18,9 @@
     * [Minimal node configuration example](#minimal-node-configuration-example)
 4. [Plans](#plans)
 5. [Tasks](#tasks)
-6. [Limitations](#limitations)
-7. [Development](#development)
+6. [Unit tests](#unit-tests)
+7. [Limitations](#limitations)
+8. [Development](#development)
 
 ## `Description`
 
@@ -322,11 +323,14 @@ This tasl is called from the `add_new_os_netboot` plan. It installs the Ubuntu o
 `create_password`:
 This task helps you to create SHA512 encrypted passwords. It uses the above mentioned Python code. This task has to run on the Puppet primary server.
 
+
+## Unit tests
+
+Unit tests are mainly covered by the main `pxe_install_spec.rb` file.
+
 ## Limitations
 
 This module is written for my private install server. Therefore it is limited to what I needed.
-
-Unit tests are not fully implemented/working.
 
 ## Development
 
