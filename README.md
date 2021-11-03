@@ -97,7 +97,7 @@ The network configuration describes how the network of a node should be setup. Y
 |---|---|---|:---:|
 | network | mac | The MAC address of the node | - |
 | | prefix | The path within the tftpboot directory to find the boot kernel and initial ram disk. | - |
-| | filename | The pxefile to load with a full path | yes |
+| | filename | The pxefile to load. A full path is needed. | yes |
 | | fixedaddress | The IP address the host should use | - |
 | | ksdevice | The network device used for kickstart | - |
 | | gateway | The default gateway to use | - |
@@ -324,14 +324,13 @@ This tasl is called from the `add_new_os_netboot` plan. It installs the Ubuntu o
 `create_password`:
 This task helps you to create SHA512 encrypted passwords. It uses the above mentioned Python code. This task has to run on the Puppet primary server.
 
-
 ## Unit tests
 
 Unit tests are mainly covered by the main `pxe_install_spec.rb` file.
 
 ## Limitations
 
-This module is written for my private install server. Therefore it is limited to what I needed.
+This module is written for my private install server. Therefore it is limited to what I needed. Especually paritioning is limited to partitions and logical LVM volumes.
 
 ## Development
 

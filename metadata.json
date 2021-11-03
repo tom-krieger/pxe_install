@@ -1,6 +1,6 @@
 {
   "name": "tomkrieger-pxe_install",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "author": "Thomas Krieger",
   "summary": "Setup CentOS/Debian pxe installation server",
   "license": "Apache-2.0",
@@ -49,6 +49,12 @@
       "operatingsystemrelease": [
         "18.04",
         "20.04"
+      ]
+    },
+    {
+      "operatingsystem": "Debian",
+      "operatingsystemrelease": [
+        "10"
       ]
     }
   ],

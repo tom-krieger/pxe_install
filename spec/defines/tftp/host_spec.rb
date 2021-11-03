@@ -108,7 +108,7 @@ describe 'pxe_install::tftp::host' do
             'mode'   => '0644',
           )
 
-        if os_facts[:operatingsystem].casecmp('ubuntu').zero?
+        if os_facts[:osfamily].casecmp('debian').zero?
           is_expected.to contain_file('/etc/default/tftpd-hpa')
             .with(
               'ensure' => 'file',
