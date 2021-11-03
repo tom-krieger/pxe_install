@@ -50,6 +50,24 @@ describe 'pxe_install::tftp' do
             'mode'   => '0644',
           )
 
+        is_expected.to contain_file('/var/lib/tftpboot/pxelinux.0')
+          .with(
+            'ensure' => 'file',
+            'owner' => 'root',
+            'group' => 'root',
+            'mode' => '0644',
+          )
+
+        if os_facts[:osfamily].casecmp('debian').zero?
+          is_expected.to contain_file('/etc/default/tftpd-hpa')
+            .with(
+              'ensure' => 'file',
+              'owner' => 'root',
+              'group' => 'root',
+              'mode' => '0644',
+            )
+        end
+
         if os_facts[:osfamily].casecmp('redhat').zero?
           is_expected.to contain_file('/etc/xinetd.d/tftp')
             .with(

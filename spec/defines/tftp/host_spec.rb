@@ -53,6 +53,78 @@ describe 'pxe_install::tftp::host' do
             'group'  => 'root',
             'mode'   => '0644',
           )
+
+          is_expected.to contain_file('/tftpboot/pxelinux.0')
+          .with(
+            'ensure' => 'file',
+            'owner'  => 'root',
+            'group'  => 'root',
+            'mode'   => '0644',
+          )
+
+        is_expected.to contain_file('/tftpboot/pxelinux.cfg/default')
+          .with(
+            'ensure' => 'file',
+            'owner'  => 'root',
+            'group'  => 'root',
+            'mode'   => '0644',
+          )
+
+        is_expected.to contain_file('/tftpboot/pxelinux.cfg')
+          .with(
+            'ensure'       => 'directory',
+            'purge'        => true,
+            'recurselimit' => 1,
+            'recurse'      => true,
+            'owner'        => 'root',
+            'group'        => 'root',
+            'mode'         => '0755',
+          )
+
+        is_expected.to contain_file('/tftpboot')
+          .with(
+            'ensure' => 'directory',
+            'owner'  => 'root',
+            'group'  => 'root',
+            'mode'   => '0755',
+          )
+
+        is_expected.to contain_package('tftp')
+          .with(
+            'ensure' => 'present',
+          )
+
+        is_expected.to contain_service('tftpd')
+          .with(
+            'ensure' => 'running',
+            'enable' => true,
+          )
+
+        is_expected.to contain_file('/etc/tftpd.map')
+          .with(
+            'ensure' => 'file',
+            'owner'  => 'root',
+            'group'  => 'root',
+            'mode'   => '0644',
+          )
+
+        if os_facts[:operatingsystem].casecmp('ubuntu').zero?
+          is_expected.to contain_file('/etc/default/tftpd-hpa')
+            .with(
+              'ensure' => 'file',
+              'owner'  => 'root',
+              'group'  => 'root',
+              'mode'   => '0644',
+            )
+        else
+          is_expected.to contain_file('/etc/xinetd.d/tftp')
+            .with(
+              'ensure' => 'file',
+              'owner'  => 'root',
+              'group'  => 'root',
+              'mode'   => '0644',
+            )
+        end
       }
     end
   end

@@ -36,8 +36,7 @@ define pxe_install::partitioning::debian (
   $nr = 400
 
   concat::fragment { "${hostname}-partition-start":
-    content => epp($template_partitioning, {
-    }),
+    content => epp($template_partitioning, {}),
     target  => $kickstart_file,
     order   => $nr,
   }
