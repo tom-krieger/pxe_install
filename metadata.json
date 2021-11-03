@@ -1,6 +1,6 @@
 {
   "name": "tomkrieger-pxe_install",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "author": "Thomas Krieger",
   "summary": "Setup CentOS/Debian pxe installation server",
   "license": "Apache-2.0",

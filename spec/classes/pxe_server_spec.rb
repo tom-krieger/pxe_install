@@ -17,7 +17,7 @@ describe 'pxe_install' do
 
         is_expected.to contain_pxe_install__parent_dirs('create script dir')
           .with(
-            'dir_path' => '/export/repos',
+            'dir_path' => '/export/repos/pub',
           )
 
         is_expected.to contain_pxe_install__parent_dirs('create kickstart dirs')
@@ -36,6 +36,11 @@ describe 'pxe_install' do
           )
 
         is_expected.to contain_file('/export/repos')
+          .with(
+            'ensure'  => 'directory',
+          )
+
+        is_expected.to contain_file('/export/repos/pub')
           .with(
             'ensure'  => 'directory',
           )

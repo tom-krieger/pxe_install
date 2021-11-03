@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 0.2.4
+
+* fixed an issue with creating necessary directories
+
 ## Release 0.2.3
 
 * added support for Debian 10

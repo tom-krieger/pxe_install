@@ -132,7 +132,8 @@ class pxe_install (
 ) inherits pxe_install::params {
 
   pxe_install::parent_dirs{ 'create script dir':
-    dir_path => dirname($scriptdir),
+    # dir_path => dirname($scriptdir),
+    dir_path => $scriptdir,
   }
 
   pxe_install::parent_dirs { 'create kickstart dirs':
