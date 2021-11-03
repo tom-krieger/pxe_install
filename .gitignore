@@ -26,4 +26,4 @@
 .envrc
 /inventory.yaml
 /spec/fixtures/litmus_inventory.yaml
-*/**/_old_code
+/_old_code/
