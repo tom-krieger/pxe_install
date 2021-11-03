@@ -2,9 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 0.2.2
+
+* added unit test hiera configuration
+* removed old unused files
+
 ## Release 0.2.1
 
-* mke filename for DHCP pxe boot configurable
+* make filename for DHCP pxe boot configurable
 
 ## Release 0.2.0
 

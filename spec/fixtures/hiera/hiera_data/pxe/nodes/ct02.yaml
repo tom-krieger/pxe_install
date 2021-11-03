@@ -1,0 +1,19 @@
+---
+pxe_install::machines:
+  ct02:
+    ensure: absent
+    network:
+      mac: 00:11:22:33:44:66
+      prefix: ubuntu/18.04/amd64
+      fixedaddress: 10.0.0.68
+      ksdevice: eth0
+      gateway: 10.0.0.4
+      netmask: 255.255.255.0
+      dns: 
+        - 10.0.0.62
+    ostype: ubuntu
+    parameter:
+      env: production
+      role: test
+      dc: test
+      agent: n

@@ -1,0 +1,23 @@
+---
+pxe_install::machines:
+  ct01:
+    ensure: present
+    network:
+      mac: 08:00:27:77:A4:40
+      prefix: centos/7/u9
+      filename: '/tftpboot/test.0'
+      fixedaddress: 10.0.0.66
+      ksdevice: eth0
+      gateway: 10.0.0.4
+      netmask: 255.255.255.0
+      dns: 
+        - 10.0.0.62
+    ostype: CentOS
+    osversion: "7"
+    keyboard: de-latin1-nodeadkeys
+    keymap: de
+    parameter:
+      env: production
+      role: test
+      dc: test
+      agent: y

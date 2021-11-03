@@ -1,0 +1,86 @@
+---
+pxe_install::installserverip: 10.0.0.21
+pxe_install::installserver: pmaster.localdomain
+pxe_install::puppetmaster: pmaster.localdomain
+pxe_install::puppetmasterip: 10.0.0.21
+pxe_install::repo_server: repos.localdomain
+pxe_install::repo_server_ip: 10.0.0.21
+pxe_install::repos_dir: /var/repos
+pxe_install::repos_url: /repos
+pxe_install::kickstart_dir: '/export/repos/kickstart'
+pxe_install::kickstart_url: /kickstart
+pxe_install::scriptdir: /export/repos/pub
+pxe_install::scripturl: /pub
+pxe_install::documentroot: /export/repos/www
+pxe_install::create_aliases: true
+pxe_install::status_allow_from:
+  - 10.0.0.108/32 
+  - 10.0.0.109/32 
+  - 10.0.0.63/32 
+  - 10.0.0.62/32 
+  - 10.0.8.0/24
+  - 127.0.0.1
+pxe_install::ssl_cert: '/etc/pki/httpd/localdomain.de/localdomain.de.cer'
+pxe_install::ssl_key: '/etc/pki/httpd/localdomain.de/localdomain.de.key'
+pxe_install::ssl_chain: '/etc/pki/httpd/localdomain.de/fullchain.cer'
+pxe_install::ssl_certs_dir: '/etc/pki/httpd/localdomain.de/'
+pxe_install::debian_mirror: debian.intergenia.de
+pxe_install::debin_mirror_dir: "/debian"
+pxe_install::ubuntu_mirror: archive.ubuntu.com
+pxe_install::ubuntu_mirror_dir: "/ubuntu"
+pxe_install::centos_mirrors:
+  "6":
+    mirror: "https://repos.example.com"
+    mirror_dir: "/centos/6/base/x86_64"
+  "7":
+    mirror: "https://repos.example.com"
+    mirror_dir: "/centos/7/base/x86_64"
+  "8":
+    mirror: "https://repos.example.com"
+    mirror_dir: "/centos/8/BaseOS/x86_64/os"
+pxe_install::services:
+  tftpd:
+    packages:
+      - tftp-server
+      - xinetd
+    packages_ensure: installed
+    port: 69
+    user: root
+    group: root
+    directory: '/var/lib/tftpboot'
+    pxelinux: 'pxelinux.cfg'
+    address: 10.0.0.2
+    tftpserverbin: /usr/sbin/in.tftpd
+    service: xinetd
+    service_ensure: running
+    service_enable: true
+  dhcpd:
+    interfaces:
+      - eth0
+    omapiport: 7911
+    default_lease_time: 43200
+    max_lease_time: 86400
+    ddns_update_style: none
+    domain_names: 
+      - localdomain
+    dns_servers:
+      - 10.0.0.62
+      - 10.0.0.63
+    ntp_servers: ['none']
+    next_server: 10.0.0.2
+    logfacility: local7
+    option_code150_label: pxegrub
+    option_code150_value: text
+    default_filename: pxelinux.0
+    hosts:
+      test:
+        mac: 00:11:22:33:44:55
+        ip: 10.0.0.99
+        max_lease_time: 86400
+    pools:
+      internal:
+        network: 10.0.0.0
+        mask: 255.255.255.0
+        range:
+          - '10.0.0.180 10.0.0.199'
+        gateway: 10.0.0.12

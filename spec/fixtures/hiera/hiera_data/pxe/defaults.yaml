@@ -1,0 +1,130 @@
+---
+pxe_install::defaults:
+  rootpw: "$6$pzoDeF..../"
+  timezone: Europe/Belfast
+  keyboard: de(Macintosh, no dead keys)
+  keymap: de
+  language: en
+  country: DE
+  locale: en_US.UTF-8
+  bootable: false
+  primary: false
+  loghost: 10.0.0.25
+  logport: 514
+  domain: example.com
+  pxefile: pxelinux.0
+  partitioning:
+    example:
+      "/boot":
+        min: 1024
+        prio: 1024
+        max: 1024
+        fstype: ext3
+        primary: true
+        bootable: true
+        label: boot
+        method: format
+        device: /dev/sda
+        order: 405
+      "vgos":
+        min: 100
+        prio: 1000
+        max: 1000000000
+        fstype: ext4
+        primary: true
+        method: lvm
+        device: /dev/sda
+        vgname: vgos
+        order: 406
+      "swap":
+        min: 4096
+        prio: 4096
+        max: 4096
+        fstype: linux-swap
+        invg: vgos
+        method: swap
+        lvname: lvol_swap
+        order: 407
+      "/":
+        min: 4096
+        prio: 4096
+        max: 4096
+        fstype: ext4
+        invg: vgos
+        lvname: lvol_root
+        method: format
+        label: root
+        order: 408
+    debian:
+      "/boot":
+        min: 1024
+        prio: 1024
+        max: 1024
+        fstype: ext3
+        primary: true
+        bootable: true
+        label: boot
+        method: format
+        device: /dev/sda
+        order: 405
+      "vgos":
+        min: 100
+        prio: 1000
+        max: 1000000000
+        fstype: ext4
+        primary: true
+        bootable: false
+        method: lvm
+        device: /dev/sda
+        vgname: vgos
+        order: 406
+      "swap":
+        min: 4096
+        prio: 4096
+        max: 4096
+        fstype: linux-swap
+        primary: false
+        bootable: false
+        invg: vgos
+        method: swap
+        lvname: lvol_swap
+        order: 407
+      "/":
+        min: 4096
+        prio: 4096
+        max: 4096
+        fstype: ext4
+        invg: vgos
+        lvname: lvol_root
+        primary: false
+        bootable: false
+        method: format
+        label: root
+        order: 408
+    redhat:
+      "/boot":
+        type: part
+        fstype: ext3
+        size: 1024
+        primary: true
+        ondisk: sda
+      "pv.01":
+        type: pvol
+        size: 1000
+        grow: true
+        primary: true
+        ondisk: sda
+      "vgos":
+        type: volgroup
+        pvol: pv.01
+      "/":
+        type: logvol
+        vgname: vgos
+        diskname: lvol_root
+        size: 2048
+        fstype: ext4
+      "swap":
+        type: logvol
+        vgname: vgos
+        diskname: lvol_swap
+        size: 4096

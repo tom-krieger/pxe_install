@@ -6,25 +6,5 @@ defaults:  # Used for any hierarchy level that omits these keys.
   data_hash: yaml_data  # Use the built-in YAML backend.
 
 hierarchy:
-  - name: "Secret data: per-node, common"
-    lookup_key: eyaml_lookup_key
-    paths:
-      - "secrets/nodes/%{trusted.certname}.eyaml"
-      - "common.eyaml"
-    options:
-      pkcs7_private_key: spec/keys/private_key.pkcs7.pem
-      pkcs7_public_key:  spec/keys/public_key.pkcs7.pem
-
-  - name: "osfamily/major release"
-    paths:
-      - "os/%{facts.os.family}/%{facts.os.release.major}.yaml"
-        # Used for Solaris
-      - "os/%{facts.os.family}/%{facts.kernelrelease}.yaml"
-        # Used to distinguish between Debian and Ubuntu
-      - "os/%{facts.os.name}/%{facts.os.release.major}.yaml"
-  - name: "osfamily"
-    paths:
-      - "os/%{facts.os.family}.yaml"
-      - "os/%{facts.os.name}.yaml"
   - name: 'common'
     path: 'common.yaml'

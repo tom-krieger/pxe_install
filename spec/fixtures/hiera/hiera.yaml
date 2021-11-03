@@ -1,0 +1,27 @@
+---
+version: 5
+
+defaults:  # Used for any hierarchy level that omits these keys.
+  datadir: hiera_data         # This path is relative to hiera.yaml's directory.
+  data_hash: yaml_data  # Use the built-in YAML backend.
+
+hierarchy:
+  - name: "Secret data: per-node, common"
+    lookup_key: eyaml_lookup_key
+    paths:
+      - "common.eyaml"
+    options:
+      pkcs7_private_key: spec/fixtures/hiera/keys/private_key.pkcs7.pem
+      pkcs7_public_key:  spec/fixtures/hiera/keys/public_key.pkcs7.pem
+
+  - name: 'pxe install nodes'
+    glob: 'pxe/nodes/*.yaml'
+
+  - name: 'pxe install default values'
+    path: pxe/defaults.yaml
+  
+  - name: 'pxe install base configuration'
+    path: 'pxe/base_configuration.yaml'
+
+  - name: 'common'
+    path: 'common.yaml'
