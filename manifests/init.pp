@@ -224,8 +224,8 @@ class pxe_install (
 
   if has_key($services, 'samba') {
     $samba = $services['samba']
-    class { 'pxe_install::samba':
-      samba => $samba,
+    class { '::samba':
+      * => $samba,
     }
   }
 

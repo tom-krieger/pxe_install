@@ -67,7 +67,7 @@ class pxe_install::samba (
 
   $security = has_key($samba, 'security') ? {
     true    => $samba['security'],
-    default => 'ads',
+    default => 'ADS',
   }
 
   $nsswitch = has_key($samba, 'nsswitch') ? {

@@ -27,11 +27,8 @@ fixtures:
       repo: "puppetlabs/apache"
       ref: "5.5.0"
     samba:
-      repo: "kakwa-samba"
-      ref: "2.0.0"
-    augeasproviders_pam:
-      repo: "herculesteam-augeasproviders_pam"
-      ref: "2.3.0"
-    augeasproviders_core:
-      repo: "herculesteam-augeasproviders_core"
-      ref: "3.1.0"
+      repo: "rehan-samba"
+      ref: "1.4.1"
+    augeas:
+      repo: "puppetlabs-augeas_core"
+      ref: "1.2.0"
