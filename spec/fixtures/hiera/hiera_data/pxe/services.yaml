@@ -7,6 +7,9 @@ pxe_install::services:
     wins_server: 0.0.0.0
     server_string: 'Install server'
     netbios_name: 'instsrv1'
+    map_to_guest: 'Bad User'
+    syslog: '3'
+    firewall_manage: false
     interfaces:
       - eth0
     hosts_allow:
@@ -21,6 +24,8 @@ pxe_install::services:
         path: /var/lib/tftpboot/windows
         browseable: true
         writable: false
+        public: yes
+        guest_ok: yes
   tftpd:
     packages:
       - tftp-server
