@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 0.3.0
+
+* added Samba support to enable PXE installation of Windows
+
 ## Release 0.2.4
 
 * fixed an issue with creating necessary directories

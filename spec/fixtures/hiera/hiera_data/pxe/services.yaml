@@ -1,0 +1,65 @@
+---
+pxe_install::services:
+  samba:
+    domain: test
+    realm: test.example.com
+    smbname: smbtest
+    join_domain: false
+    logtosyslog: false
+    nsswitch: false
+    krbconf: false
+    shares:
+      install:
+        path: /var/lib/tftpboot/windows
+        manage_directory: true
+        owner: root
+        group: root
+        mode: '0755'
+        acl: []
+        options:
+          browsable: Yes
+  tftpd:
+    packages:
+      - tftp-server
+      - xinetd
+    packages_ensure: installed
+    port: 69
+    user: root
+    group: root
+    directory: '/var/lib/tftpboot'
+    pxelinux: 'pxelinux.cfg'
+    address: 10.0.0.2
+    tftpserverbin: /usr/sbin/in.tftpd
+    service: xinetd
+    service_ensure: running
+    service_enable: true
+  dhcpd:
+    interfaces:
+      - eth0
+    omapiport: 7911
+    default_lease_time: 43200
+    max_lease_time: 86400
+    ddns_update_style: none
+    domain_names: 
+      - localdomain
+    dns_servers:
+      - 10.0.0.62
+      - 10.0.0.63
+    ntp_servers: ['none']
+    next_server: 10.0.0.2
+    logfacility: local7
+    option_code150_label: pxegrub
+    option_code150_value: text
+    default_filename: pxelinux.0
+    hosts:
+      test:
+        mac: 00:11:22:33:44:55
+        ip: 10.0.0.99
+        max_lease_time: 86400
+    pools:
+      internal:
+        network: 10.0.0.0
+        mask: 255.255.255.0
+        range:
+          - '10.0.0.180 10.0.0.199'
+        gateway: 10.0.0.12

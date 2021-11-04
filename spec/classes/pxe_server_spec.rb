@@ -4,7 +4,11 @@ require 'pp'
 describe 'pxe_install' do
   on_supported_os.each do |os, os_facts|
     context "on #{os}" do
-      let(:facts) { os_facts }
+      let(:facts) do
+        os_facts.merge!(
+          'samba_version' => '4.3.0',
+        )
+      end
 
       it {
         is_expected.to compile

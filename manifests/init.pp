@@ -222,6 +222,13 @@ class pxe_install (
     }
   }
 
+  if has_key($services, 'samba') {
+    $samba = $services['samba']
+    class { 'pxe_install::samba':
+      samba => $samba,
+    }
+  }
+
   $machines.each |$hostname, $data| {
 
     pxe_install::kickstart { $hostname:

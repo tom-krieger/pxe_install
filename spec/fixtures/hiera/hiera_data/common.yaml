@@ -5,3 +5,9 @@ lookup_options:
   '^pxe_install::machines$':
     merge:
       strategy: deep
+  '^pxe_install::defaults$':
+    merge:
+      strategy: deep
+  '^pxe_install::services$':
+    merge:
+      strategy: deep
