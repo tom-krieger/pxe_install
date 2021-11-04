@@ -141,6 +141,41 @@ For the tftp service please provide the packages and service name to use. The `g
 
 The DHCP service can serve as a full DHCP service. This means you can define static DHCP entried for all nodes regardless if these nodes need install services. The dhcp service configuration has a `hosts` part where you can configure all these nodes.
 
+### `SAMBA service`
+
+The SAMBA service is needed to kickstart Windows installation. Windows will download all needed files from here during unattended installation.
+
+Configuration example:
+
+```yaml
+samba:
+    package_ensure: installed
+    os_level: 50
+    workgroup: WORKGROUP
+    wins_server: 10.0.0.75
+    server_string: 'Install server'
+    netbios_name: 'wonderbox'
+    map_to_guest: 'Bad User'
+    syslog: '3'
+    firewall_manage: false
+    interfaces:
+      - eth0
+    hosts_allow:
+      - '127.'
+    hosts_deny: 
+      - 'ALL'
+    local_master: yes
+    preferred_master: no
+    shares:
+      install:
+        comment: 'Windows install media'
+        path: /var/lib/tftpboot/windows
+        browseable: true
+        writable: false
+        public: yes
+        guest_ok: yes
+```
+
 ### `Node configuration`
 
 The node configuration includes general settings for a node like the root password, os type, keyboard, language and timezone settings. The following table describes the available configiration options. If a value is available as default value it is marked with *yes* in the *default value* column.

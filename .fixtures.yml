@@ -26,3 +26,9 @@ fixtures:
     apache:
       repo: "puppetlabs/apache"
       ref: "5.5.0"
+    samba:
+      repo: "rehan-samba"
+      ref: "1.4.1"
+    augeas:
+      repo: "puppetlabs-augeas_core"
+      ref: "1.2.0"

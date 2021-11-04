@@ -19,6 +19,9 @@ hierarchy:
 
   - name: 'pxe install default values'
     path: pxe/defaults.yaml
+
+  - name: 'pxe install services values'
+    path: pxe/services.yaml
   
   - name: 'pxe install base configuration'
     path: 'pxe/base_configuration.yaml'
