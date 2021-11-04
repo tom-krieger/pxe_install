@@ -61,7 +61,7 @@ The module will take care about for each configured node:
 
 ### `Install server definitions`
 
-The module has several configuration options. Please look into the REFERENCE.md file. The data folder contains a `common.yaml` file showing some example configurations.
+The module has several configuration options. Please look into the [REFERENCE.md](https://github.com/tom-krieger/pxe_install/blob/main/REFERENCE.md) file. The data folder contains a `common.yaml` file showing some example configurations.
 
 The install server can provide a DHCP and a TFTP service. These services have their configuration located in the `pxe_install::services` part.
 
