@@ -15,7 +15,7 @@
       * [Node user configuration](#node-user-configuration)
       * [Node partition configuration](#node-partition-configuration)
     * [Default values](#default-values)
-    * [Minimal node configuration example](#minimal-node-configuration-example)
+    * [Minimal node configuration examples](#minima-node-configuration-examples)
 4. [Plans](#plans)
 5. [Tasks](#tasks)
 6. [Unit tests](#unit-tests)
@@ -42,7 +42,75 @@ This module configures an Apache webserver with http and https access. The neede
 
 ### `Beginning with pxe_install`
 
-It is highly recommended, to add all configuration into the install server's Hiera node definition file.
+It is highly recommended, to add all configuration into the install server's Hiera node definition file. Here's a short example how you can organize this in your conreol repository. The example is reduced to the parts regarding the PXE install server.
+
+Your Hiera configuration file `hiera.yaml` can look like this.
+
+```yaml
+---
+version: 5
+defaults:
+  datadir: data
+  data_hash: yaml_data
+
+hierarchy:
+  - name: "Secret data: per-node, common"
+    lookup_key: eyaml_lookup_key
+    paths:
+      - "common.eyaml"
+    options:
+      pkcs7_private_key: <your private key>
+      pkcs7_public_key:  <your public key>
+
+  - name: "PXE install server configurations"
+    globs:
+      - "pxe/*.yaml"
+      - "pxe/nodes/*.yaml"
+
+  - name: "Other YAML hierarchy levels"
+    path: "common.yaml"
+```
+
+This needs the following lookup configuration in your `common.yaml`file.
+
+```yaml
+---
+lookup_options:
+  '^pxe_install::machines$':
+    merge:
+      strategy: deep
+  '^pxe_install::defaults$':
+    merge:
+      strategy: deep
+  '^pxe_install::services$':
+    merge:
+      strategy: deep
+```
+
+The folder structure of your conreol repository should loo like this to get the above configurations work.
+
+```
+control-repo/
+├── data/                                 # Hiera data directory.
+│   ├── nodes/                            # Node-specific data goes here.
+│   ├── pxe/                              # Global PXE install data goes here.
+│   ├── pxe/nodes/                        # Node configutation goes here.
+│   └── common.yaml                       # Common data goes here.
+├── manifests/
+│   └── site.pp                           # The “main” manifest that contains a default node definition.
+├── scripts/
+│   ├── code_manager_config_version.rb    # A config_version script for Code Manager.
+│   ├── config_version.rb                 # A config_version script for r10k.
+│   └── config_version.sh                 # A wrapper that chooses the appropriate config_version script.
+├── site-modules/                         # This directory contains site-specific modules and is added to $modulepath.
+│   ├── profile/                          # The profile module.
+│   └── role/                             # The role module.
+├── LICENSE
+├── Puppetfile                            # A list of external Puppet modules to deploy with an environment.
+├── README.md
+├── environment.conf                      # Environment-specific settings. Configures the modulepath and config_version.
+└── hiera.yaml
+```
 
 ## `Usage`
 
@@ -285,7 +353,7 @@ The following default values are available:
 
 Default partition tables are available for Debian like and Redhat like operation systems. You can define your own default partition tables. This is useful if you want to create e. g. a three node cluster and all three nodes should have an identcal configuration.
 
-### Minimal node configuration example
+### Minimal node configuration examples
 
 The following example uses all available default values and the node definition only contains the necessary definitions. The example makes use of a defined partition table in the install server defaults.
 
@@ -306,6 +374,81 @@ The following example uses all available default values and the node definition 
       dc: home
       agent: y
     partitiontable: example
+```
+
+If you want to split your configuration into multiple files and keep all install server related stuff in a dedicated folder in your Hiera data folder, you can refer to the following configuration examples. Please keep in mind that you need to configute the Hiera merge options in the `common.yaml` file as described above.
+
+A node definition `tomtest.yaml`
+
+```yaml
+---
+pxe_install::machines:
+  tomtest:
+    ensure: present
+    ostype: ubuntu
+    network:
+      mac: 00:50:56:91:ba:68
+      prefix: ubuntu/18.04/amd64
+      fixedaddress: 10.0.0.132
+      ksdevice: eth0
+      gateway: 10.0.0.4
+      netmask: 255.255.255.0
+    parameter:
+      env: production
+      role: ubuntu
+      dc: home
+      agent: y
+    partitiontable: tomtest2
+
+```
+
+The partition table definition `default_partitioning.yaml`
+
+```yaml
+---
+pxe_install::defaults:
+  partitioning:
+    tomtest2:
+      "/boot":
+        min: 2048
+        prio: 2048
+        max: 2048
+        fstype: ext3
+        primary: true
+        bootable: true
+        label: boot
+        method: format
+        device: /dev/sda
+        order: 405
+      "vgos":
+        min: 100
+        prio: 1000
+        max: 1000000000
+        fstype: ext4
+        primary: true
+        method: lvm
+        device: /dev/sda
+        vgname: vgos
+        order: 406
+      "swap":
+        min: 4096
+        prio: 4096
+        max: 4096
+        fstype: linux-swap
+        invg: vgos
+        method: swap
+        lvname: lvol_swap
+        order: 407
+      "/":
+        min: 8192
+        prio: 8192
+        max: 8192
+        fstype: ext4
+        invg: vgos
+        lvname: lvol_root
+        method: format
+        label: root
+        order: 408
 ```
 
 ## Plans

@@ -37,3 +37,8 @@ appveyor.yml:
 .gitignore: 
   paths:
     - "/_old_code/"
+
+.puppet-lint.rc:
+  disabled_checks:
+    - relative
+    - security_apache_no_ssl_vhost
