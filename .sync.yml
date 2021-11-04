@@ -38,7 +38,6 @@ appveyor.yml:
   paths:
     - "/_old_code/"
 
-.puppet-lint.rc:
-  disabled_checks:
-    - relative
+Rakefile:
+  extra_disabled_lint_checks:
     - security_apache_no_ssl_vhost
