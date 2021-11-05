@@ -489,6 +489,7 @@ describe 'pxe_install' do
         is_expected.to contain_archive('syslinux-6.03.tar.gz')
           .with(
             'path'         => '/opt/pxe_install/syslinux-6.03.tar.gz',
+            'source'       => 'https://www.kernel.org/pub/linux/utils/boot/syslinux/syslinux-6.03.tar.gz',
             'extract'      => true,
             'extract_path' => '/opt/pxe_install/',
             'creates'      => '/opt/pxe_install/syslinux-6.03.tar.gz',
