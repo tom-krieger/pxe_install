@@ -91,6 +91,27 @@
 # @param add_hosts_entries
 #    Add install server and puppet server to /etc/hosts file.
 #
+# @param install_curl
+#    Install curl package
+#
+# @param install_unzip
+#    Install unzip package
+#
+# @param syslinux_url
+#    The url where to download the syslinux archive.
+#
+# @param syslinux_name
+#    Ther name of the archive.
+#
+# @param syslinux_version
+#    The version of the archive.
+#
+# @param ipxefile
+#    The url to download the ipxe file.
+#
+# @param syslinux_files
+#    A hash with files and locations from the syslinux archive to copy to the tftpboot directory.
+#
 # @param defaults
 #    Default values.
 #
@@ -110,25 +131,32 @@ class pxe_install (
   Stdlib::Unixpath $kickstart_dir,
   String $kickstart_url,
   Sensitive[String] $challenge_password,
-  Optional[String] $puppetmaster              = '',
-  Optional[String] $puppetmasterip            = '',
-  Optional[String] $debian_mirror             = '',
-  Optional[String] $debian_mirror_dir         = '/debian',
-  Optional[String] $ubuntu_mirror             = '',
-  Optional[String] $ubuntu_mirror_dir         = '/ubuntu',
-  Optional[Hash] $centos_mirrors              = {},
-  Optional[Hash] $services                    = {},
-  Optional[Hash] $machines                    = {},
-  Optional[Array] $status_allow_from          = ['127.0.0.1'],
-  Optional[Boolean] $enabled                  = true,
-  Optional[String] $ssl_cert                  = '/etc/pki/httpd/repos.example.com/repos.example.com.cer',
-  Optional[String] $ssl_key                   = '/etc/pki/httpd/repos.example.com/repos.example.com.key',
-  Optional[String] $ssl_chain                 = '/etc/pki/httpd/repos.example.com/fullchain.cer',
-  Optional[String] $ssl_certs_dir             = '/etc/pki/httpd/repos.example.com/',
-  Optional[String] $documentroot              = '/var/www/html',
-  Optional[Boolean] $create_aliases           = true,
-  Optional[Boolean] $add_hosts_entries        = false,
-  Optional[Hash] $defaults                    = $pxe_install::params::defaults,
+  Optional[String] $puppetmaster                = '',
+  Optional[String] $puppetmasterip              = '',
+  Optional[String] $debian_mirror               = '',
+  Optional[String] $debian_mirror_dir           = '/debian',
+  Optional[String] $ubuntu_mirror               = '',
+  Optional[String] $ubuntu_mirror_dir           = '/ubuntu',
+  Optional[Hash] $centos_mirrors                = {},
+  Optional[Hash] $services                      = {},
+  Optional[Hash] $machines                      = {},
+  Optional[Array] $status_allow_from            = ['127.0.0.1'],
+  Optional[Boolean] $enabled                    = true,
+  Optional[String] $ssl_cert                    = '/etc/pki/httpd/repos.example.com/repos.example.com.cer',
+  Optional[String] $ssl_key                     = '/etc/pki/httpd/repos.example.com/repos.example.com.key',
+  Optional[String] $ssl_chain                   = '/etc/pki/httpd/repos.example.com/fullchain.cer',
+  Optional[String] $ssl_certs_dir               = '/etc/pki/httpd/repos.example.com/',
+  Optional[String] $documentroot                = '/var/www/html',
+  Optional[Boolean] $create_aliases             = true,
+  Optional[Boolean] $add_hosts_entries          = false,
+  Optional[Stdlib::HTTPSUrl] $syslinux_url      = $pxe_install::params::syslinux_url,
+  Optional[String] $syslinux_name               = $pxe_install::params::syslinux_name,
+  Optional[String] $syslinux_version            = $pxe_install::params::syslinux_version,
+  Optional[Stdlib::HTTPUrl] $ipxefile           = $pxe_install::params::ipxefile,
+  Optional[Hash] $syslinux_files                = $pxe_install::params::syslinux_files,
+  Optional[Boolean] $install_curl               = $pxe_install::params::install_curl,
+  Optional[Boolean] $install_unzip              = $pxe_install::params::install_unzip,
+  Optional[Hash] $defaults                      = $pxe_install::params::defaults,
 ) inherits pxe_install::params {
 
   pxe_install::parent_dirs{ 'create script dir':

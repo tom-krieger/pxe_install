@@ -8,6 +8,36 @@
 #@api private
 class pxe_install::params {
 
+  $syslinux_url = 'https://www.kernel.org/pub/linux/utils/boot/syslinux'
+  $syslinux_name = 'syslinux'
+  $syslinux_version = '6.03'
+  $ipxefile = 'http://boot.ipxe.org/ipxe.efi'
+  $install_curl = false
+  $install_unzip = false
+  $syslinux_files = {
+    '/' => {
+      'pxelinux.0' => '/bios/core/pxelinux.0',
+      'ldlinux.c32' => '/bios/com32/elflink/ldlinux/ldlinux.c32',
+      'bootx64.efi' => '/efi64/efi/syslinux.efi',
+      'ldlinux.e64' => '/efi64/com32/elflink/ldlinux/ldlinux.e64',
+    },
+    '/bios' => {
+      'libcom32.c32' => '/bios/com32/lib/libcom32.c32',
+      'libutil.c32' => '/bios/com32/libutil/libutil.c32',
+      'linux.c32' => '/bios/com32/modules/linux.c32',
+      'vesamenu.c32' => '/bios/com32/menu/vesamenu.c32',
+    },
+    '/efi64' => {
+      'libcom32.c32' => '/efi64/com32/lib/libcom32.c32',
+      'libutil.c32' => '/efi64/com32/libutil/libutil.c32',
+      'linux.c32' => '/efi64/com32/modules/linux.c32',
+      'vesamenu.c32' => '/efi64/com32/menu/vesamenu.c32',
+    },
+    '/winpe' => {
+      'wimboot' => 'https://github.com/ipxe/wimboot/releases/latest/download/wimboot'
+    },
+  }
+
   $defaults = {
     'rootpw' => '$6$pzoDeF70$KIpccvU4EZhii.Pb88xDawv.MBeNZhICVFnw7RahRl2OlZKbI8rcc0VGVVrsVejoyShgIhSz/Da6z36K6U.CZ/',
     'timezone' => 'Europe/Berlin',

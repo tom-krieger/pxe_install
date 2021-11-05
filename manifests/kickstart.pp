@@ -33,16 +33,6 @@ define pxe_install::kickstart (
   $parameter    = $data['parameter']
   $ensure       = $data['ensure']
 
-  if $ensure != 'present' and $ensure != 'absent' {
-    fail("Host ${hostname} contains an invalid value for ensure: ${ensure}")
-  }
-
-  if has_key($data, 'network') {
-    $network_data = $data['network']
-  } else {
-    fail("Host ${hostname} has no network configuration!")
-  }
-
   if has_key($data, 'ostype') {
     $ostype       = $data['ostype']
   } else {
@@ -67,7 +57,17 @@ define pxe_install::kickstart (
     $partitioning = $defaults['partitioning'][$lookupkey]
   }
 
-  if empty($partitioning) {
+  if $ensure != 'present' and $ensure != 'absent' {
+    fail("Host ${hostname} contains an invalid value for ensure: ${ensure}")
+  }
+
+  if has_key($data, 'network') {
+    $network_data = $data['network']
+  } else {
+    fail("Host ${hostname} has no network configuration!")
+  }
+
+  if empty($partitioning) and $ostype.downcase != 'windows' {
     fail("Host ${hostname} has no or no valid partitioning information.")
   }
 
@@ -149,6 +149,9 @@ define pxe_install::kickstart (
       }
 
     }
+    'windows': {
+      # nothing to do yet
+    }
     default: {
       $template_start = 'pxe_install/redhat/kickstart.epp'
       $template_finish = 'pxe_install/redhat/kickstart-end.epp'
@@ -227,61 +230,65 @@ define pxe_install::kickstart (
   }
 
   $ks_fqdn = "${hostname}.${domain}"
-  concat::fragment { "${hostname}-start":
-    order   => 01,
-    content => epp($template_start, {
-      puppetenv        => $parameter['env'],
-      puppetrole       => $parameter['role'],
-      datacenter       => $parameter['dc'],
-      language         => $language,
-      country          => $country,
-      locale           => $locale,
-      keyboard         => $keyboard,
-      ip               => $network_data['fixedaddress'],
-      netmask          => $network_data['netmask'],
-      gateway          => $network_data['gateway'],
-      dnsservers       => $dns_data,
-      hostname         => $hostname,
-      rootpw           => $rootpw,
-      timezone         => $timezone,
-      mirror           => $mirror,
-      mirror_dir       => $mirror_dir,
-      loghost          => $loghost,
-      ksdevice         => $network_data['ksdevice'],
-      fqdn             => $ks_fqdn,
-      lang             => $language,
-      installserverurl => $installserverurl,
-      reposerver       => $pxe_install::repo_server,
-      agent            => $agent,
-      kickstart_url    => $kickstart_url,
-      repos_url        => $repos_url,
-      scripturl        => $scripturl,
-      user             => $user,
-      osversion        => $data['osversion'],
-    }),
-    target  => $kickstart_file,
-  }
 
-  if($template_finish != '') {
-    concat::fragment {"${hostname}-finish":
-      order   => 999,
-      content => epp($template_finish, {
-        ip            => $network_data['fixedaddress'],
-        fqdn          => "${title}.${domain}",
-        hostname      => $title,
-        reposerver    => $pxe_install::repo_server,
-        reposerverip  => $pxe_install::repo_server_ip,
-        agent         => $agent,
-        kickstart_url => $kickstart_url,
-        repos_url     => $repos_url,
-        scripturl     => $scripturl,
-        country       => $country,
-        mirror        => $mirror,
-        mirror_dir    => $mirror_dir,
-        osversion     => $data['osversion'],
-        bootdevice    => $bootdevice,
+  if $ostype.downcase != 'windows' {
+
+    concat::fragment { "${hostname}-start":
+      order   => 01,
+      content => epp($template_start, {
+        puppetenv        => $parameter['env'],
+        puppetrole       => $parameter['role'],
+        datacenter       => $parameter['dc'],
+        language         => $language,
+        country          => $country,
+        locale           => $locale,
+        keyboard         => $keyboard,
+        ip               => $network_data['fixedaddress'],
+        netmask          => $network_data['netmask'],
+        gateway          => $network_data['gateway'],
+        dnsservers       => $dns_data,
+        hostname         => $hostname,
+        rootpw           => $rootpw,
+        timezone         => $timezone,
+        mirror           => $mirror,
+        mirror_dir       => $mirror_dir,
+        loghost          => $loghost,
+        ksdevice         => $network_data['ksdevice'],
+        fqdn             => $ks_fqdn,
+        lang             => $language,
+        installserverurl => $installserverurl,
+        reposerver       => $pxe_install::repo_server,
+        agent            => $agent,
+        kickstart_url    => $kickstart_url,
+        repos_url        => $repos_url,
+        scripturl        => $scripturl,
+        user             => $user,
+        osversion        => $data['osversion'],
       }),
       target  => $kickstart_file,
+    }
+
+    if($template_finish != '') {
+      concat::fragment {"${hostname}-finish":
+        order   => 999,
+        content => epp($template_finish, {
+          ip            => $network_data['fixedaddress'],
+          fqdn          => "${title}.${domain}",
+          hostname      => $title,
+          reposerver    => $pxe_install::repo_server,
+          reposerverip  => $pxe_install::repo_server_ip,
+          agent         => $agent,
+          kickstart_url => $kickstart_url,
+          repos_url     => $repos_url,
+          scripturl     => $scripturl,
+          country       => $country,
+          mirror        => $mirror,
+          mirror_dir    => $mirror_dir,
+          osversion     => $data['osversion'],
+          bootdevice    => $bootdevice,
+        }),
+        target  => $kickstart_file,
+      }
     }
   }
 
@@ -313,7 +320,26 @@ define pxe_install::kickstart (
 
     }
 
-    $dhcp_data = merge($dhcp_base_data, $dhcp_file_data)
+    $uefi = has_key($network_data, 'uefi') ? {
+      true    => $network_data['uefi'],
+      default => false,
+    }
+
+    if $uefi and $ostype.downcase() == 'windows' {
+      $uefi_data = {
+        on_commit => [
+        'if exists ipxe.efi {',
+        '  filename "winpe.ipxe";',
+        '} else {',
+        '  filename "ipxe.efi";',
+        '}',
+        ]
+      }
+    } else {
+      $uefi_data = {}
+    }
+
+    $dhcp_data = merge($dhcp_base_data, $dhcp_file_data, $uefi_data)
 
     dhcp::host { $hostname:
       * => $dhcp_data,

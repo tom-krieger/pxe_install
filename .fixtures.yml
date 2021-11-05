@@ -32,3 +32,6 @@ fixtures:
     augeas:
       repo: "puppetlabs-augeas_core"
       ref: "1.2.0"
+    archive:
+      repo: "puppet-archive"
+      ref: "6.0.1"

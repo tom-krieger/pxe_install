@@ -27,6 +27,7 @@ pxe_install::services:
         public: yes
         guest_ok: yes
   tftpd:
+    manage_tftpboot: true
     packages:
       - tftp-server
       - xinetd

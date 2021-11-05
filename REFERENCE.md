@@ -15,7 +15,9 @@
 * `pxe_install::apache`: Configure webserver for install server
 * `pxe_install::dhcp`: Setup DHCP server
 * `pxe_install::params`: Default parameters
+* `pxe_install::syslinux`: Download syslinux archive
 * `pxe_install::tftp`: Setup ftp server
+* `pxe_install::winipxe`: Install windows ipxe files
 
 ### Defined types
 
@@ -94,6 +96,13 @@ The following parameters are available in the `pxe_install` class:
 * [`create_aliases`](#create_aliases)
 * [`challenge_password`](#challenge_password)
 * [`add_hosts_entries`](#add_hosts_entries)
+* [`install_curl`](#install_curl)
+* [`install_unzip`](#install_unzip)
+* [`syslinux_url`](#syslinux_url)
+* [`syslinux_name`](#syslinux_name)
+* [`syslinux_version`](#syslinux_version)
+* [`ipxefile`](#ipxefile)
+* [`syslinux_files`](#syslinux_files)
 * [`defaults`](#defaults)
 
 ##### <a name="installserverip"></a>`installserverip`
@@ -307,6 +316,62 @@ Data type: `Optional[Boolean]`
 Add install server and puppet server to /etc/hosts file.
 
 Default value: ``false``
+
+##### <a name="install_curl"></a>`install_curl`
+
+Data type: `Optional[Boolean]`
+
+Install curl package
+
+Default value: `$pxe_install::params::install_curl`
+
+##### <a name="install_unzip"></a>`install_unzip`
+
+Data type: `Optional[Boolean]`
+
+Install unzip package
+
+Default value: `$pxe_install::params::install_unzip`
+
+##### <a name="syslinux_url"></a>`syslinux_url`
+
+Data type: `Optional[Stdlib::HTTPSUrl]`
+
+The url where to download the syslinux archive.
+
+Default value: `$pxe_install::params::syslinux_url`
+
+##### <a name="syslinux_name"></a>`syslinux_name`
+
+Data type: `Optional[String]`
+
+Ther name of the archive.
+
+Default value: `$pxe_install::params::syslinux_name`
+
+##### <a name="syslinux_version"></a>`syslinux_version`
+
+Data type: `Optional[String]`
+
+The version of the archive.
+
+Default value: `$pxe_install::params::syslinux_version`
+
+##### <a name="ipxefile"></a>`ipxefile`
+
+Data type: `Optional[Stdlib::HTTPUrl]`
+
+The url to download the ipxe file.
+
+Default value: `$pxe_install::params::ipxefile`
+
+##### <a name="syslinux_files"></a>`syslinux_files`
+
+Data type: `Optional[Hash]`
+
+A hash with files and locations from the syslinux archive to copy to the tftpboot directory.
+
+Default value: `$pxe_install::params::syslinux_files`
 
 ##### <a name="defaults"></a>`defaults`
 

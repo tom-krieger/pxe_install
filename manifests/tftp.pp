@@ -141,4 +141,22 @@ class pxe_install::tftp (
     mode   => '0644',
     source => 'puppet:///modules/pxe_install/tftp-default',
   }
+
+  $manage_tftpboot = has_key($tftp, 'manage_tftpboot') ? {
+    true    => $tftp['manage_tftpboot'],
+    default => false,
+  }
+
+  if $manage_tftpboot {
+
+    class { 'pxe_install::syslinux':
+      tftpboot_dir        => $basedir,
+      create_tftpboot_dir => true,
+    }
+
+    class { 'pxe_install::winipxe':
+      tftpboot_dir => $basedir,
+    }
+  }
+
 }
