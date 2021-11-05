@@ -320,26 +320,7 @@ define pxe_install::kickstart (
 
     }
 
-    $uefi = has_key($network_data, 'uefi') ? {
-      true    => $network_data['uefi'],
-      default => false,
-    }
-
-    if $uefi and $ostype.downcase() == 'windows' {
-      $uefi_data = {
-        on_commit => [
-        'if exists ipxe.efi {',
-        '  filename "winpe.ipxe";',
-        '} else {',
-        '  filename "ipxe.efi";',
-        '}',
-        ]
-      }
-    } else {
-      $uefi_data = {}
-    }
-
-    $dhcp_data = merge($dhcp_base_data, $dhcp_file_data, $uefi_data)
+    $dhcp_data = merge($dhcp_base_data, $dhcp_file_data)
 
     dhcp::host { $hostname:
       * => $dhcp_data,

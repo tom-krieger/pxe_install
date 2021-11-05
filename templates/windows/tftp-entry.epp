@@ -1,0 +1,12 @@
+path <%= $path %>
+prompt 0
+timeout 0
+UI vesamenu.c32
+default ks
+
+label ks
+        menu label ^ks
+        menu default
+        com32 linux.c32
+        APPEND winpe/wimboot
+        initrdfile=winpe/boot/bootmgr,winpe/boot/bcd,winpe/boot/boot.sdi,winpe/source s/boot.wim

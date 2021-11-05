@@ -143,6 +143,14 @@ define pxe_install::tftp::host (
         *       => $file_data,
       }
     }
+    'windows': {
+      file { $filename:
+        content => epp('pxe_install/windows/tftp-entry.epp', {
+          path       => $_path,
+        }),
+        *       => $file_data,
+      }
+    }
     default: {
       # RedHat/CentOS
       file { $filename:
