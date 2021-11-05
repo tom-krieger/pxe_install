@@ -87,7 +87,7 @@ class pxe_install::syslinux (
       } else {
 
         exec { "copying file ${dst}-${dir}":
-          command => "cp /tmp/${archive}${src} ${tftpboot_dir}${dir}/${dst}",
+          command => "cp /opt/pxe_install/${archive}${src} ${tftpboot_dir}${dir}/${dst}",
           path    => ['/bin/', '/usr/bin'],
           unless  => "test -f ${tftpboot_dir}${dir}/${dst}",
           require => Archive["${archive}.tar.gz"],

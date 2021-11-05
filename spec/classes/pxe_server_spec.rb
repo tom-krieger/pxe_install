@@ -509,84 +509,84 @@ describe 'pxe_install' do
         # Exec[copying file pxelinux.0-/]
         is_expected.to contain_exec('copying file pxelinux.0-/')
           .with(
-            'command' => 'cp /tmp/syslinux-6.03/bios/core/pxelinux.0 /var/lib/tftpboot//pxelinux.0',
+            'command' => 'cp /opt/pxe_install/syslinux-6.03/bios/core/pxelinux.0 /var/lib/tftpboot//pxelinux.0',
             'path'    => ['/bin/', '/usr/bin'],
             'unless'  => 'test -f /var/lib/tftpboot//pxelinux.0',
           )
         # Exec[copying file bootx64.efi-/]
         is_expected.to contain_exec('copying file bootx64.efi-/')
           .with(
-            'command' => 'cp /tmp/syslinux-6.03/efi64/efi/syslinux.efi /var/lib/tftpboot//bootx64.efi',
+            'command' => 'cp /opt/pxe_install/syslinux-6.03/efi64/efi/syslinux.efi /var/lib/tftpboot//bootx64.efi',
             'path'    => ['/bin/', '/usr/bin'],
             'unless'  => 'test -f /var/lib/tftpboot//bootx64.efi',
           )
         # Exec[copying file ldlinux.c32-/]
         is_expected.to contain_exec('copying file ldlinux.c32-/')
           .with(
-            'command' => 'cp /tmp/syslinux-6.03/bios/com32/elflink/ldlinux/ldlinux.c32 /var/lib/tftpboot//ldlinux.c32',
+            'command' => 'cp /opt/pxe_install/syslinux-6.03/bios/com32/elflink/ldlinux/ldlinux.c32 /var/lib/tftpboot//ldlinux.c32',
             'path'    => ['/bin/', '/usr/bin'],
             'unless'  => 'test -f /var/lib/tftpboot//ldlinux.c32',
           )
         # Exec[copying file ldlinux.e64-/]
         is_expected.to contain_exec('copying file ldlinux.e64-/')
           .with(
-            'command' => 'cp /tmp/syslinux-6.03/efi64/com32/elflink/ldlinux/ldlinux.e64 /var/lib/tftpboot//ldlinux.e64',
+            'command' => 'cp /opt/pxe_install/syslinux-6.03/efi64/com32/elflink/ldlinux/ldlinux.e64 /var/lib/tftpboot//ldlinux.e64',
             'path'    => ['/bin/', '/usr/bin'],
             'unless'  => 'test -f /var/lib/tftpboot//ldlinux.e64',
           )
         # Exec[copying file libcom32.c32-/bios]
         is_expected.to contain_exec('copying file libcom32.c32-/bios')
           .with(
-            'command' => 'cp /tmp/syslinux-6.03/bios/com32/lib/libcom32.c32 /var/lib/tftpboot/bios/libcom32.c32',
+            'command' => 'cp /opt/pxe_install/syslinux-6.03/bios/com32/lib/libcom32.c32 /var/lib/tftpboot/bios/libcom32.c32',
             'path'    => ['/bin/', '/usr/bin'],
             'unless'  => 'test -f /var/lib/tftpboot/bios/libcom32.c32',
           )
         # Exec[copying file libutil.c32-/bios]
         is_expected.to contain_exec('copying file libutil.c32-/bios')
           .with(
-            'command' => 'cp /tmp/syslinux-6.03/bios/com32/libutil/libutil.c32 /var/lib/tftpboot/bios/libutil.c32',
+            'command' => 'cp /opt/pxe_install/syslinux-6.03/bios/com32/libutil/libutil.c32 /var/lib/tftpboot/bios/libutil.c32',
             'path'    => ['/bin/', '/usr/bin'],
             'unless'  => 'test -f /var/lib/tftpboot/bios/libutil.c32',
           )
         # Exec[copying file linux.c32-/bios]
         is_expected.to contain_exec('copying file linux.c32-/bios')
           .with(
-            'command' => 'cp /tmp/syslinux-6.03/bios/com32/modules/linux.c32 /var/lib/tftpboot/bios/linux.c32',
+            'command' => 'cp /opt/pxe_install/syslinux-6.03/bios/com32/modules/linux.c32 /var/lib/tftpboot/bios/linux.c32',
             'path'    => ['/bin/', '/usr/bin'],
             'unless'  => 'test -f /var/lib/tftpboot/bios/linux.c32',
           )
         # Exec[copying file vesamenu.c32-/bios]
         is_expected.to contain_exec('copying file vesamenu.c32-/bios')
           .with(
-            'command' => 'cp /tmp/syslinux-6.03/bios/com32/menu/vesamenu.c32 /var/lib/tftpboot/bios/vesamenu.c32',
+            'command' => 'cp /opt/pxe_install/syslinux-6.03/bios/com32/menu/vesamenu.c32 /var/lib/tftpboot/bios/vesamenu.c32',
             'path'    => ['/bin/', '/usr/bin'],
             'unless'  => 'test -f /var/lib/tftpboot/bios/vesamenu.c32',
           )
         # Exec[copying file libutil.c32-/efi64]
         is_expected.to contain_exec('copying file libutil.c32-/efi64')
           .with(
-            'command' => 'cp /tmp/syslinux-6.03/efi64/com32/libutil/libutil.c32 /var/lib/tftpboot/efi64/libutil.c32',
+            'command' => 'cp /opt/pxe_install/syslinux-6.03/efi64/com32/libutil/libutil.c32 /var/lib/tftpboot/efi64/libutil.c32',
             'path'    => ['/bin/', '/usr/bin'],
             'unless'  => 'test -f /var/lib/tftpboot/efi64/libutil.c32',
           )
         # Exec[copying file linux.c32-/efi64]
         is_expected.to contain_exec('copying file linux.c32-/efi64')
           .with(
-            'command' => 'cp /tmp/syslinux-6.03/efi64/com32/modules/linux.c32 /var/lib/tftpboot/efi64/linux.c32',
+            'command' => 'cp /opt/pxe_install/syslinux-6.03/efi64/com32/modules/linux.c32 /var/lib/tftpboot/efi64/linux.c32',
             'path'    => ['/bin/', '/usr/bin'],
             'unless'  => 'test -f /var/lib/tftpboot/efi64/linux.c32',
           )
         # Exec[copying file vesamenu.c32-/efi64]
         is_expected.to contain_exec('copying file vesamenu.c32-/efi64')
           .with(
-            'command' => 'cp /tmp/syslinux-6.03/efi64/com32/menu/vesamenu.c32 /var/lib/tftpboot/efi64/vesamenu.c32',
+            'command' => 'cp /opt/pxe_install/syslinux-6.03/efi64/com32/menu/vesamenu.c32 /var/lib/tftpboot/efi64/vesamenu.c32',
             'path'    => ['/bin/', '/usr/bin'],
             'unless'  => 'test -f /var/lib/tftpboot/efi64/vesamenu.c32',
           )
         # Exec[copying file libcom32.c32-/efi64]
         is_expected.to contain_exec('copying file libcom32.c32-/efi64')
           .with(
-            'command' => 'cp /tmp/syslinux-6.03/efi64/com32/lib/libcom32.c32 /var/lib/tftpboot/efi64/libcom32.c32',
+            'command' => 'cp /opt/pxe_install/syslinux-6.03/efi64/com32/lib/libcom32.c32 /var/lib/tftpboot/efi64/libcom32.c32',
             'path'    => ['/bin/', '/usr/bin'],
             'unless'  => 'test -f /var/lib/tftpboot/efi64/libcom32.c32',
           )
