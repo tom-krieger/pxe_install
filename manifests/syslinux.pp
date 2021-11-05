@@ -61,7 +61,7 @@ class pxe_install::syslinux (
   $archive = "${pxe_install::syslinux_name}-${pxe_install::syslinux_version}"
 
   archive { "${archive}.tar.gz":
-    path         => '/opt/pxe_install',
+    path         => "/opt/pxe_install/${archive}.tar.gz",
     source       => $pxe_install::syslinux_url,
     extract      => true,
     extract_path => '/opt/pxe_install/',

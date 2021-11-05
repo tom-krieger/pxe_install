@@ -488,7 +488,7 @@ describe 'pxe_install' do
         # Archive[syslinux-6.03]
         is_expected.to contain_archive('syslinux-6.03.tar.gz')
           .with(
-            'path'         => '/opt/pxe_install',
+            'path'         => '/opt/pxe_install/syslinux-6.03.tar.gz',
             'extract'      => true,
             'extract_path' => '/opt/pxe_install/',
             'creates'      => '/opt/pxe_install/syslinux-6.03.tar.gz',
