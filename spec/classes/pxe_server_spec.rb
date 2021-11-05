@@ -492,7 +492,7 @@ describe 'pxe_install' do
             'source'       => 'https://www.kernel.org/pub/linux/utils/boot/syslinux/syslinux-6.03.tar.gz',
             'extract'      => true,
             'extract_path' => '/opt/pxe_install/',
-            'creates'      => '/opt/pxe_install/syslinux-6.03.tar.gz',
+            'creates'      => '/opt/pxe_install/syslinux-6.03',
             'cleanup'      => true,
           )
         # Class[Pxe_install::Syslinux]
@@ -506,6 +506,44 @@ describe 'pxe_install' do
           .with(
             'tftpboot_dir'        => '/var/lib/tftpboot',
           )
+
+        is_expected.to contain_pxe_install__parent_dirs('create tftpboot dir /var/lib/tftpboot/')
+          .with(
+            'dir_path' => '/var/lib/tftpboot/',
+          )
+
+        is_expected.to contain_pxe_install__parent_dirs('create tftpboot dir /var/lib/tftpboot/bios')
+          .with(
+            'dir_path' => '/var/lib/tftpboot/bios',
+          )
+
+        is_expected.to contain_pxe_install__parent_dirs('create tftpboot dir /var/lib/tftpboot/efi64')
+          .with(
+            'dir_path' => '/var/lib/tftpboot/efi64',
+          )
+
+        is_expected.to contain_pxe_install__parent_dirs('create tftpboot dir /var/lib/tftpboot/winpe')
+          .with(
+            'dir_path' => '/var/lib/tftpboot/winpe',
+          )
+        
+        is_expected.to contain_file('/var/lib/tftpboot/bios')
+          .with(
+            'ensure' => 'directory'
+          )
+        is_expected.to contain_file('/var/lib/tftpboot/efi64')
+          .with(
+            'ensure' => 'directory'
+          )
+        is_expected.to contain_file('/var/lib/tftpboot/winpe')
+          .with(
+            'ensure' => 'directory'
+          )
+        is_expected.to contain_file('/var/lib')
+          .with(
+            'ensure' => 'directory'
+          )
+
         # Exec[copying file pxelinux.0-/]
         is_expected.to contain_exec('copying file pxelinux.0-/')
           .with(
@@ -616,11 +654,11 @@ describe 'pxe_install' do
             'group'  => 'root',
             'mode'   => '0755',
           )
-        # File[/var/lib/tftpboot/winpw.ipxe]
-        is_expected.to contain_file('/var/lib/tftpboot/winpw.ipxe')
+        # File[/var/lib/tftpboot/winpe.ipxe]
+        is_expected.to contain_file('/var/lib/tftpboot/winpe.ipxe')
           .with(
             'ensure' => 'file',
-            'source' => 'puppet:///modules/pxe_install/winpw.ipxe',
+            'source' => 'puppet:///modules/pxe_install/winpe.ipxe',
             'owner'  => 'root',
             'group'  => 'root',
             'mode'   => '0755',

@@ -41,3 +41,4 @@ appveyor.yml:
 Rakefile:
   extra_disabled_lint_checks:
     - security_apache_no_ssl_vhost
+    - security_class_or_define_parameter_in_exec
