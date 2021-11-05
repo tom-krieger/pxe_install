@@ -32,9 +32,9 @@ class pxe_install::winipxe (
     mode   => $mode,
   }
 
-  file { "${tftpboot_dir}/winpw.ipxe":
+  file { "${tftpboot_dir}/winpe.ipxe":
     ensure => file,
-    source => 'puppet:///modules/pxe_install/winpw.ipxe',
+    source => 'puppet:///modules/pxe_install/winpe.ipxe',
     owner  => $owner,
     group  => $group,
     mode   => $mode,
