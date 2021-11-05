@@ -71,6 +71,10 @@ class pxe_install::syslinux (
 
   $pxe_install::syslinux_files.each |$dir, $files| {
 
+    pxe_install::parent_dirs { "create tytpboot dir ${tftpboot_dir}/${dir":
+      dir_path => "${tftpboot_dir}/${dir}",
+    }
+
     $files.each |$dst, $src| {
 
       if $src =~ /^http/ {
