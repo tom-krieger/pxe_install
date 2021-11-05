@@ -526,22 +526,22 @@ describe 'pxe_install' do
           .with(
             'dir_path' => '/var/lib/tftpboot/winpe',
           )
-        
+
         is_expected.to contain_file('/var/lib/tftpboot/bios')
           .with(
-            'ensure' => 'directory'
+            'ensure' => 'directory',
           )
         is_expected.to contain_file('/var/lib/tftpboot/efi64')
           .with(
-            'ensure' => 'directory'
+            'ensure' => 'directory',
           )
         is_expected.to contain_file('/var/lib/tftpboot/winpe')
           .with(
-            'ensure' => 'directory'
+            'ensure' => 'directory',
           )
         is_expected.to contain_file('/var/lib')
           .with(
-            'ensure' => 'directory'
+            'ensure' => 'directory',
           )
 
         # Exec[copying file pxelinux.0-/]
