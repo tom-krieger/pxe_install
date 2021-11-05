@@ -65,7 +65,7 @@ class pxe_install::syslinux (
     source       => "${pxe_install::syslinux_url}/${archive}.tar.gz",
     extract      => true,
     extract_path => '/opt/pxe_install/',
-    creates      => "/opt/pxe_install/${archive}.tar.gz",
+    creates      => "/opt/pxe_install/${archive}",
     cleanup      => true,
   }
 
@@ -76,11 +76,12 @@ class pxe_install::syslinux (
       if $src =~ /^http/ {
 
         file { "${tftpboot_dir}${dir}/${dst}":
-          ensure => file,
-          source => $src,
-          owner  => $owner,
-          group  => $group,
-          mode   => $mode,
+          ensure  => file,
+          source  => $src,
+          owner   => $owner,
+          group   => $group,
+          mode    => $mode,
+          require => Archive["${archive}.tar.gz"],
         }
 
       } else {
@@ -88,7 +89,8 @@ class pxe_install::syslinux (
         exec { "copying file ${dst}-${dir}":
           command => "cp /tmp/${archive}${src} ${tftpboot_dir}${dir}/${dst}",
           path    => ['/bin/', '/usr/bin'],
-          unless  => "$(test -f ${tftpboot_dir}${dir}/${dst})",
+          unless  => "test -f ${tftpboot_dir}${dir}/${dst}",
+          require => Archive["${archive}.tar.gz"],
         }
 
       }
