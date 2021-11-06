@@ -24,6 +24,7 @@
 6. [Unit tests](#unit-tests)
 7. [Limitations](#limitations)
 8. [Development](#development)
+9. [Known issues](*known-issues)
 
 ## `Description`
 
@@ -516,3 +517,7 @@ This module is written for my private install server. Therefore it is limited to
 ## Development
 
 In the Development section, tell other users the ground rules for contributing to your project and how they should submit their work.
+
+## Known issues
+
+The `tftp-hpa` package on Debian and Ubuntu servers causes failures during installation if the `/tmp` directory has the `noexec` flag set. The installation works regardless. The next puppet run will finish without problems and the tftp server works. If you want to avoid this issue it is possible to remove the `noexec` flag from the `/tmp` directory and add it again after the puppet run has finished.
