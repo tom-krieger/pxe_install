@@ -109,9 +109,6 @@
 # @param ipxefile
 #    The url to download the ipxe file.
 #
-# @param syslinux_files
-#    A hash with files and locations from the syslinux archive to copy to the tftpboot directory.
-#
 # @param defaults
 #    Default values.
 #
@@ -153,7 +150,6 @@ class pxe_install (
   Optional[String] $syslinux_name               = $pxe_install::params::syslinux_name,
   Optional[String] $syslinux_version            = $pxe_install::params::syslinux_version,
   Optional[Stdlib::HTTPUrl] $ipxefile           = $pxe_install::params::ipxefile,
-  Optional[Hash] $syslinux_files                = $pxe_install::params::syslinux_files,
   Optional[Boolean] $install_curl               = $pxe_install::params::install_curl,
   Optional[Boolean] $install_unzip              = $pxe_install::params::install_unzip,
   Optional[Hash] $defaults                      = $pxe_install::params::defaults,

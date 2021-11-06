@@ -69,11 +69,15 @@ class pxe_install::syslinux (
     cleanup      => true,
   }
 
-  $pxe_install::syslinux_files.each |$dir, $files| {
+  $pxe_install::params::syslinux_files.keys.each |$dir| {
 
     pxe_install::parent_dirs { "create tftpboot dir ${tftpboot_dir}${dir}":
       dir_path => "${tftpboot_dir}${dir}",
     }
+
+  }
+
+  $pxe_install::params::syslinux_files.each |$dir, $files| {
 
     $files.each |$dst, $src| {
 

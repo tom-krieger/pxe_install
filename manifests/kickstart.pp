@@ -39,12 +39,19 @@ define pxe_install::kickstart (
     fail("Host ${hostname} has no ostype given!")
   }
 
-  $lookupkey = $ostype.downcase() ? {
-    'debian' => 'debian',
-    'ubuntu' => 'debian',
-    'redhat' => 'redhat',
-    'centos' => 'redhat',
-    default  => 'unknown',
+  case $ostype.downcase() {
+    'debian', 'ubuntu': {
+      $lookupkey = 'debian'
+    }
+    'redhat', 'centos': {
+      $lookupkey = 'redhat'
+    }
+    'windows': {
+      $lookupkey = 'windows'
+    }
+    default: {
+      fail("Unsupported os: ${ostype}. Only Debian, Ubuntu, redhat, CentOS and Windows are supported.")
+    }
   }
 
   $defaults = $pxe_install::defaults
