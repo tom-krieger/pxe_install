@@ -89,7 +89,7 @@ class pxe_install::syslinux (
           owner   => $owner,
           group   => $group,
           mode    => $mode,
-          require => Archive["${archive}.tar.gz"],
+          require => [Archive["${archive}.tar.gz"], File["${tftpboot_dir}${dir}"]],
         }
 
       } else {
@@ -98,7 +98,7 @@ class pxe_install::syslinux (
           command => "cp /opt/pxe_install/${archive}${src} ${tftpboot_dir}${dir}/${dst}",
           path    => ['/bin/', '/usr/bin'],
           unless  => "test -f ${tftpboot_dir}${dir}/${dst}",
-          require => Archive["${archive}.tar.gz"],
+          require => [Archive["${archive}.tar.gz"], File["${tftpboot_dir}${dir}"]],
         }
 
       }
