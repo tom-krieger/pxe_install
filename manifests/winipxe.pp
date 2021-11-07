@@ -5,6 +5,9 @@
 # @param tftpboot_dir
 #    Directory serving tftp requests
 #
+# @param winpe_dir
+#    Directory serving windows installs within the *tftpboot_dir*
+#
 # @param owner
 #    The file/directory owner.
 #
@@ -20,6 +23,7 @@
 # @api private
 class pxe_install::winipxe (
   Stdlib::Absolutepath $tftpboot_dir,
+  String $winpe_dir,
   String $owner                         = 'root',
   String $group                         = 'root',
   String $mode                          = '0755',
@@ -33,10 +37,12 @@ class pxe_install::winipxe (
   }
 
   file { "${tftpboot_dir}/winpe.ipxe":
-    ensure => file,
-    source => 'puppet:///modules/pxe_install/winpe.ipxe',
-    owner  => $owner,
-    group  => $group,
-    mode   => $mode,
+    ensure  => file,
+    content => epp('pxe_install/windows/winpe.ipxe.epp', {
+      dir => $winpe_dir,
+    }),
+    owner   => $owner,
+    group   => $group,
+    mode    => $mode,
   }
 }

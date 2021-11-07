@@ -1,0 +1,7 @@
+#!ipxe
+
+kernel <%= $dir %>/wimboot
+initrd <%= $dir %>/boot/bcd                     BCD
+initrd <%= $dir %>/boot/boot.sdi                boot.sdi
+initrd <%= $dir %>/sources/boot.wim             boot.wim
+boot

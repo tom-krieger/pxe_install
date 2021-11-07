@@ -1,6 +1,6 @@
 # @summary Default parameters
 #
-# A description of what this class does
+# All default values.
 #
 # @example
 #   include pxe_install::params

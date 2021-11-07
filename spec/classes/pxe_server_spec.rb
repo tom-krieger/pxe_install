@@ -121,6 +121,7 @@ describe 'pxe_install' do
           .with(
             'tftp' => {
               'manage_tftpboot' => true,
+              'winpe_dir' => 'winpe',
               'packages' => ['tftp-server', 'xinetd'],
               'packages_ensure' => 'installed',
               'port' => 69,
@@ -658,7 +659,6 @@ describe 'pxe_install' do
         is_expected.to contain_file('/var/lib/tftpboot/winpe.ipxe')
           .with(
             'ensure' => 'file',
-            'source' => 'puppet:///modules/pxe_install/winpe.ipxe',
             'owner'  => 'root',
             'group'  => 'root',
             'mode'   => '0755',

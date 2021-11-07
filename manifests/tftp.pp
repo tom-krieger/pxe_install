@@ -147,6 +147,11 @@ class pxe_install::tftp (
     default => false,
   }
 
+  $winpe_dir = has_key($tftp, 'winpe_dir') ? {
+    true    => $tftp['winpe_dir'],
+    default => 'winpe',
+  }
+
   if $manage_tftpboot {
 
     class { 'pxe_install::syslinux':
@@ -156,6 +161,8 @@ class pxe_install::tftp (
 
     class { 'pxe_install::winipxe':
       tftpboot_dir => $basedir,
+      winpe_dir    => $winpe_dir,
+
     }
   }
 

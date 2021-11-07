@@ -28,6 +28,7 @@ pxe_install::services:
         guest_ok: yes
   tftpd:
     manage_tftpboot: true
+    winpe_dir: 'winpe'
     packages:
       - tftp-server
       - xinetd
