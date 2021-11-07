@@ -102,7 +102,6 @@ The following parameters are available in the `pxe_install` class:
 * [`syslinux_name`](#syslinux_name)
 * [`syslinux_version`](#syslinux_version)
 * [`ipxefile`](#ipxefile)
-* [`syslinux_files`](#syslinux_files)
 * [`defaults`](#defaults)
 
 ##### <a name="installserverip"></a>`installserverip`
@@ -364,14 +363,6 @@ Data type: `Optional[Stdlib::HTTPUrl]`
 The url to download the ipxe file.
 
 Default value: `$pxe_install::params::ipxefile`
-
-##### <a name="syslinux_files"></a>`syslinux_files`
-
-Data type: `Optional[Hash]`
-
-A hash with files and locations from the syslinux archive to copy to the tftpboot directory.
-
-Default value: `$pxe_install::params::syslinux_files`
 
 ##### <a name="defaults"></a>`defaults`
 

@@ -9,6 +9,7 @@
     * [Beginning with pxe_install](#beginning-with-pxe_install)
 3. [Usage](#usage)
     * [Install server definitions](#install-server-definitions)
+    * [Services](services)
     * [TFTP service](#tftp-service)
     * [DHCP servie](#dhcp-service)
     * [SAMBA service](#samba-service)
@@ -137,17 +138,93 @@ The module has several configuration options. Please look into the [REFERENCE.md
 
 The install server can provide a DHCP and a TFTP service. These services have their configuration located in the `pxe_install::services` part.
 
-#### `TFTP service`
+#### Services
 
-For the tftp service please provide the packages and service name to use. The `group` option is only needed on RedHat/CentOS operating systems.
+The follwong services are only configured when defined in the services configuration section.
 
-#### `DHCP service`
+```yaml
+pxe_install::services:
+  samba:
+    ...
+  tftpd:
+    ...
+  dhcpd:
+    ...
+```
 
-The DHCP service can serve as a full DHCP service. This means you can define static DHCP entried for all nodes regardless if these nodes need install services. The dhcp service configuration has a `hosts` part where you can configure all these nodes.
+##### `TFTP service`
 
-### `SAMBA service`
+For the tftp service please provide the packages and service name to use. The `group` option is only needed on RedHat/CentOS operating systems. 
+
+> If you do not enable this service you have to take care yorself to create the TFTP entries.
+
+Configuration example:
+
+```yaml
+  tftpd:
+    manage_tftpboot: true
+    packages:
+      - tftp-server
+      - xinetd
+    packages_ensure: installed
+    port: 69
+    user: root
+    group: root
+    directory: '/var/lib/tftpboot'
+    pxelinux: 'pxelinux.cfg'
+    address: 10.0.0.2
+    tftpserverbin: /usr/sbin/in.tftpd
+    service: xinetd
+    service_ensure: running
+    service_enable: true
+```
+
+##### `DHCP service`
+
+The DHCP service can serve as a full DHCP service. This means you can define static DHCP entried for all nodes regardless if these nodes need install services. The dhcp service configuration has a `hosts` part where you can configure all these nodes. 
+
+> If you do not enable the DHCP service, you have to take care about the DHCP entries yourself.
+
+Configuration example:
+
+```yaml
+dhcpd:
+    interfaces:
+      - eth0
+    omapiport: 7911
+    default_lease_time: 43200
+    max_lease_time: 86400
+    ddns_update_style: none
+    domain_names: 
+      - localdomain
+    dns_servers:
+      - 10.0.0.62
+      - 10.0.0.63
+    ntp_servers: ['none']
+    next_server: 10.0.0.2
+    logfacility: local7
+    option_code150_label: pxegrub
+    option_code150_value: text
+    default_filename: pxelinux.0
+    hosts:
+      test:
+        mac: 00:11:22:33:44:55
+        ip: 10.0.0.99
+        max_lease_time: 86400
+    pools:
+      internal:
+        network: 10.0.0.0
+        mask: 255.255.255.0
+        range:
+          - '10.0.0.180 10.0.0.199'
+        gateway: 10.0.0.12  
+```
+
+##### `SAMBA service`
 
 The SAMBA service is needed to kickstart Windows installation. Windows will download all needed files from here during unattended installation.
+
+> If you do not enable this service please take care to provide a SAMBA share needed for the Windows installation.
 
 Configuration example:
 

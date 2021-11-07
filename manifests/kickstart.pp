@@ -18,6 +18,12 @@
 # @param scripturl
 #    The URL where to download scripts
 #
+# @param dhcp_entry
+#    Flag to configure DHCP
+#
+# @param tftp_entry
+#    Flag to manage TFTP
+#
 # @example
 #   pxe_install::kickstart { 'namevar': }
 #
@@ -28,6 +34,8 @@ define pxe_install::kickstart (
   String $kickstart_url,
   String $repos_url,
   String $scripturl,
+  Boolean $dhcp_entry,
+  Boolean $tftp_entry,
 ) {
   $hostname     = $title
   $parameter    = $data['parameter']
@@ -299,7 +307,7 @@ define pxe_install::kickstart (
     }
   }
 
-  if $ensure == 'present' {
+  if $ensure == 'present' and $dhcp_entry {
     $dhcp_base_data = {
       mac     => $network_data['mac'],
       ip      => $network_data['fixedaddress'],
@@ -371,20 +379,24 @@ define pxe_install::kickstart (
     $ks = 'ks'
   }
 
-  pxe_install::tftp::host { $network_data['fixedaddress']:
-    ensure     => $ensure,
-    ostype     => $data['ostype'],
-    prefix     => $network_data['prefix'],
-    path       => $path,
-    ksurl      => $ksurl,
-    ksdevice   => $network_data['ksdevice'],
-    puppetenv  => $env,
-    puppetrole => $role,
-    datacenter => $datacenter,
-    locale     => $locale,
-    keymap     => $keymap,
-    loghost    => $loghost,
-    logport    => $logport,
-    ks         => $ks,
+  if $tftp_entry {
+
+    pxe_install::tftp::host { $network_data['fixedaddress']:
+      ensure     => $ensure,
+      ostype     => $data['ostype'],
+      prefix     => $network_data['prefix'],
+      path       => $path,
+      ksurl      => $ksurl,
+      ksdevice   => $network_data['ksdevice'],
+      puppetenv  => $env,
+      puppetrole => $role,
+      datacenter => $datacenter,
+      locale     => $locale,
+      keymap     => $keymap,
+      loghost    => $loghost,
+      logport    => $logport,
+      ks         => $ks,
+    }
+
   }
 }

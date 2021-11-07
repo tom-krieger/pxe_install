@@ -261,6 +261,8 @@ class pxe_install (
       kickstart_url => $kickstart_url,
       repos_url     => $repos_url,
       scripturl     => $scripturl,
+      dhcp_entry    => has_key($services, 'dhcpd'),
+      tftp_entry    => has_key($services, 'tftpd'),
     }
 
   }
