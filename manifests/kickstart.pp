@@ -320,17 +320,31 @@ define pxe_install::kickstart (
         options => {
           'routers'   => $network_data['gateway'],
           'host-name' => $hostname,
-          'filename' => $network_data['filename'],
+          'filename'  => $network_data['filename'],
         },
       }
 
     } else {
 
-      $dhcp_file_data = {
-        options => {
-          'routers'   => $network_data['gateway'],
-          'host-name' => $hostname,
-        },
+      if $ostype.downcase() == 'windows' {
+
+        $dhcp_file_data = {
+          options => {
+            'routers'   => $network_data['gateway'],
+            'host-name' => $hostname,
+            'filename'  => 'winpe.ipxe',
+          },
+        }
+
+      } else {
+
+        $dhcp_file_data = {
+          options => {
+            'routers'   => $network_data['gateway'],
+            'host-name' => $hostname,
+          },
+        }
+
       }
 
     }
