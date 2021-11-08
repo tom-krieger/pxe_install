@@ -290,15 +290,15 @@ The network configuration describes how the network of a node should be setup. Y
 
 #### `Node user configuration`
 
-Ubuntu/Debian need a unprivileded user. This user can be defined in the `user` section.
+Ubuntu/Debian need a unprivileded user to be able to login and to escalate your privileges to `root`after installation. This user can be defined in the `user` section.
 
 | Section | Config option | Comment | Default value |
 |---|---|---|:---:|
 | user | fullname | The full name of the user | yes |
 | | username | The username, e. g. ppt4711 | yes |
-| | password | The password has to be encrypted as teh operating system will do, so e. g. MD5 or SHA512 encrypted. See the explanations below on how to create such a password. | yes |
+| | password | The password has to be encrypted as the operating system will do, so e. g. MD5 or SHA512 encrypted. See the explanations below on how to create such a password. | yes |
 
-**Online to create a SHA512 encryped password:**
+**One liner to create a SHA512 encryped password:**
 
 ```python3
 python3 -c 'import crypt; print(crypt.crypt("your password here", crypt.mksalt(crypt.METHOD_SHA512)))'
@@ -566,6 +566,8 @@ pxe_install::defaults:
         label: root
         order: 408
 ```
+
+You can find more examples in the `spec/fixtures/hiera/hiera_data/pxe` folder.
 
 ## Plans
 

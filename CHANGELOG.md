@@ -5,7 +5,8 @@ All notable changes to this project will be documented in this file.
 ## v0.3.0
 
 * added Samba support to enable PXE installation of Windows
-* added Windows PXE installation support
+* added Windows PXE installation support, create dhcp entries and tftp entries
+* added support for uefi and bios installations
 
 ## v0.2.4
 

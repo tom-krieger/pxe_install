@@ -18,7 +18,9 @@
 #    The file/directory permissions.
 #
 # @example
-#   include pxe_install::winipxe
+#    class { 'pxe_install::winipxe'
+#        tftpboot_dir => '/var/lib/tftpboot',
+#         winpe_dir   => 'winpe',
 #
 # @api private
 class pxe_install::winipxe (

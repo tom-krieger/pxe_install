@@ -18,7 +18,9 @@
 #    The file/directory permissions.
 #
 # @example
-#   include pxe_install::syslinux
+#   class { 'pxe_install::syslinux':
+#       tftpboot_dir => '/var/lib/tftpboot',
+#   }
 #
 # @api private
 class pxe_install::syslinux (
