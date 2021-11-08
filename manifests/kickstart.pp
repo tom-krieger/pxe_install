@@ -86,21 +86,21 @@ define pxe_install::kickstart (
     fail("Host ${hostname} has no or no valid partitioning information.")
   }
 
-  if ! has_key($network_data, 'fixedaddress') {
+  unless has_key($network_data, 'fixedaddress') {
     fail("A server needs an ip address. Parameter fixedaddress missing for ${hostname}")
   }
 
-  if ! has_key($network_data, 'mac') {
+  unless has_key($network_data, 'mac') {
     fail("A server needs a mac address for installation. ${hostname} has none!")
   }
 
-  if ! has_key($data, 'osversion') and $ensure == 'present' and ($ostype.downcase() == 'centos' or $ostype.downcase() == 'windows') {
+  unless has_key($data, 'osversion') and $ensure == 'present' and ($ostype.downcase() == 'centos' or $ostype.downcase() == 'windows') {
     fail("Host ${hostname} needs an osversion!")
   }
 
   if has_key($data, 'user') {
     $user = $data['user']
-  } elsif has_key($pxe_install::defaults, 'user') {
+  } elsif h_winpeas_key($pxe_install::defaults, 'user') {
     $user = $pxe_install::defaults['user']
   } else {
     $user = {}
@@ -378,8 +378,8 @@ define pxe_install::kickstart (
       $dhcp_file_data = {
         options => {
           routers   => $network_data['gateway'],
-          host-name => $hostname,
-          filename  => $network_data['filename'],
+          host-name => "\"${hostname}\"",
+          filename  => "\"${network_data['filename']}\"",
         },
       }
 
@@ -388,8 +388,8 @@ define pxe_install::kickstart (
       $dhcp_file_data = {
         options => {
           routers   => $network_data['gateway'],
-          host-name => $hostname,
-          filename => $scenario_data['filename'],
+          host-name => "\"${hostname}\"",
+          filename => "\"${scenario_data['filename']}\"",
         },
       }
 
