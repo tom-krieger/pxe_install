@@ -5,22 +5,22 @@ pxe_install::services:
     os_level: 50
     workgroup: installserver
     wins_server: 0.0.0.0
-    server_string: 'Install server'
-    netbios_name: 'instsrv1'
-    map_to_guest: 'Bad User'
-    syslog: '3'
+    server_string: "Install server"
+    netbios_name: "instsrv1"
+    map_to_guest: "Bad User"
+    syslog: "3"
     firewall_manage: false
     interfaces:
       - eth0
     hosts_allow:
-      - '127.'
-    hosts_deny: 
-      - 'ALL'
+      - "127."
+    hosts_deny:
+      - "ALL"
     local_master: yes
     preferred_master: no
     shares:
       install:
-        comment: 'Windows install media'
+        comment: "Windows install media"
         path: /var/lib/tftpboot/windows
         browseable: true
         writable: false
@@ -28,7 +28,7 @@ pxe_install::services:
         guest_ok: yes
   tftpd:
     manage_tftpboot: true
-    winpe_dir: 'winpe'
+    winpe_dir: "winpe"
     packages:
       - tftp-server
       - xinetd
@@ -36,8 +36,9 @@ pxe_install::services:
     port: 69
     user: root
     group: root
-    directory: '/var/lib/tftpboot'
-    pxelinux: 'pxelinux.cfg'
+    directory: "/var/lib/tftpboot"
+    windows_directory: "/windows/winpe"
+    pxelinux: "pxelinux.cfg"
     address: 10.0.0.2
     tftpserverbin: /usr/sbin/in.tftpd
     service: xinetd
@@ -50,17 +51,61 @@ pxe_install::services:
     default_lease_time: 43200
     max_lease_time: 86400
     ddns_update_style: none
-    domain_names: 
+    domain_names:
       - localdomain
     dns_servers:
       - 10.0.0.62
       - 10.0.0.63
-    ntp_servers: ['none']
+    ntp_servers: ["none"]
     next_server: 10.0.0.2
     logfacility: local7
     option_code150_label: pxegrub
     option_code150_value: text
     default_filename: pxelinux.0
+    ipxe_bootstrap: winpe.ipxe
+    ipxe_filename: ipxe.efi
+    globaloptions:
+      - "space ipxe"
+      - "ipxe-encap-opts code 175 = encapsulate ipxe"
+      - "ipxe.priority code 1 = signed integer 8"
+      - "ipxe.keep-san code 8 = unsigned integer 8"
+      - "ipxe.skip-san-boot code 9 = unsigned integer 8"
+      - "ipxe.syslogs code 85 = string"
+      - "ipxe.cert code 91 = string"
+      - "ipxe.privkey code 92 = string"
+      - "ipxe.crosscert code 93 = string"
+      - "ipxe.no-pxedhcp code 176 = unsigned integer 8"
+      - "ipxe.bus-id code 177 = string"
+      - "ipxe.san-filename code 188 = string"
+      - "ipxe.bios-drive code 189 = unsigned integer 8"
+      - "ipxe.username code 190 = string"
+      - "ipxe.password code 191 = string"
+      - "ipxe.reverse-username code 192 = string"
+      - "ipxe.reverse-password code 193 = string"
+      - "ipxe.version code 235 = string"
+      - "iscsi-initiator-iqn code 203 = string"
+      - "ipxe.pxeext code 16 = unsigned integer 8"
+      - "ipxe.iscsi code 17 = unsigned integer 8"
+      - "ipxe.aoe code 18 = unsigned integer 8"
+      - "ipxe.http code 19 = unsigned integer 8"
+      - "ipxe.https code 20 = unsigned integer 8"
+      - "ipxe.tftp code 21 = unsigned integer 8"
+      - "ipxe.ftp code 22 = unsigned integer 8"
+      - "ipxe.dns code 23 = unsigned integer 8"
+      - "ipxe.bzimage code 24 = unsigned integer 8"
+      - "ipxe.multiboot code 25 = unsigned integer 8"
+      - "ipxe.slam code 26 = unsigned integer 8"
+      - "ipxe.srp code 27 = unsigned integer 8"
+      - "ipxe.nbi code 32 = unsigned integer 8"
+      - "ipxe.pxe code 33 = unsigned integer 8"
+      - "ipxe.elf code 34 = unsigned integer 8"
+      - "ipxe.comboot code 35 = unsigned integer 8"
+      - "ipxe.efi code 36 = unsigned integer 8"
+      - "ipxe.fcoe code 37 = unsigned integer 8"
+      - "ipxe.vlan code 38 = unsigned integer 8"
+      - "ipxe.menu code 39 = unsigned integer 8"
+      - "ipxe.sdi code 40 = unsigned integer 8"
+      - "ipxe.nfs code 41 = unsigned integer 8"
     hosts:
       test:
         mac: 00:11:22:33:44:55
@@ -71,5 +116,5 @@ pxe_install::services:
         network: 10.0.0.0
         mask: 255.255.255.0
         range:
-          - '10.0.0.180 10.0.0.199'
+          - "10.0.0.180 10.0.0.199"
         gateway: 10.0.0.12

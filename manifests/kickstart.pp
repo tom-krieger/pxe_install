@@ -94,7 +94,7 @@ define pxe_install::kickstart (
     fail("A server needs a mac address for installation. ${hostname} has none!")
   }
 
-  if ! has_key($data, 'osversion') and $ensure == 'present' and $ostype.downcase() == 'centos' {
+  if ! has_key($data, 'osversion') and $ensure == 'present' and ($ostype.downcase() == 'centos' or $ostype.downcase() == 'windows') {
     fail("Host ${hostname} needs an osversion!")
   }
 
@@ -108,11 +108,13 @@ define pxe_install::kickstart (
 
   $kickstart_file = "${kickstart_dir}/${hostname}"
 
-  concat { $kickstart_file:
-    ensure => $ensure,
-    owner  => 'root',
-    group  => 'root',
-    mode   => '0644',
+  if $ostype.downcase() != 'windows' {
+    concat { $kickstart_file:
+      ensure => $ensure,
+      owner  => 'root',
+      group  => 'root',
+      mode   => '0644',
+    }
   }
 
   if has_key($data, 'loghost') {
@@ -132,12 +134,61 @@ define pxe_install::kickstart (
     default => 'default',
   }
 
+  $basedir = has_key($pxe_install::tftp::tftp, 'directory') ? {
+    true => $pxe_install::tftp::tftp['directory'],
+    default => '/var/lib/tftpboot',
+  }
+
+  $windows_dir = has_key($pxe_install::tftp::tftp, 'windows_directory') ? {
+    true    => $pxe_install::tftp::tftp['windows_directory'],
+    default => '/windows',
+  }
+
+  $iso = has_key($network_data, 'iso') ? {
+    true    => $network_data['iso'],
+    default => '',
+  }
+
+  $boot_architecture = has_key($network_data, 'boot_architecture') ? {
+    true    => $network_data['boot_architecture'],
+    default => '',
+  }
+
+  unless has_key($pxe_install::defaults, 'boot_scenarios') {
+    fail('Boot scenario configuration is missing in defaults configuration.')
+  }
+
+  case $boot_architecture {
+    'bios': {
+      $scenario_data = $pxe_install::defaults['boot_scenarios']['bios']
+    }
+    'uefi': {
+      if $ostype.downcase() == 'windows' {
+        $scenario_data = $pxe_install::defaults['boot_scenarios']['ipxe']
+      } else {
+        $scenario_data = $pxe_install::defaults['boot_scenarios']['efi64']
+      }
+    }
+    default: {
+      $scenario_data = {}
+
+      if $ostype.downcase() == 'windows' {
+        fail("Host ${hostname} needs a boot_architecture for installing Windows!")
+      }
+    }
+  }
+
+  $dns_data = has_key($network_data, 'dns') ? {
+    true    => join($network_data['dns'], ','),
+    default => join($pxe_install::defaults['dns'], ','),
+  }
+
   case $ostype.downcase() {
     'debian': {
       $template_start = 'pxe_install/debian/kickstart.epp'
       $template_finish = 'pxe_install/debian/kickstart-end.epp'
-      $mirror = $pxe_install::debian_mirror
-      $mirror_dir = $pxe_install::debian_mirror_dir
+      $mirror_kost = $pxe_install::mirrors['debian']['mirror_host']
+      $mirror_uri = $pxe_install::mirrors['debian']['mirror_uri']
       $ksurl = "http://${pxe_install::repo_server}/kickstart/${hostname}"
       $installserverurl = ''
 
@@ -152,8 +203,8 @@ define pxe_install::kickstart (
       $template_start = 'pxe_install/ubuntu/kickstart.epp'
       $template_partitioning = 'pxe_install/ubuntu/kickstart-partitioning.epp'
       $template_finish = 'pxe_install/ubuntu/kickstart-end.epp'
-      $mirror = $pxe_install::ubuntu_mirror
-      $mirror_dir = $pxe_install::ubuntu_mirror_dir
+      $mirror_host = $pxe_install::mirrors['ubuntu']['mirror_host']
+      $mirror_uri = $pxe_install::mirrors['ubuntu']['mirror_uri']
       $ksurl = "http://${pxe_install::repo_server}/kickstart/${hostname}"
       $installserverurl = ''
 
@@ -165,19 +216,32 @@ define pxe_install::kickstart (
 
     }
     'windows': {
-      # nothing to do yet
+      $mirror_host = $pxe_install::mirrors['windows']['mirror_host']
+      $mirror_uri = $pxe_install::mirrors['windows']['mirror_uri']
+      $ksurl = ''
+
+      pxe_install::samba::host { $hostname:
+        tftpboot_dir      => "${basedir}${windows_dir}",
+        osversion         => $data['osversion'],
+        iso               => $iso,
+        boot_architecture => $scenario_data['boot_architecture'],
+        fixedaddress      => $network_data['fixedaddress'],
+        macaddress        => $network_data['mac'],
+        subnet            => $network_data['netmask'],
+        gateway           => $network_data['gateway'],
+        dns               => $network_data['dns'],
+      }
     }
     default: {
       $template_start = 'pxe_install/redhat/kickstart.epp'
       $template_finish = 'pxe_install/redhat/kickstart-end.epp'
 
-      if has_key($pxe_install::centos_mirrors, $data['osversion']) {
+      if has_key($pxe_install::mirrors['centos'], $data['osversion']) {
 
-        $mirror_data = $pxe_install::centos_mirrors[$data['osversion']]
-        $mirror = $mirror_data['mirror']
-        $mirror_dir = $mirror_data['mirror_dir']
+        $mirror_host = $pxe_install::mirrors['centos'][$data['osversion']]['mirror_host']
+        $mirror_uri = $pxe_install::mirrors['centos'][$data['osversion']]['mirror_uri']
         $ksurl = "http://${pxe_install::repo_server}/kickstart/${hostname}"
-        $installserverurl = "${mirror}${mirror_dir}"
+        $installserverurl = "${mirror_host}${mirror_uri}"
 
         pxe_install::partitioning::redhat { $hostname:
           hostname       => $hostname,
@@ -186,7 +250,7 @@ define pxe_install::kickstart (
         }
 
       } else {
-
+        fail("No mirror defined for ${hostname} for CentOS ${data['osversion']}")
       }
     }
   }
@@ -239,11 +303,6 @@ define pxe_install::kickstart (
     default => $pxe_install::defaults['keymap'],
   }
 
-  $dns_data = has_key($network_data, 'dns') ? {
-    true    => join($network_data['dns'], ','),
-    default => join($pxe_install::defaults['dns'], ','),
-  }
-
   $ks_fqdn = "${hostname}.${domain}"
 
   if $ostype.downcase != 'windows' {
@@ -265,8 +324,8 @@ define pxe_install::kickstart (
         hostname         => $hostname,
         rootpw           => $rootpw,
         timezone         => $timezone,
-        mirror           => $mirror,
-        mirror_dir       => $mirror_dir,
+        mirror           => $mirror_host,
+        mirror_dir       => $mirror_uri,
         loghost          => $loghost,
         ksdevice         => $network_data['ksdevice'],
         fqdn             => $ks_fqdn,
@@ -297,8 +356,8 @@ define pxe_install::kickstart (
           repos_url     => $repos_url,
           scripturl     => $scripturl,
           country       => $country,
-          mirror        => $mirror,
-          mirror_dir    => $mirror_dir,
+          mirror        => $mirror_host,
+          mirror_dir    => $mirror_uri,
           osversion     => $data['osversion'],
           bootdevice    => $bootdevice,
         }),
@@ -318,33 +377,29 @@ define pxe_install::kickstart (
 
       $dhcp_file_data = {
         options => {
-          'routers'   => $network_data['gateway'],
-          'host-name' => $hostname,
-          'filename'  => $network_data['filename'],
+          routers   => $network_data['gateway'],
+          host-name => $hostname,
+          filename  => $network_data['filename'],
+        },
+      }
+
+    } elsif has_key($scenario_data, 'filename') {
+
+      $dhcp_file_data = {
+        options => {
+          routers   => $network_data['gateway'],
+          host-name => $hostname,
+          filename => $scenario_data['filename'],
         },
       }
 
     } else {
 
-      if $ostype.downcase() == 'windows' {
-
-        $dhcp_file_data = {
-          options => {
-            'routers'   => $network_data['gateway'],
-            'host-name' => $hostname,
-            'filename'  => 'winpe.ipxe',
-          },
-        }
-
-      } else {
-
-        $dhcp_file_data = {
-          options => {
-            'routers'   => $network_data['gateway'],
-            'host-name' => $hostname,
-          },
-        }
-
+      $dhcp_file_data = {
+        options => {
+          routers   => $network_data['gateway'],
+          host-name => $hostname,
+        },
       }
 
     }
@@ -377,7 +432,8 @@ define pxe_install::kickstart (
   }
 
   if  $ostype.downcase() == 'centos' or
-      $ostype.downcase() == 'redhat'
+      $ostype.downcase() == 'redhat' or
+      $ostype.downcase() == 'windows'
   {
     $osvers = has_key($data, 'osversion') ? {
       true  => $data['osversion'],
@@ -395,21 +451,29 @@ define pxe_install::kickstart (
 
   if $tftp_entry {
 
+    $prefix = has_key($network_data, 'prefix') ? {
+      true    => $network_data['prefix'],
+      default => '',
+    }
+
     pxe_install::tftp::host { $network_data['fixedaddress']:
-      ensure     => $ensure,
-      ostype     => $data['ostype'],
-      prefix     => $network_data['prefix'],
-      path       => $path,
-      ksurl      => $ksurl,
-      ksdevice   => $network_data['ksdevice'],
-      puppetenv  => $env,
-      puppetrole => $role,
-      datacenter => $datacenter,
-      locale     => $locale,
-      keymap     => $keymap,
-      loghost    => $loghost,
-      logport    => $logport,
-      ks         => $ks,
+      ensure        => $ensure,
+      ostype        => $ostype,
+      prefix        => $prefix,
+      path          => $path,
+      ksurl         => $ksurl,
+      ksdevice      => $network_data['ksdevice'],
+      puppetenv     => $env,
+      puppetrole    => $role,
+      datacenter    => $datacenter,
+      locale        => $locale,
+      keymap        => $keymap,
+      loghost       => $loghost,
+      logport       => $logport,
+      ks            => $ks,
+      mirror_host   => $mirror_host,
+      mirror_uri    => $mirror_uri,
+      scenario_data => $scenario_data,
     }
 
   }

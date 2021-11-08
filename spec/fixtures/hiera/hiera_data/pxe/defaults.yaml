@@ -13,6 +13,22 @@ pxe_install::defaults:
   logport: 514
   domain: example.com
   pxefile: pxelinux.0
+  boot_scenarios:
+    bios:
+      boot_architecture: bios
+      filename: lpxelinux.0
+      http: true
+      windows_support: true
+    efi64:
+      boot_architecture: uefi
+      filename: bootx64.efi
+      http: true
+      windows_support: false
+    ipxe:
+      boot_architecture: uefi
+      filename: ipxe_winpe.efi
+      http: true
+      windows_support: true
   partitioning:
     example:
       "/boot":

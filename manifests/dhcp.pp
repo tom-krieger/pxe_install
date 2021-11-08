@@ -21,7 +21,22 @@ class pxe_install::dhcp (
     $pxefilename = 'pxelinux.0'
   }
 
-  class { 'dhcp':
+  if has_key($dhcp, 'ipxe_bootstrap') and has_key($dhcp, 'ipxe_filename') {
+    $ipxe_config = {
+      ipxe_bootstrap => $dhcp['ipxe_bootstrap'],
+      ipxe_filename => $dhcp['ipxe_filename'],
+    }
+  } else {
+    $ipxe_config = {}
+  }
+
+  if has_key($dhcp, 'globaloptions') {
+    $_globaloptions = $dhcp['globaloptions']
+  } else {
+    $_globaloptions = []
+  }
+
+  $dhcp_global_options = {
     service_ensure       => running,
     interfaces           => $dhcp['interfaces'],
     nameservers          => $dhcp['dns_servers'],
@@ -36,6 +51,13 @@ class pxe_install::dhcp (
     logfacility          => $dhcp['logfacility'],
     option_code150_label => $dhcp['option_code_50_label'],
     option_code150_value => $dhcp['option_code150_value'],
+    globaloptions        => $_globaloptions,
+  }
+
+  $_dhcp_global_options = merge($dhcp_global_options, $ipxe_config)
+
+  class { 'dhcp':
+    * => $_dhcp_global_options,
   }
 
   # loop over subnets
