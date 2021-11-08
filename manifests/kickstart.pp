@@ -173,7 +173,7 @@ define pxe_install::kickstart (
       $scenario_data = {}
 
       if $ostype.downcase() == 'windows' {
-        fail("Host ${hostname} needs a boot_architecture for installing Windows!")
+        fail("Host ${hostname} needs a valid boot_architecture for installing Windows! '${boot_architecture}' is not supported.")
       }
     }
   }
