@@ -371,26 +371,22 @@ define pxe_install::kickstart (
       mac     => $network_data['mac'],
       ip      => $network_data['fixedaddress'],
       comment => "Kickstart dhcp entry for ${hostname}",
+      options => {
+        routers   => $network_data['gateway'],
+        host-name => "\"${hostname}\"",
+      },
     }
 
     if has_key($network_data, 'filename') {
 
       $dhcp_file_data = {
-        options => {
-          routers   => $network_data['gateway'],
-          host-name => "\"${hostname}\"",
-          filename  => "\"${network_data['filename']}\"",
-        },
+        filename  => "\"${network_data['filename']}\"",
       }
 
     } elsif has_key($scenario_data, 'filename') {
 
       $dhcp_file_data = {
-        options => {
-          routers   => $network_data['gateway'],
-          host-name => "\"${hostname}\"",
-          filename => "\"${scenario_data['filename']}\"",
-        },
+        filename => "\"${scenario_data['filename']}\"",
       }
 
     } else {
