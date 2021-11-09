@@ -15,7 +15,9 @@
 * `pxe_install::apache`: Configure webserver for install server
 * `pxe_install::dhcp`: Setup DHCP server
 * `pxe_install::params`: Default parameters
+* `pxe_install::syslinux`: Download syslinux archive
 * `pxe_install::tftp`: Setup ftp server
+* `pxe_install::winipxe`: Install windows ipxe files
 
 ### Defined types
 
@@ -31,6 +33,7 @@
 * `pxe_install::partitioning::ubuntu`: Create a partion table for Ubuntu systems
 
 Create the partion entries for presdeed.
+* `pxe_install::samba::host`: Create a host entry for a Windows node
 * `pxe_install::tftp::host`: Create a tftp server entry for a host.
 
 ### Functions
@@ -77,11 +80,6 @@ The following parameters are available in the `pxe_install` class:
 * [`kickstart_url`](#kickstart_url)
 * [`puppetmaster`](#puppetmaster)
 * [`puppetmasterip`](#puppetmasterip)
-* [`debian_mirror`](#debian_mirror)
-* [`debian_mirror_dir`](#debian_mirror_dir)
-* [`ubuntu_mirror`](#ubuntu_mirror)
-* [`ubuntu_mirror_dir`](#ubuntu_mirror_dir)
-* [`centos_mirrors`](#centos_mirrors)
 * [`services`](#services)
 * [`machines`](#machines)
 * [`status_allow_from`](#status_allow_from)
@@ -94,6 +92,13 @@ The following parameters are available in the `pxe_install` class:
 * [`create_aliases`](#create_aliases)
 * [`challenge_password`](#challenge_password)
 * [`add_hosts_entries`](#add_hosts_entries)
+* [`install_curl`](#install_curl)
+* [`install_unzip`](#install_unzip)
+* [`syslinux_url`](#syslinux_url)
+* [`syslinux_name`](#syslinux_name)
+* [`syslinux_version`](#syslinux_version)
+* [`ipxefile`](#ipxefile)
+* [`mirrors`](#mirrors)
 * [`defaults`](#defaults)
 
 ##### <a name="installserverip"></a>`installserverip`
@@ -171,46 +176,6 @@ Data type: `Optional[String]`
 The ip of the Puppet master server
 
 Default value: `''`
-
-##### <a name="debian_mirror"></a>`debian_mirror`
-
-Data type: `Optional[String]`
-
-The Debian mirror host
-
-Default value: `''`
-
-##### <a name="debian_mirror_dir"></a>`debian_mirror_dir`
-
-Data type: `Optional[String]`
-
-The uri to use on the Debain mirror.
-
-Default value: `'/debian'`
-
-##### <a name="ubuntu_mirror"></a>`ubuntu_mirror`
-
-Data type: `Optional[String]`
-
-The Ubuntu mirror host
-
-Default value: `''`
-
-##### <a name="ubuntu_mirror_dir"></a>`ubuntu_mirror_dir`
-
-Data type: `Optional[String]`
-
-The uri to use on the Ubuntu mirror.
-
-Default value: `'/ubuntu'`
-
-##### <a name="centos_mirrors"></a>`centos_mirrors`
-
-Data type: `Optional[Hash]`
-
-hash with CentOS mirror hosts and directories
-
-Default value: `{}`
 
 ##### <a name="services"></a>`services`
 
@@ -307,6 +272,62 @@ Data type: `Optional[Boolean]`
 Add install server and puppet server to /etc/hosts file.
 
 Default value: ``false``
+
+##### <a name="install_curl"></a>`install_curl`
+
+Data type: `Optional[Boolean]`
+
+Install curl package
+
+Default value: `$pxe_install::params::install_curl`
+
+##### <a name="install_unzip"></a>`install_unzip`
+
+Data type: `Optional[Boolean]`
+
+Install unzip package
+
+Default value: `$pxe_install::params::install_unzip`
+
+##### <a name="syslinux_url"></a>`syslinux_url`
+
+Data type: `Optional[Stdlib::HTTPSUrl]`
+
+The url where to download the syslinux archive.
+
+Default value: `$pxe_install::params::syslinux_url`
+
+##### <a name="syslinux_name"></a>`syslinux_name`
+
+Data type: `Optional[String]`
+
+Ther name of the archive.
+
+Default value: `$pxe_install::params::syslinux_name`
+
+##### <a name="syslinux_version"></a>`syslinux_version`
+
+Data type: `Optional[String]`
+
+The version of the archive.
+
+Default value: `$pxe_install::params::syslinux_version`
+
+##### <a name="ipxefile"></a>`ipxefile`
+
+Data type: `Optional[Stdlib::HTTPUrl]`
+
+The url to download the ipxe file.
+
+Default value: `$pxe_install::params::ipxefile`
+
+##### <a name="mirrors"></a>`mirrors`
+
+Data type: `Optional[Hash]`
+
+Hash with mirror definitions.
+
+Default value: `$pxe_install::params::mirrors`
 
 ##### <a name="defaults"></a>`defaults`
 

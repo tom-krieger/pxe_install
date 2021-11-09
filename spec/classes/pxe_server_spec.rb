@@ -99,6 +99,28 @@ describe 'pxe_install' do
               'option_code150_label' => 'pxegrub',
               'option_code150_value' => 'text',
               'default_filename' => 'pxelinux.0',
+              'ipxe_bootstrap' => 'winpe.ipxe',
+              'ipxe_filename' => 'ipxe.efi',
+              'globaloptions' => ['space ipxe', 'ipxe-encap-opts code 175 = encapsulate ipxe', 'ipxe.priority code 1 = signed integer 8',
+                                  'ipxe.keep-san code 8 = unsigned integer 8', 'ipxe.skip-san-boot code 9 = unsigned integer 8',
+                                  'ipxe.syslogs code 85 = string', 'ipxe.cert code 91 = string', 'ipxe.privkey code 92 = string',
+                                  'ipxe.crosscert code 93 = string', 'ipxe.no-pxedhcp code 176 = unsigned integer 8',
+                                  'ipxe.bus-id code 177 = string', 'ipxe.san-filename code 188 = string',
+                                  'ipxe.bios-drive code 189 = unsigned integer 8', 'ipxe.username code 190 = string',
+                                  'ipxe.password code 191 = string', 'ipxe.reverse-username code 192 = string',
+                                  'ipxe.reverse-password code 193 = string', 'ipxe.version code 235 = string',
+                                  'iscsi-initiator-iqn code 203 = string', 'ipxe.pxeext code 16 = unsigned integer 8',
+                                  'ipxe.iscsi code 17 = unsigned integer 8', 'ipxe.aoe code 18 = unsigned integer 8',
+                                  'ipxe.http code 19 = unsigned integer 8', 'ipxe.https code 20 = unsigned integer 8',
+                                  'ipxe.tftp code 21 = unsigned integer 8', 'ipxe.ftp code 22 = unsigned integer 8',
+                                  'ipxe.dns code 23 = unsigned integer 8', 'ipxe.bzimage code 24 = unsigned integer 8',
+                                  'ipxe.multiboot code 25 = unsigned integer 8', 'ipxe.slam code 26 = unsigned integer 8',
+                                  'ipxe.srp code 27 = unsigned integer 8', 'ipxe.nbi code 32 = unsigned integer 8',
+                                  'ipxe.pxe code 33 = unsigned integer 8', 'ipxe.elf code 34 = unsigned integer 8',
+                                  'ipxe.comboot code 35 = unsigned integer 8', 'ipxe.efi code 36 = unsigned integer 8',
+                                  'ipxe.fcoe code 37 = unsigned integer 8', 'ipxe.vlan code 38 = unsigned integer 8',
+                                  'ipxe.menu code 39 = unsigned integer 8', 'ipxe.sdi code 40 = unsigned integer 8',
+                                  'ipxe.nfs code 41 = unsigned integer 8'],
               'hosts' => {
                 'test' => {
                   'mac' => '00:11:22:33:44:55',
@@ -120,12 +142,15 @@ describe 'pxe_install' do
         is_expected.to contain_class('pxe_install::tftp')
           .with(
             'tftp' => {
+              'manage_tftpboot' => true,
+              'winpe_dir' => 'winpe',
               'packages' => ['tftp-server', 'xinetd'],
               'packages_ensure' => 'installed',
               'port' => 69,
               'user' => 'root',
               'group' => 'root',
               'directory' => '/var/lib/tftpboot',
+              'windows_directory' => '/windows/winpe',
               'pxelinux' => 'pxelinux.cfg',
               'address' => '10.0.0.2',
               'tftpserverbin' => '/usr/sbin/in.tftpd',
@@ -250,8 +275,8 @@ describe 'pxe_install' do
             'options' => {
               'routers'   => '10.0.0.4',
               'host-name' => 'ct01',
-              'filename' => '/tftpboot/test.0',
             },
+            'filename' => '/tftpboot/test.0',
             'comment' => 'Kickstart dhcp entry for ct01',
           )
 
@@ -263,7 +288,20 @@ describe 'pxe_install' do
               'routers'   => '10.0.0.4',
               'host-name' => 'ct03',
             },
+            'filename' => 'lpxelinux.0',
             'comment' => 'Kickstart dhcp entry for ct03',
+          )
+
+        is_expected.to contain_dhcp__host('ct04')
+          .with(
+            'mac' => '00:11:22:33:44:88',
+            'ip' => '10.0.0.132',
+            'options' => {
+              'routers'   => '10.0.0.4',
+              'host-name' => 'ct04',
+            },
+            'filename' => 'ipxe_winpe.efi',
+            'comment' => 'Kickstart dhcp entry for ct04',
           )
 
         is_expected.to contain_dhcp__host('test')
@@ -292,6 +330,7 @@ describe 'pxe_install' do
                 'ksdevice' => 'eth0',
                 'gateway' => '10.0.0.4',
                 'netmask' => '255.255.255.0',
+                'boot_architecture' => 'bios',
                 'dns' => ['10.0.0.62'],
                 'filename' => '/tftpboot/test.0',
               },
@@ -324,6 +363,7 @@ describe 'pxe_install' do
                 'gateway' => '10.0.0.4',
                 'netmask' => '255.255.255.0',
                 'dns' => ['10.0.0.62'],
+                'boot_architecture' => 'bios',
               },
               'ostype' => 'ubuntu',
               'parameter' => {
@@ -351,6 +391,7 @@ describe 'pxe_install' do
                 'gateway' => '10.0.0.4',
                 'netmask' => '255.255.255.0',
                 'dns' => ['10.0.0.62', '10.0.0.63', '10.0.0.25'],
+                'boot_architecture' => 'bios',
               },
               'ostype' => 'ubuntu',
               'parameter' => {
@@ -371,6 +412,34 @@ describe 'pxe_install' do
             'scripturl'     => '/pub',
           )
 
+        is_expected.to contain_pxe_install__kickstart('ct04')
+          .with(
+            'data'          => {
+              'ensure' => 'present',
+              'network' => {
+                'mac' => '00:11:22:33:44:88',
+                'fixedaddress' => '10.0.0.132',
+                'ksdevice' => 'eth0',
+                'gateway' => '10.0.0.4',
+                'netmask' => '255.255.255.0',
+                'dns' => ['10.0.0.62', '10.0.0.63', '10.0.0.25'],
+                'boot_architecture' => 'uefi',
+              },
+              'ostype' => 'windows',
+              'osversion' => '2019',
+              'parameter' => {
+                'env' => 'production',
+                'role' => 'test',
+                'dc' => 'test',
+                'agent' => 'y',
+              },
+            },
+            'kickstart_dir' => '/export/repos/kickstart',
+            'kickstart_url' => '/kickstart',
+            'repos_url'     => '/repos',
+            'scripturl'     => '/pub',
+          )
+
         is_expected.to contain_pxe_install__tftp__host('10.0.0.32')
           .with(
             'ensure'     => 'present',
@@ -378,6 +447,24 @@ describe 'pxe_install' do
             'prefix'     => 'ubuntu/18.04/amd64',
             'path'       => '',
             'ksurl'      => 'http://repos.localdomain/kickstart/ct03',
+            'ksdevice'   => 'eth0',
+            'puppetenv'  => 'production',
+            'puppetrole' => 'test',
+            'datacenter' => 'test',
+            'locale'     => 'en_US.UTF-8',
+            'keymap'     => 'de',
+            'loghost'    => '10.0.0.25',
+            'logport'    => 514,
+            'ks'         => 'ks',
+          )
+
+        is_expected.to contain_pxe_install__tftp__host('10.0.0.132')
+          .with(
+            'ensure'     => 'present',
+            'ostype'     => 'windows',
+            'prefix'     => '',
+            'path'       => '',
+            'ksurl'      => '',
             'ksdevice'   => 'eth0',
             'puppetenv'  => 'production',
             'puppetrole' => 'test',
@@ -425,7 +512,20 @@ describe 'pxe_install' do
             'ks'         => 'ks',
           )
 
-        # File[/var/lib/tftpboot]
+        is_expected.to contain_pxe_install__samba__host('ct04')
+          .with(
+            'tftpboot_dir'      => '/var/lib/tftpboot/windows/winpe',
+            'osversion'         => '2019',
+            'iso'               => '',
+            'boot_architecture' => 'uefi',
+            'fixedaddress'      => '10.0.0.132',
+            'macaddress'        => '00:11:22:33:44:88',
+            'subnet'            => '255.255.255.0',
+            'gateway'           => '10.0.0.4',
+            'dns'               => ['10.0.0.62', '10.0.0.63', '10.0.0.25'],
+            'puppetmaster'      => 'pmaster.localdomain',
+          )
+
         is_expected.to contain_file('/var/lib/tftpboot')
           .with(
             'ensure'       => 'directory',
@@ -434,7 +534,16 @@ describe 'pxe_install' do
             'mode'         => '0755',
           )
 
-        # File[/var/lib/tftpboot/pxelinux.cfg]
+        is_expected.to contain_file('/var/lib/tftpboot/windows/winpe')
+          .with(
+            'ensure' => 'directory',
+          )
+
+        # is_expected.to contain_file('/tftpboot/windows')
+        #   .with(
+        #     'ensure' => 'directory',
+        #   )
+
         is_expected.to contain_file('/var/lib/tftpboot/pxelinux.cfg')
           .with(
             'ensure'       => 'directory',
@@ -445,7 +554,7 @@ describe 'pxe_install' do
             'recurselimit' => 1,
             'recurse'      => true,
           )
-        # File[/var/lib/tftpboot/pxelinux.0]
+
         is_expected.to contain_file('/var/lib/tftpboot/pxelinux.0')
           .with(
             'ensure' => 'file',
@@ -454,7 +563,6 @@ describe 'pxe_install' do
             'mode'   => '0644',
           )
 
-        # File[/var/lib/tftpboot/pxelinux.cfg/0A000020]
         is_expected.to contain_file('/var/lib/tftpboot/pxelinux.cfg/0A000020')
           .with(
             'ensure' => 'present',
@@ -462,8 +570,6 @@ describe 'pxe_install' do
             'group'  => 'root',
             'mode'   => '0644',
           )
-
-        # File[/var/lib/tftpboot/pxelinux.cfg/0A000042]
         is_expected.to contain_file('/var/lib/tftpboot/pxelinux.cfg/0A000042')
           .with(
             'ensure' => 'present',
@@ -472,7 +578,6 @@ describe 'pxe_install' do
             'mode'   => '0644',
           )
 
-        # File[/var/lib/tftpboot/pxelinux.cfg/0A000044]
         is_expected.to contain_file('/var/lib/tftpboot/pxelinux.cfg/0A000044')
           .with(
             'ensure' => 'absent',
@@ -481,7 +586,14 @@ describe 'pxe_install' do
             'mode'   => '0644',
           )
 
-        # File[/var/lib/tftpboot/pxelinux.cfg/default]
+        is_expected.to contain_file('/var/lib/tftpboot/pxelinux.cfg/0A000084')
+          .with(
+            'ensure' => 'present',
+            'owner'  => 'root',
+            'group'  => 'root',
+            'mode'   => '0644',
+          )
+
         is_expected.to contain_file('/var/lib/tftpboot/pxelinux.cfg/default')
           .with(
             'ensure' => 'file',
@@ -490,7 +602,197 @@ describe 'pxe_install' do
             'mode'   => '0644',
           )
 
-        # Pxe_install::Partitioning::Redhat[ct01]
+        is_expected.to contain_file('/var/lib/tftpboot/windows/winpe/001122334488.cfg')
+          .with(
+            'ensure' => 'file',
+            'owner'  => 'root',
+            'group'  => 'root',
+            'mode'   => '0644',
+          )
+
+        is_expected.to contain_archive('syslinux-6.03.tar.gz')
+          .with(
+            'path'         => '/opt/pxe_install/syslinux-6.03.tar.gz',
+            'source'       => 'https://www.kernel.org/pub/linux/utils/boot/syslinux/syslinux-6.03.tar.gz',
+            'extract'      => true,
+            'extract_path' => '/opt/pxe_install/',
+            'creates'      => '/opt/pxe_install/syslinux-6.03',
+            'cleanup'      => true,
+          )
+
+        is_expected.to contain_class('pxe_install::syslinux')
+          .with(
+            'tftpboot_dir'        => '/var/lib/tftpboot',
+            'create_tftpboot_dir' => true,
+          )
+
+        is_expected.to contain_class('pxe_install::winipxe')
+          .with(
+            'tftpboot_dir'        => '/var/lib/tftpboot',
+          )
+
+        is_expected.to contain_pxe_install__parent_dirs('create tftpboot dir /var/lib/tftpboot/')
+          .with(
+            'dir_path' => '/var/lib/tftpboot/',
+          )
+
+        is_expected.to contain_pxe_install__parent_dirs('create tftpboot dir /var/lib/tftpboot/bios')
+          .with(
+            'dir_path' => '/var/lib/tftpboot/bios',
+          )
+
+        is_expected.to contain_pxe_install__parent_dirs('create tftpboot dir /var/lib/tftpboot/efi64')
+          .with(
+            'dir_path' => '/var/lib/tftpboot/efi64',
+          )
+
+        is_expected.to contain_pxe_install__parent_dirs('create tftpboot dir /var/lib/tftpboot/winpe')
+          .with(
+            'dir_path' => '/var/lib/tftpboot/winpe',
+          )
+
+        is_expected.to contain_file('/var/lib/tftpboot/bios')
+          .with(
+            'ensure' => 'directory',
+          )
+        is_expected.to contain_file('/var/lib/tftpboot/efi64')
+          .with(
+            'ensure' => 'directory',
+          )
+        is_expected.to contain_file('/var/lib/tftpboot/winpe')
+          .with(
+            'ensure' => 'directory',
+          )
+        is_expected.to contain_file('/var/lib')
+          .with(
+            'ensure' => 'directory',
+          )
+
+        is_expected.to contain_exec('copying file pxelinux.0-/')
+          .with(
+            'command' => 'cp /opt/pxe_install/syslinux-6.03/bios/core/pxelinux.0 /var/lib/tftpboot//pxelinux.0',
+            'path'    => ['/bin/', '/usr/bin'],
+            'unless'  => 'test -f /var/lib/tftpboot//pxelinux.0',
+          )
+
+        is_expected.to contain_exec('copying file lpxelinux.0-/')
+          .with(
+            'command' => 'cp /opt/pxe_install/syslinux-6.03/bios/core/lpxelinux.0 /var/lib/tftpboot//lpxelinux.0',
+            'path'    => ['/bin/', '/usr/bin'],
+            'unless'  => 'test -f /var/lib/tftpboot//lpxelinux.0',
+          )
+
+        is_expected.to contain_exec('copying file bootx64.efi-/')
+          .with(
+            'command' => 'cp /opt/pxe_install/syslinux-6.03/efi64/efi/syslinux.efi /var/lib/tftpboot//bootx64.efi',
+            'path'    => ['/bin/', '/usr/bin'],
+            'unless'  => 'test -f /var/lib/tftpboot//bootx64.efi',
+          )
+
+        is_expected.to contain_exec('copying file ldlinux.c32-/')
+          .with(
+            'command' => 'cp /opt/pxe_install/syslinux-6.03/bios/com32/elflink/ldlinux/ldlinux.c32 /var/lib/tftpboot//ldlinux.c32',
+            'path'    => ['/bin/', '/usr/bin'],
+            'unless'  => 'test -f /var/lib/tftpboot//ldlinux.c32',
+          )
+
+        is_expected.to contain_exec('copying file ldlinux.e64-/')
+          .with(
+            'command' => 'cp /opt/pxe_install/syslinux-6.03/efi64/com32/elflink/ldlinux/ldlinux.e64 /var/lib/tftpboot//ldlinux.e64',
+            'path'    => ['/bin/', '/usr/bin'],
+            'unless'  => 'test -f /var/lib/tftpboot//ldlinux.e64',
+          )
+
+        is_expected.to contain_exec('copying file libcom32.c32-/bios')
+          .with(
+            'command' => 'cp /opt/pxe_install/syslinux-6.03/bios/com32/lib/libcom32.c32 /var/lib/tftpboot/bios/libcom32.c32',
+            'path'    => ['/bin/', '/usr/bin'],
+            'unless'  => 'test -f /var/lib/tftpboot/bios/libcom32.c32',
+          )
+
+        is_expected.to contain_exec('copying file libutil.c32-/bios')
+          .with(
+            'command' => 'cp /opt/pxe_install/syslinux-6.03/bios/com32/libutil/libutil.c32 /var/lib/tftpboot/bios/libutil.c32',
+            'path'    => ['/bin/', '/usr/bin'],
+            'unless'  => 'test -f /var/lib/tftpboot/bios/libutil.c32',
+          )
+
+        is_expected.to contain_exec('copying file linux.c32-/bios')
+          .with(
+            'command' => 'cp /opt/pxe_install/syslinux-6.03/bios/com32/modules/linux.c32 /var/lib/tftpboot/bios/linux.c32',
+            'path'    => ['/bin/', '/usr/bin'],
+            'unless'  => 'test -f /var/lib/tftpboot/bios/linux.c32',
+          )
+
+        is_expected.to contain_exec('copying file vesamenu.c32-/bios')
+          .with(
+            'command' => 'cp /opt/pxe_install/syslinux-6.03/bios/com32/menu/vesamenu.c32 /var/lib/tftpboot/bios/vesamenu.c32',
+            'path'    => ['/bin/', '/usr/bin'],
+            'unless'  => 'test -f /var/lib/tftpboot/bios/vesamenu.c32',
+          )
+
+        is_expected.to contain_exec('copying file libutil.c32-/efi64')
+          .with(
+            'command' => 'cp /opt/pxe_install/syslinux-6.03/efi64/com32/libutil/libutil.c32 /var/lib/tftpboot/efi64/libutil.c32',
+            'path'    => ['/bin/', '/usr/bin'],
+            'unless'  => 'test -f /var/lib/tftpboot/efi64/libutil.c32',
+          )
+
+        is_expected.to contain_exec('copying file linux.c32-/efi64')
+          .with(
+            'command' => 'cp /opt/pxe_install/syslinux-6.03/efi64/com32/modules/linux.c32 /var/lib/tftpboot/efi64/linux.c32',
+            'path'    => ['/bin/', '/usr/bin'],
+            'unless'  => 'test -f /var/lib/tftpboot/efi64/linux.c32',
+          )
+
+        is_expected.to contain_exec('copying file vesamenu.c32-/efi64')
+          .with(
+            'command' => 'cp /opt/pxe_install/syslinux-6.03/efi64/com32/menu/vesamenu.c32 /var/lib/tftpboot/efi64/vesamenu.c32',
+            'path'    => ['/bin/', '/usr/bin'],
+            'unless'  => 'test -f /var/lib/tftpboot/efi64/vesamenu.c32',
+          )
+
+        is_expected.to contain_exec('copying file libcom32.c32-/efi64')
+          .with(
+            'command' => 'cp /opt/pxe_install/syslinux-6.03/efi64/com32/lib/libcom32.c32 /var/lib/tftpboot/efi64/libcom32.c32',
+            'path'    => ['/bin/', '/usr/bin'],
+            'unless'  => 'test -f /var/lib/tftpboot/efi64/libcom32.c32',
+          )
+
+        is_expected.to contain_file('/opt/pxe_install')
+          .with(
+            'ensure' => 'directory',
+            'owner'  => 'root',
+            'group'  => 'root',
+            'mode'   => '0755',
+          )
+
+        is_expected.to contain_file('/var/lib/tftpboot/winpe/wimboot')
+          .with(
+            'ensure' => 'file',
+            'source' => 'https://github.com/ipxe/wimboot/releases/latest/download/wimboot',
+            'owner'  => 'root',
+            'group'  => 'root',
+            'mode'   => '0755',
+          )
+
+        is_expected.to contain_file('/var/lib/tftpboot/ipexe.efi')
+          .with(
+            'ensure' => 'file',
+            'source' => 'http://boot.ipxe.org/ipxe.efi',
+            'owner'  => 'root',
+            'group'  => 'root',
+            'mode'   => '0755',
+          )
+
+        is_expected.to contain_file('/var/lib/tftpboot/winpe.ipxe')
+          .with(
+            'ensure' => 'file',
+            'owner'  => 'root',
+            'group'  => 'root',
+            'mode'   => '0755',
+          )
+
         is_expected.to contain_pxe_install__partitioning__redhat('ct01')
           .with(
             'hostname'       => 'ct01',
@@ -529,7 +831,7 @@ describe 'pxe_install' do
             },
             'kickstart_file' => '/export/repos/kickstart/ct01',
           )
-        # Pxe_install::Partitioning::Ubuntu[ct02]
+
         is_expected.to contain_pxe_install__partitioning__ubuntu('ct02')
           .with(
             'hostname'       => 'ct02',
@@ -586,7 +888,7 @@ describe 'pxe_install' do
             },
             'kickstart_file' => '/export/repos/kickstart/ct02',
           )
-        # Pxe_install::Partitioning::Debian[ct02]
+
         is_expected.to contain_pxe_install__partitioning__debian('ct02')
           .with(
             'hostname'       => 'ct02',
@@ -646,7 +948,7 @@ describe 'pxe_install' do
             'template_part_entry' => 'pxe_install/ubuntu/partition_entry.epp',
             'template_part_finish' => 'pxe_install/ubuntu/partition_finish.epp',
           )
-        # Pxe_install::Partitioning::Debian[ct03]
+
         is_expected.to contain_pxe_install__partitioning__ubuntu('ct03')
           .with(
             'hostname'       => 'ct03',
@@ -703,7 +1005,7 @@ describe 'pxe_install' do
             },
             'kickstart_file' => '/export/repos/kickstart/ct03',
           )
-        # Pxe_install::Partitioning::Ubuntu[ct03]
+
         is_expected.to contain_pxe_install__partitioning__debian('ct03')
           .with(
             'hostname'       => 'ct03',
@@ -788,147 +1090,144 @@ describe 'pxe_install' do
             'mode'   => '0644',
           )
 
-        # Concat::Fragment[ct01-/]
         is_expected.to contain_concat__fragment('ct01-/')
           .with(
             'order'   => 500,
             'target'  => '/export/repos/kickstart/ct01',
           )
-        # Concat::Fragment[ct01-/boot]
+
         is_expected.to contain_concat__fragment('ct01-/boot')
           .with(
             'order'   => 500,
             'target'  => '/export/repos/kickstart/ct01',
           )
-        # Concat::Fragment[ct01-finish]
+
         is_expected.to contain_concat__fragment('ct01-finish')
           .with(
             'order'   => 999,
             'target'  => '/export/repos/kickstart/ct01',
           )
-        # Concat::Fragment[ct01-pv.01]
+
         is_expected.to contain_concat__fragment('ct01-pv.01')
           .with(
             'order'   => 500,
             'target'  => '/export/repos/kickstart/ct01',
           )
-        # Concat::Fragment[ct01-start]
+
         is_expected.to contain_concat__fragment('ct01-start')
           .with(
             'order'   => 1,
             'target'  => '/export/repos/kickstart/ct01',
           )
-        # Concat::Fragment[ct01-swap]
+
         is_expected.to contain_concat__fragment('ct01-swap')
           .with(
             'order'   => 500,
             'target'  => '/export/repos/kickstart/ct01',
           )
-        # Concat::Fragment[ct01-vgos]
+
         is_expected.to contain_concat__fragment('ct01-vgos')
           .with(
             'order'   => 500,
             'target'  => '/export/repos/kickstart/ct01',
           )
 
-        # Concat::Fragment[ct02-/]
         is_expected.to contain_concat__fragment('ct02-/')
           .with(
             'order'   => 408,
             'target'  => '/export/repos/kickstart/ct02',
           )
-        # Concat::Fragment[ct02-/boot]
+
         is_expected.to contain_concat__fragment('ct02-/boot')
           .with(
             'order'   => 405,
             'target'  => '/export/repos/kickstart/ct02',
           )
-        # Concat::Fragment[ct02-finish]
+
         is_expected.to contain_concat__fragment('ct02-finish')
           .with(
             'order'   => 999,
             'target'  => '/export/repos/kickstart/ct02',
           )
-        # Concat::Fragment[ct02-partioning-finish]
+
         is_expected.to contain_concat__fragment('ct02-partioning-finish')
           .with(
             'order'   => 600,
             'target'  => '/export/repos/kickstart/ct02',
           )
-        # Concat::Fragment[ct02-partition-start]
+
         is_expected.to contain_concat__fragment('ct02-partition-start')
           .with(
             'order'   => 400,
             'target'  => '/export/repos/kickstart/ct02',
           )
-        # Concat::Fragment[ct02-start]
+
         is_expected.to contain_concat__fragment('ct02-start')
           .with(
             'order'   => 1,
             'target'  => '/export/repos/kickstart/ct02',
           )
-        # Concat::Fragment[ct02-swap]
+
         is_expected.to contain_concat__fragment('ct02-swap')
           .with(
             'order'   => 407,
             'target'  => '/export/repos/kickstart/ct02',
           )
-        # Concat::Fragment[ct02-vgos]
+
         is_expected.to contain_concat__fragment('ct02-vgos')
           .with(
             'order'   => 406,
             'target'  => '/export/repos/kickstart/ct02',
           )
-        # Concat::Fragment[ct03-/]
+
         is_expected.to contain_concat__fragment('ct03-/')
           .with(
             'order'   => 408,
             'target'  => '/export/repos/kickstart/ct03',
           )
-        # Concat::Fragment[ct03-/boot]
+
         is_expected.to contain_concat__fragment('ct03-/boot')
           .with(
             'order'   => 405,
             'target'  => '/export/repos/kickstart/ct03',
           )
-        # Concat::Fragment[ct03-finish]
+
         is_expected.to contain_concat__fragment('ct03-finish')
           .with(
             'order'   => 999,
             'target'  => '/export/repos/kickstart/ct03',
           )
-        # Concat::Fragment[ct03-partioning-finish]
+
         is_expected.to contain_concat__fragment('ct03-partioning-finish')
           .with(
             'order'   => 600,
             'target'  => '/export/repos/kickstart/ct03',
           )
-        # Concat::Fragment[ct03-partition-start]
+
         is_expected.to contain_concat__fragment('ct03-partition-start')
           .with(
             'order'   => 400,
             'target'  => '/export/repos/kickstart/ct03',
           )
-        # Concat::Fragment[ct03-start]
+
         is_expected.to contain_concat__fragment('ct03-start')
           .with(
             'order'   => 1,
             'target'  => '/export/repos/kickstart/ct03',
           )
-        # Concat::Fragment[ct03-swap]
+
         is_expected.to contain_concat__fragment('ct03-swap')
           .with(
             'order'   => 407,
             'target'  => '/export/repos/kickstart/ct03',
           )
-        # Concat::Fragment[ct03-vgos]
+
         is_expected.to contain_concat__fragment('ct03-vgos')
           .with(
             'order'   => 406,
             'target'  => '/export/repos/kickstart/ct03',
           )
 
-        # File[/export/repos/pub/debian-rc.local]
         is_expected.to contain_file('/export/repos/pub/debian-rc.local')
           .with(
             'ensure' => 'file',

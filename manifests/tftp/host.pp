@@ -48,6 +48,15 @@
 # @param ks
 #    CentOS/RedHat  7 and 8 have different ways to give kickstart informsation. 
 #
+# @param mirror_host
+#    The mirror host.
+#
+# @param mirror_uri
+#    The URI to use.
+#
+# @param scenario_data
+#    Data describing the install scenario.
+#
 # @example
 #   pxe_install::tftp::host { 'namevar': }
 #
@@ -55,20 +64,28 @@
 define pxe_install::tftp::host (
   String $ostype,
   Enum['absent', 'present'] $ensure,
-  Optional[String] $prefix     = '',
-  Optional[String] $path       = '',
-  Optional[String] $ksurl      = '',
-  Optional[String] $ksdevice   = '',
-  Optional[String] $puppetenv  = 'none',
-  Optional[String] $puppetrole = 'none',
-  Optional[String] $datacenter = 'none',
-  Optional[String] $locale     = 'en_US',
-  Optional[String] $keymap     = '',
-  Optional[String] $loghost    = '',
-  Optional[Integer] $logport   = 0,
-  Optional[String] $ks         = '',
+  Optional[String] $prefix      = '',
+  Optional[String] $path        = '',
+  Optional[String] $ksurl       = '',
+  Optional[String] $ksdevice    = '',
+  Optional[String] $puppetenv   = 'none',
+  Optional[String] $puppetrole  = 'none',
+  Optional[String] $datacenter  = 'none',
+  Optional[String] $locale      = 'en_US',
+  Optional[String] $keymap      = '',
+  Optional[String] $loghost     = '',
+  Optional[Integer] $logport    = 0,
+  Optional[String] $ks          = '',
+  Optional[String] $mirror_host = '',
+  Optional[String] $mirror_uri  = '',
+  Optional[Hash] $scenario_data = {},
 ) {
 
+  if  $ostype.downcase() == 'windows' and
+      ($mirror_host == '' or $mirror_uri == '')
+  {
+    fail('A Windows node needs a mirror_host and a mirror_uri to create a TFTP entry!')
+  }
   $octets = split($title, /\./)
   $hex = sprintf('%<a>02x%<b>02x%<c>02x%<d>02x', {
     'a' => $octets[0],
@@ -107,17 +124,19 @@ define pxe_install::tftp::host (
       }
       file { $filename:
         content => epp('pxe_install/debian/tftp-entry.epp', {
-          path       => $_path,
-          prefix     => $prefix,
-          ksurl      => $ksurl,
-          locale     => $locale,
-          keymap     => $keymap,
-          loghost    => $loghost,
-          logport    => $logport,
-          ksdevice   => $ksdevice,
-          puppetenv  => $puppetenv,
-          puppetrole => $puppetrole,
-          datacenter => $datacenter,
+          path        => $_path,
+          prefix      => $prefix,
+          ksurl       => $ksurl,
+          locale      => $locale,
+          keymap      => $keymap,
+          loghost     => $loghost,
+          logport     => $logport,
+          ksdevice    => $ksdevice,
+          puppetenv   => $puppetenv,
+          puppetrole  => $puppetrole,
+          datacenter  => $datacenter,
+          mirror_host => $mirror_host,
+          mirror_uri  => $mirror_uri,
         }),
         *       => $file_data,
       }
@@ -128,17 +147,29 @@ define pxe_install::tftp::host (
       }
       file { $filename:
         content => epp('pxe_install/ubuntu/tftp-entry.epp', {
-          path       => $_path,
-          prefix     => $prefix,
-          ksurl      => $ksurl,
-          locale     => $locale,
-          keymap     => $keymap,
-          loghost    => $loghost,
-          logport    => $logport,
-          ksdevice   => $ksdevice,
-          puppetenv  => $puppetenv,
-          puppetrole => $puppetrole,
-          datacenter => $datacenter,
+          path        => $_path,
+          prefix      => $prefix,
+          ksurl       => $ksurl,
+          locale      => $locale,
+          keymap      => $keymap,
+          loghost     => $loghost,
+          logport     => $logport,
+          ksdevice    => $ksdevice,
+          puppetenv   => $puppetenv,
+          puppetrole  => $puppetrole,
+          datacenter  => $datacenter,
+          mirror_host => $mirror_host,
+          mirror_uri  => $mirror_uri,
+        }),
+        *       => $file_data,
+      }
+    }
+    'windows': {
+      file { $filename:
+        content => epp('pxe_install/windows/tftp-entry.epp', {
+          path        => $_path,
+          mirror_host => $mirror_host,
+          mirror_uri  => $mirror_uri,
         }),
         *       => $file_data,
       }
@@ -147,13 +178,15 @@ define pxe_install::tftp::host (
       # RedHat/CentOS
       file { $filename:
         content => epp('pxe_install/redhat/tftp-entry.epp', {
-          prefix     => $prefix,
-          ksurl      => $ksurl,
-          ksdevice   => $ksdevice,
-          puppetenv  => $puppetenv,
-          puppetrole => $puppetrole,
-          datacenter => $datacenter,
-          ks         => $ks,
+          prefix      => $prefix,
+          ksurl       => $ksurl,
+          ksdevice    => $ksdevice,
+          puppetenv   => $puppetenv,
+          puppetrole  => $puppetrole,
+          datacenter  => $datacenter,
+          ks          => $ks,
+          mirror_host => $mirror_host,
+          mirror_uri  => $mirror_uri,
         }),
         *       => $file_data,
       }

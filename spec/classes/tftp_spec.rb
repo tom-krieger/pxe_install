@@ -122,6 +122,26 @@ describe 'pxe_install::tftp' do
             'group'  => 'root',
             'mode'   => '0755',
           )
+
+        is_expected.to contain_file('/var/lib/tftpboot/windows')
+          .with(
+            'ensure' => 'directory',
+          )
+
+        is_expected.to contain_file('/var/lib')
+          .with(
+            'ensure' => 'directory',
+          )
+
+        is_expected.to contain_file('/var')
+          .with(
+            'ensure' => 'directory',
+          )
+
+        is_expected.to contain_pxe_install__parent_dirs('create windows directory')
+          .with(
+            'dir_path' => '/var/lib/tftpboot/windows',
+          )
       }
     end
   end

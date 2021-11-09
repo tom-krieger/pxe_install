@@ -52,6 +52,19 @@ class pxe_install::tftp (
     fail('No ip for tftp server given and no ip can be determined!')
   }
 
+  unless has_key($tftp, 'directory') {
+    fail('No tftpboot directory given!')
+  }
+
+  $windows_dir = has_key($tftp, 'windows_directory') ? {
+    true    => $tftp['windows_directory'],
+    default => '/windows',
+  }
+
+  pxe_install::parent_dirs { 'create windows directory':
+    dir_path => "${tftp['directory']}${windows_dir}"
+  }
+
   ensure_resource('service', [$tftp['service']], {
     ensure => $srv_ensure,
     enable => $srv_enable,
@@ -141,4 +154,29 @@ class pxe_install::tftp (
     mode   => '0644',
     source => 'puppet:///modules/pxe_install/tftp-default',
   }
+
+  $manage_tftpboot = has_key($tftp, 'manage_tftpboot') ? {
+    true    => $tftp['manage_tftpboot'],
+    default => false,
+  }
+
+  $winpe_dir = has_key($tftp, 'winpe_dir') ? {
+    true    => $tftp['winpe_dir'],
+    default => 'winpe',
+  }
+
+  if $manage_tftpboot {
+
+    class { 'pxe_install::syslinux':
+      tftpboot_dir        => $basedir,
+      create_tftpboot_dir => true,
+    }
+
+    class { 'pxe_install::winipxe':
+      tftpboot_dir => $basedir,
+      winpe_dir    => $winpe_dir,
+
+    }
+  }
+
 }

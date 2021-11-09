@@ -1,0 +1,12 @@
+path <%= $path %>
+prompt 0
+timeout 0
+UI vesamenu.c32
+default ks
+
+label ks
+        menu label ^ks
+        menu default
+        com32 linux.c32
+        APPEND <%= $mirror_host %><%= $mirror_uri %>/wimboot
+        initrdfile=<%= $mirror_host %><%= $mirror_uri %>/boot/bootmgr,<%= $mirror_host %><%= $mirror_uri %>/boot/bcd,<%= $mirror_host %><%= $mirror_uri %>/boot/boot.sdi,<%= $mirror_host %><%= $mirror_uri %>/sources/boot.wim

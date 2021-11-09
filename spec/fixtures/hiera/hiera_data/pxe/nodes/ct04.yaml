@@ -1,11 +1,10 @@
 ---
 pxe_install::machines:
-  ct03:
+  ct04:
     ensure: present
     network:
-      mac: 00:11:22:33:44:77
-      prefix: ubuntu/18.04/amd64
-      fixedaddress: 10.0.0.32
+      mac: 00:11:22:33:44:88
+      fixedaddress: 10.0.0.132
       ksdevice: eth0
       gateway: 10.0.0.4
       netmask: 255.255.255.0
@@ -13,14 +12,11 @@ pxe_install::machines:
         - 10.0.0.62
         - 10.0.0.63
         - 10.0.0.25
-      boot_architecture: bios
-    ostype: ubuntu
+      boot_architecture: uefi
+    ostype: windows
+    osversion: '2019'
     parameter:
       env: production
       role: test
       dc: test
       agent: y
-    user:
-      fullname: Tom test
-      username: tester
-      password: "$5$h...."
