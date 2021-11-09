@@ -14,6 +14,11 @@ describe 'pxe_install::samba::host' do
       'subnet' => '255.255.255.0',
       'gateway' => '10.0.0.1',
       'dns' => ['10.0.0.65'],
+      'puppetmaster' => 'puppetmaster.localdomain',
+      'puppetrole' => 'test',
+      'datacenter' => 'testdc',
+      'puppetenv' => 'production',
+      'agent' => 'y',
     }
   end
 

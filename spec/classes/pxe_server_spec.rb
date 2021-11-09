@@ -523,6 +523,7 @@ describe 'pxe_install' do
             'subnet'            => '255.255.255.0',
             'gateway'           => '10.0.0.4',
             'dns'               => ['10.0.0.62', '10.0.0.63', '10.0.0.25'],
+            'puppetmaster'      => 'pmaster.localdomain',
           )
 
         is_expected.to contain_file('/var/lib/tftpboot')
@@ -532,6 +533,16 @@ describe 'pxe_install' do
             'group'        => 'root',
             'mode'         => '0755',
           )
+
+        is_expected.to contain_file('/var/lib/tftpboot/windows/winpe')
+          .with(
+            'ensure' => 'directory',
+          )
+
+        # is_expected.to contain_file('/tftpboot/windows')
+        #   .with(
+        #     'ensure' => 'directory',
+        #   )
 
         is_expected.to contain_file('/var/lib/tftpboot/pxelinux.cfg')
           .with(
@@ -599,7 +610,6 @@ describe 'pxe_install' do
             'mode'   => '0644',
           )
 
-        # Archive[syslinux-6.03]
         is_expected.to contain_archive('syslinux-6.03.tar.gz')
           .with(
             'path'         => '/opt/pxe_install/syslinux-6.03.tar.gz',
@@ -609,13 +619,13 @@ describe 'pxe_install' do
             'creates'      => '/opt/pxe_install/syslinux-6.03',
             'cleanup'      => true,
           )
-        # Class[Pxe_install::Syslinux]
+
         is_expected.to contain_class('pxe_install::syslinux')
           .with(
             'tftpboot_dir'        => '/var/lib/tftpboot',
             'create_tftpboot_dir' => true,
           )
-        # Class[Pxe_install::Winipxe]
+
         is_expected.to contain_class('pxe_install::winipxe')
           .with(
             'tftpboot_dir'        => '/var/lib/tftpboot',
@@ -658,7 +668,6 @@ describe 'pxe_install' do
             'ensure' => 'directory',
           )
 
-        # Exec[copying file pxelinux.0-/]
         is_expected.to contain_exec('copying file pxelinux.0-/')
           .with(
             'command' => 'cp /opt/pxe_install/syslinux-6.03/bios/core/pxelinux.0 /var/lib/tftpboot//pxelinux.0',
@@ -672,84 +681,84 @@ describe 'pxe_install' do
             'path'    => ['/bin/', '/usr/bin'],
             'unless'  => 'test -f /var/lib/tftpboot//lpxelinux.0',
           )
-        # Exec[copying file bootx64.efi-/]
+
         is_expected.to contain_exec('copying file bootx64.efi-/')
           .with(
             'command' => 'cp /opt/pxe_install/syslinux-6.03/efi64/efi/syslinux.efi /var/lib/tftpboot//bootx64.efi',
             'path'    => ['/bin/', '/usr/bin'],
             'unless'  => 'test -f /var/lib/tftpboot//bootx64.efi',
           )
-        # Exec[copying file ldlinux.c32-/]
+
         is_expected.to contain_exec('copying file ldlinux.c32-/')
           .with(
             'command' => 'cp /opt/pxe_install/syslinux-6.03/bios/com32/elflink/ldlinux/ldlinux.c32 /var/lib/tftpboot//ldlinux.c32',
             'path'    => ['/bin/', '/usr/bin'],
             'unless'  => 'test -f /var/lib/tftpboot//ldlinux.c32',
           )
-        # Exec[copying file ldlinux.e64-/]
+
         is_expected.to contain_exec('copying file ldlinux.e64-/')
           .with(
             'command' => 'cp /opt/pxe_install/syslinux-6.03/efi64/com32/elflink/ldlinux/ldlinux.e64 /var/lib/tftpboot//ldlinux.e64',
             'path'    => ['/bin/', '/usr/bin'],
             'unless'  => 'test -f /var/lib/tftpboot//ldlinux.e64',
           )
-        # Exec[copying file libcom32.c32-/bios]
+
         is_expected.to contain_exec('copying file libcom32.c32-/bios')
           .with(
             'command' => 'cp /opt/pxe_install/syslinux-6.03/bios/com32/lib/libcom32.c32 /var/lib/tftpboot/bios/libcom32.c32',
             'path'    => ['/bin/', '/usr/bin'],
             'unless'  => 'test -f /var/lib/tftpboot/bios/libcom32.c32',
           )
-        # Exec[copying file libutil.c32-/bios]
+
         is_expected.to contain_exec('copying file libutil.c32-/bios')
           .with(
             'command' => 'cp /opt/pxe_install/syslinux-6.03/bios/com32/libutil/libutil.c32 /var/lib/tftpboot/bios/libutil.c32',
             'path'    => ['/bin/', '/usr/bin'],
             'unless'  => 'test -f /var/lib/tftpboot/bios/libutil.c32',
           )
-        # Exec[copying file linux.c32-/bios]
+
         is_expected.to contain_exec('copying file linux.c32-/bios')
           .with(
             'command' => 'cp /opt/pxe_install/syslinux-6.03/bios/com32/modules/linux.c32 /var/lib/tftpboot/bios/linux.c32',
             'path'    => ['/bin/', '/usr/bin'],
             'unless'  => 'test -f /var/lib/tftpboot/bios/linux.c32',
           )
-        # Exec[copying file vesamenu.c32-/bios]
+
         is_expected.to contain_exec('copying file vesamenu.c32-/bios')
           .with(
             'command' => 'cp /opt/pxe_install/syslinux-6.03/bios/com32/menu/vesamenu.c32 /var/lib/tftpboot/bios/vesamenu.c32',
             'path'    => ['/bin/', '/usr/bin'],
             'unless'  => 'test -f /var/lib/tftpboot/bios/vesamenu.c32',
           )
-        # Exec[copying file libutil.c32-/efi64]
+
         is_expected.to contain_exec('copying file libutil.c32-/efi64')
           .with(
             'command' => 'cp /opt/pxe_install/syslinux-6.03/efi64/com32/libutil/libutil.c32 /var/lib/tftpboot/efi64/libutil.c32',
             'path'    => ['/bin/', '/usr/bin'],
             'unless'  => 'test -f /var/lib/tftpboot/efi64/libutil.c32',
           )
-        # Exec[copying file linux.c32-/efi64]
+
         is_expected.to contain_exec('copying file linux.c32-/efi64')
           .with(
             'command' => 'cp /opt/pxe_install/syslinux-6.03/efi64/com32/modules/linux.c32 /var/lib/tftpboot/efi64/linux.c32',
             'path'    => ['/bin/', '/usr/bin'],
             'unless'  => 'test -f /var/lib/tftpboot/efi64/linux.c32',
           )
-        # Exec[copying file vesamenu.c32-/efi64]
+
         is_expected.to contain_exec('copying file vesamenu.c32-/efi64')
           .with(
             'command' => 'cp /opt/pxe_install/syslinux-6.03/efi64/com32/menu/vesamenu.c32 /var/lib/tftpboot/efi64/vesamenu.c32',
             'path'    => ['/bin/', '/usr/bin'],
             'unless'  => 'test -f /var/lib/tftpboot/efi64/vesamenu.c32',
           )
-        # Exec[copying file libcom32.c32-/efi64]
+
         is_expected.to contain_exec('copying file libcom32.c32-/efi64')
           .with(
             'command' => 'cp /opt/pxe_install/syslinux-6.03/efi64/com32/lib/libcom32.c32 /var/lib/tftpboot/efi64/libcom32.c32',
             'path'    => ['/bin/', '/usr/bin'],
             'unless'  => 'test -f /var/lib/tftpboot/efi64/libcom32.c32',
           )
-        # File[/opt/pxe_install]
+
         is_expected.to contain_file('/opt/pxe_install')
           .with(
             'ensure' => 'directory',
@@ -757,7 +766,7 @@ describe 'pxe_install' do
             'group'  => 'root',
             'mode'   => '0755',
           )
-        # File[/var/lib/tftpboot//winpe/wimboot]
+
         is_expected.to contain_file('/var/lib/tftpboot/winpe/wimboot')
           .with(
             'ensure' => 'file',
@@ -766,7 +775,7 @@ describe 'pxe_install' do
             'group'  => 'root',
             'mode'   => '0755',
           )
-        # File[/var/lib/tftpboot/ipexe.efi]
+
         is_expected.to contain_file('/var/lib/tftpboot/ipexe.efi')
           .with(
             'ensure' => 'file',

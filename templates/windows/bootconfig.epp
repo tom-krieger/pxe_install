@@ -8,5 +8,11 @@
   "ipaddress": "<%= $fixedaddress %>",
   "subnet": "<%= $subnet %>",
   "gateway": "<%= $gateway %>",
-  "dns": [ <%= $dns_servers %> ]
+  "dns": [ <%= $dns_servers %> ],
+  "puppet_server": "<%= $puppetmaster %>",
+  "puppet_agent": "<%= $agent %>",
+  "agent_environment": "<%= $puppetenv %>",
+  "datacenter": "<%= $datacenter %>",
+  "role": "<%= $puppetrole %>",
+  "challenge_password": "<%= unwrap($challenge_password) %>"
 }

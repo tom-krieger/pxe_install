@@ -18,11 +18,17 @@
 # @param scripturl
 #    The URL where to download scripts
 #
+# @param puppetmaster
+#    The hostname of the puppet master.
+#
 # @param dhcp_entry
 #    Flag to configure DHCP
 #
 # @param tftp_entry
 #    Flag to manage TFTP
+#
+# @param challenge_password
+#    The password for autosining agent CSRs.
 #
 # @example
 #   pxe_install::kickstart { 'namevar': }
@@ -34,8 +40,10 @@ define pxe_install::kickstart (
   String $kickstart_url,
   String $repos_url,
   String $scripturl,
+  String $puppetmaster,
   Boolean $dhcp_entry,
   Boolean $tftp_entry,
+  Sensitive[String] $challenge_password,
 ) {
   $hostname     = $title
   $parameter    = $data['parameter']
@@ -221,15 +229,21 @@ define pxe_install::kickstart (
       $ksurl = ''
 
       pxe_install::samba::host { $hostname:
-        tftpboot_dir      => "${basedir}${windows_dir}",
-        osversion         => $data['osversion'],
-        iso               => $iso,
-        boot_architecture => $scenario_data['boot_architecture'],
-        fixedaddress      => $network_data['fixedaddress'],
-        macaddress        => $network_data['mac'],
-        subnet            => $network_data['netmask'],
-        gateway           => $network_data['gateway'],
-        dns               => $network_data['dns'],
+        tftpboot_dir       => "${basedir}${windows_dir}",
+        osversion          => $data['osversion'],
+        iso                => $iso,
+        boot_architecture  => $scenario_data['boot_architecture'],
+        fixedaddress       => $network_data['fixedaddress'],
+        macaddress         => $network_data['mac'],
+        subnet             => $network_data['netmask'],
+        gateway            => $network_data['gateway'],
+        dns                => $network_data['dns'],
+        puppetmaster       => $puppetmaster,
+        puppetenv          => $parameter['env'],
+        puppetrole         => $parameter['role'],
+        datacenter         => $parameter['dc'],
+        agent              => $parameter['agent'],
+        challenge_password => $pxe_install::challenge_password,
       }
     }
     default: {

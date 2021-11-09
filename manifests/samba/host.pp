@@ -26,6 +26,9 @@
 # @param dns
 #    An array with dns servers.
 #
+# @param puppetmaster
+#    The hostname of the puppet master.
+#
 # @param iso
 #    An ISO image to use.
 #
@@ -51,6 +54,12 @@ define pxe_install::samba::host (
   Stdlib::IP::Address::Nosubnet $subnet,
   Stdlib::IP::Address::Nosubnet $gateway,
   Array[Stdlib::IP::Address::Nosubnet] $dns,
+  String $puppetmaster,
+  String $puppetenv,
+  String $puppetrole,
+  String $datacenter,
+  String $agent,
+  Optional[Sensitive[String]] $challenge_password = undef,
   Optional[String] $iso                           = '',
   String $owner                                   = 'root',
   String $group                                   = 'root',
@@ -62,14 +71,20 @@ define pxe_install::samba::host (
   file { "${tftpboot_dir}/${mac_string}.cfg":
     ensure  => file,
     content => epp('pxe_install/windows/bootconfig.epp', {
-      osversion         => $osversion,
-      hostname          => $title,
-      iso               => $iso,
-      boot_architecture => $boot_architecture,
-      fixedaddress      => $fixedaddress,
-      subnet            => $subnet,
-      gateway           => $gateway,
-      dns_servers       => $dns_servers
+      osversion          => $osversion,
+      hostname           => $title,
+      iso                => $iso,
+      boot_architecture  => $boot_architecture,
+      fixedaddress       => $fixedaddress,
+      subnet             => $subnet,
+      gateway            => $gateway,
+      dns_servers        => $dns_servers,
+      puppetmaster       => $puppetmaster,
+      agent              => $agent,
+      puppetenv          => $puppetenv,
+      datacenter         => $datacenter,
+      puppetrole         => $puppetrole,
+      challenge_password => $challenge_password,
     }),
     owner   => $owner,
     group   => $group,
