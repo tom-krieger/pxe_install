@@ -373,7 +373,7 @@ define pxe_install::kickstart (
       comment => "Kickstart dhcp entry for ${hostname}",
       options => {
         routers   => $network_data['gateway'],
-        host-name => "\"${hostname}\"",
+        host-name => $hostname,
       },
     }
 
@@ -395,10 +395,24 @@ define pxe_install::kickstart (
 
     }
 
-    $dhcp_data = merge($dhcp_base_data, $dhcp_file_data)
+    $dhcp_ipxe_filename_data = has_key($network_data, 'ipxe_filename') ? {
+      true    => {
+        ipxe_filename => $network_data['ipxe_filename'],
+      },
+      default => {},
+    }
+
+    $dhcp_ipxe_bootstrap_data = has_key($network_data, 'ipxe_bootstrap') ? {
+      true    => {
+        ipxe_bootstrap => $network_data['ipxe_bootstrap'],
+      },
+      default => {},
+    }
+
+    $dhcp_host_data = merge($dhcp_base_data, $dhcp_file_data, $dhcp_ipxe_filename_data, $dhcp_ipxe_bootstrap_data)
 
     dhcp::host { $hostname:
-      * => $dhcp_data,
+      * => $dhcp_host_data,
     }
   }
 

@@ -274,9 +274,9 @@ describe 'pxe_install' do
             'ip' => '10.0.0.66',
             'options' => {
               'routers'   => '10.0.0.4',
-              'host-name' => '"ct01"',
-              'filename' => '"/tftpboot/test.0"',
+              'host-name' => 'ct01',
             },
+            'filename' => '/tftpboot/test.0',
             'comment' => 'Kickstart dhcp entry for ct01',
           )
 
@@ -286,9 +286,9 @@ describe 'pxe_install' do
             'ip' => '10.0.0.32',
             'options' => {
               'routers'   => '10.0.0.4',
-              'host-name' => '"ct03"',
-              'filename' => '"lpxelinux.0"',
+              'host-name' => 'ct03',
             },
+            'filename' => 'lpxelinux.0',
             'comment' => 'Kickstart dhcp entry for ct03',
           )
 
@@ -298,9 +298,9 @@ describe 'pxe_install' do
             'ip' => '10.0.0.132',
             'options' => {
               'routers'   => '10.0.0.4',
-              'host-name' => '"ct04"',
-              'filename' => '"ipxe_winpe.efi"',
+              'host-name' => 'ct04',
             },
+            'filename' => 'ipxe_winpe.efi',
             'comment' => 'Kickstart dhcp entry for ct04',
           )
 
