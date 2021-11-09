@@ -380,13 +380,13 @@ define pxe_install::kickstart (
     if has_key($network_data, 'filename') {
 
       $dhcp_file_data = {
-        filename  => "\"${network_data['filename']}\"",
+        filename  => ${network_data['filename']},
       }
 
     } elsif has_key($scenario_data, 'filename') {
 
       $dhcp_file_data = {
-        filename => "\"${scenario_data['filename']}\"",
+        filename => ${scenario_data['filename']},
       }
 
     } else {
