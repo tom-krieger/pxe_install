@@ -33,6 +33,7 @@
 * `pxe_install::partitioning::ubuntu`: Create a partion table for Ubuntu systems
 
 Create the partion entries for presdeed.
+* `pxe_install::samba::host`: Create a host entry for a Windows node
 * `pxe_install::tftp::host`: Create a tftp server entry for a host.
 
 ### Functions
@@ -79,11 +80,6 @@ The following parameters are available in the `pxe_install` class:
 * [`kickstart_url`](#kickstart_url)
 * [`puppetmaster`](#puppetmaster)
 * [`puppetmasterip`](#puppetmasterip)
-* [`debian_mirror`](#debian_mirror)
-* [`debian_mirror_dir`](#debian_mirror_dir)
-* [`ubuntu_mirror`](#ubuntu_mirror)
-* [`ubuntu_mirror_dir`](#ubuntu_mirror_dir)
-* [`centos_mirrors`](#centos_mirrors)
 * [`services`](#services)
 * [`machines`](#machines)
 * [`status_allow_from`](#status_allow_from)
@@ -102,6 +98,7 @@ The following parameters are available in the `pxe_install` class:
 * [`syslinux_name`](#syslinux_name)
 * [`syslinux_version`](#syslinux_version)
 * [`ipxefile`](#ipxefile)
+* [`mirrors`](#mirrors)
 * [`defaults`](#defaults)
 
 ##### <a name="installserverip"></a>`installserverip`
@@ -179,46 +176,6 @@ Data type: `Optional[String]`
 The ip of the Puppet master server
 
 Default value: `''`
-
-##### <a name="debian_mirror"></a>`debian_mirror`
-
-Data type: `Optional[String]`
-
-The Debian mirror host
-
-Default value: `''`
-
-##### <a name="debian_mirror_dir"></a>`debian_mirror_dir`
-
-Data type: `Optional[String]`
-
-The uri to use on the Debain mirror.
-
-Default value: `'/debian'`
-
-##### <a name="ubuntu_mirror"></a>`ubuntu_mirror`
-
-Data type: `Optional[String]`
-
-The Ubuntu mirror host
-
-Default value: `''`
-
-##### <a name="ubuntu_mirror_dir"></a>`ubuntu_mirror_dir`
-
-Data type: `Optional[String]`
-
-The uri to use on the Ubuntu mirror.
-
-Default value: `'/ubuntu'`
-
-##### <a name="centos_mirrors"></a>`centos_mirrors`
-
-Data type: `Optional[Hash]`
-
-hash with CentOS mirror hosts and directories
-
-Default value: `{}`
 
 ##### <a name="services"></a>`services`
 
@@ -363,6 +320,14 @@ Data type: `Optional[Stdlib::HTTPUrl]`
 The url to download the ipxe file.
 
 Default value: `$pxe_install::params::ipxefile`
+
+##### <a name="mirrors"></a>`mirrors`
+
+Data type: `Optional[Hash]`
+
+Hash with mirror definitions.
+
+Default value: `$pxe_install::params::mirrors`
 
 ##### <a name="defaults"></a>`defaults`
 

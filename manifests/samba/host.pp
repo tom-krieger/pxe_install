@@ -1,11 +1,11 @@
-# @summary Create a host entry for a Windoes node
+# @summary Create a host entry for a Windows node
 #
 # Create a host entry for a Windows node on the Samba share
 #
 # @param tftpboot_dir
 #    The directory to write the configuration file
 #
-# @param maccaddress
+# @param macaddress
 #    The mac address of the host
 #
 # @param osversion
@@ -23,7 +23,7 @@
 # @param gateway
 #    The default gateway to use.
 #
-# @apram dns
+# @param dns
 #    An array with dns servers.
 #
 # @param iso

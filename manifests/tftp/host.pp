@@ -48,6 +48,15 @@
 # @param ks
 #    CentOS/RedHat  7 and 8 have different ways to give kickstart informsation. 
 #
+# @param mirror_host
+#    The mirror host.
+#
+# @param mirror_uri
+#    The URI to use.
+#
+# @param scenario_data
+#    Data describing the install scenario.
+#
 # @example
 #   pxe_install::tftp::host { 'namevar': }
 #

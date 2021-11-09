@@ -38,21 +38,6 @@
 # @param puppetmasterip
 #    The ip of the Puppet master server
 #
-# @param debian_mirror
-#    The Debian mirror host
-#
-# @param debian_mirror_dir
-#    The uri to use on the Debain mirror.
-#
-# @param ubuntu_mirror
-#    The Ubuntu mirror host
-#
-# @param ubuntu_mirror_dir
-#    The uri to use on the Ubuntu mirror.
-#
-# @param centos_mirrors
-#    hash with CentOS mirror hosts and directories
-#
 # @param services
 #    Hash with services to configure. Valid are dhcp and tftp. Each service is a hash of how to configure
 #    that service.
@@ -108,6 +93,9 @@
 #
 # @param ipxefile
 #    The url to download the ipxe file.
+#
+# @param mirrors
+#    Hash with mirror definitions.
 #
 # @param defaults
 #    Default values.

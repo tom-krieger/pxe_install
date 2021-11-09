@@ -58,7 +58,7 @@ define pxe_install::kickstart (
       $lookupkey = 'windows'
     }
     default: {
-      fail("Unsupported os: ${ostype}. Only Debian, Ubuntu, redhat, CentOS and Windows are supported.")
+      fail("Unsupported os: ${ostype}. Only Debian, Ubuntu, Redhat, CentOS and Windows are supported.")
     }
   }
 
@@ -66,7 +66,7 @@ define pxe_install::kickstart (
 
   if has_key($data, 'partitioning') {
     $partitioning = $data['partitioning']
-  } elsif has_key($data, 'partitiontable') and has_key($pxe_install::defaults['partitioning'], $data['partitiontable']) {
+  } elsif has_key($data, 'partitiontable') and has_key($defaults['partitioning'], $data['partitiontable']) {
     $partitioning = $defaults['partitioning'][$data['partitiontable']]
   } else {
     $partitioning = $defaults['partitioning'][$lookupkey]
@@ -94,14 +94,14 @@ define pxe_install::kickstart (
     fail("A server needs a mac address for installation. ${hostname} has none!")
   }
 
-  unless has_key($data, 'osversion') and $ensure == 'present' and ($ostype.downcase() == 'centos' or $ostype.downcase() == 'windows') {
+  if ! has_key($data, 'osversion') and $ensure == 'present' and ($ostype.downcase() == 'centos' or $ostype.downcase() == 'windows') {
     fail("Host ${hostname} needs an osversion!")
   }
 
   if has_key($data, 'user') {
     $user = $data['user']
-  } elsif h_winpeas_key($pxe_install::defaults, 'user') {
-    $user = $pxe_install::defaults['user']
+  } elsif has_key($defaults, 'user') {
+    $user = $defaults['user']
   } else {
     $user = {}
   }
@@ -120,13 +120,13 @@ define pxe_install::kickstart (
   if has_key($data, 'loghost') {
     $loghost = $data['loghost']
   } else {
-    $loghost = $pxe_install::defaults['loghost']
+    $loghost = $defaults['loghost']
   }
 
   if has_key($data, 'logport') {
     $logport = $data['logport']
   } else {
-    $logport = $pxe_install::defaults['logport']
+    $logport = $defaults['logport']
   }
 
   $bootdevice = has_key($data, 'bootdevice') ? {
@@ -154,19 +154,19 @@ define pxe_install::kickstart (
     default => '',
   }
 
-  unless has_key($pxe_install::defaults, 'boot_scenarios') {
+  unless has_key($defaults, 'boot_scenarios') {
     fail('Boot scenario configuration is missing in defaults configuration.')
   }
 
   case $boot_architecture {
     'bios': {
-      $scenario_data = $pxe_install::defaults['boot_scenarios']['bios']
+      $scenario_data = $defaults['boot_scenarios']['bios']
     }
     'uefi': {
       if $ostype.downcase() == 'windows' {
-        $scenario_data = $pxe_install::defaults['boot_scenarios']['ipxe']
+        $scenario_data = $defaults['boot_scenarios']['ipxe']
       } else {
-        $scenario_data = $pxe_install::defaults['boot_scenarios']['efi64']
+        $scenario_data = $defaults['boot_scenarios']['efi64']
       }
     }
     default: {
@@ -180,7 +180,7 @@ define pxe_install::kickstart (
 
   $dns_data = has_key($network_data, 'dns') ? {
     true    => join($network_data['dns'], ','),
-    default => join($pxe_install::defaults['dns'], ','),
+    default => join($defaults['dns'], ','),
   }
 
   case $ostype.downcase() {
@@ -262,45 +262,45 @@ define pxe_install::kickstart (
 
   if has_key($network_data, 'domain') {
     $domain = $network_data['domain']
-  } elsif $pxe_install::defaults['domain'] != '' {
-    $domain = $pxe_install::defaults['domain']
+  } elsif $defaults['domain'] != '' {
+    $domain = $defaults['domain']
   } else {
     fail("No domain for ${hostname} given and no default domain available!")
   }
 
   $rootpw = has_key($data, 'rootpw') ? {
     true    => $data['rootpw'],
-    default => $pxe_install::defaults['rootpw']
+    default => $defaults['rootpw']
   }
 
   $language = has_key($data, 'language') ? {
     true    => $data['language'],
-    default => $pxe_install::defaults['language'],
+    default => $defaults['language'],
   }
 
   $country = has_key($data, 'country') ? {
     true    => $data['country'],
-    default => $pxe_install::defaults['country'],
+    default => $defaults['country'],
   }
 
   $locale = has_key($data, 'locale') ? {
     true    => $data['locale'],
-    default => $pxe_install::defaults['locale'],
+    default => $defaults['locale'],
   }
 
   $keyboard = has_key($data, 'keyboard') ? {
     true    => $data['keyboard'],
-    default => $pxe_install::defaults['keyboard'],
+    default => $defaults['keyboard'],
   }
 
   $timezone = has_key($data, 'timezone') ? {
     true    => $data['timezone'],
-    default => $pxe_install::defaults['timezone'],
+    default => $defaults['timezone'],
   }
 
   $keymap = has_key($data, 'keymap') ? {
     true    => $data['keymap'],
-    default => $pxe_install::defaults['keymap'],
+    default => $defaults['keymap'],
   }
 
   $ks_fqdn = "${hostname}.${domain}"
@@ -395,12 +395,7 @@ define pxe_install::kickstart (
 
     } else {
 
-      $dhcp_file_data = {
-        options => {
-          routers   => $network_data['gateway'],
-          host-name => $hostname,
-        },
-      }
+      $dhcp_file_data = {}
 
     }
 
