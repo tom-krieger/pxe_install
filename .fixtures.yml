@@ -4,6 +4,10 @@
 fixtures:
   symlinks:
     pxe_install: "#{source_dir}"
+  repositories:
+    puppet-dhcp: 
+      repo: "https://github.com/tom-krieger/puppet-dhcp.git"
+      ref: "master"
   forge_modules:
     stdlib:
       repo: "puppetlabs/stdlib"

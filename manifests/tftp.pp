@@ -52,6 +52,19 @@ class pxe_install::tftp (
     fail('No ip for tftp server given and no ip can be determined!')
   }
 
+  unless has_key($tftp, 'directory') {
+    fail('No tftpboot directory given!')
+  }
+
+  $windows_dir = has_key($tftp, 'windows_directory') ? {
+    true    => $tftp['windows_directory'],
+    default => '/windows',
+  }
+
+  pxe_install::parent_dirs { 'create windows directory':
+    dir_path => "${tftp['directory']}${windows_dir}"
+  }
+
   ensure_resource('service', [$tftp['service']], {
     ensure => $srv_ensure,
     enable => $srv_enable,

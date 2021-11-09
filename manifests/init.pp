@@ -151,20 +151,6 @@ class pxe_install (
     dir_path => $documentroot,
   }
 
-  $tftp_base_dir = has_key($pxe_install::tftp::tftp, 'directory') ? {
-    true => $pxe_install::tftp::tftp['directory'],
-    default => '/var/lib/tftpboot',
-  }
-
-  $windows_dir = has_key($pxe_install::tftp::tftp, 'windows_directory') ? {
-    true    => $pxe_install::tftp::tftp['windows_directory'],
-    default => '/windows',
-  }
-
-  pxe_install::parent_dirs { 'create document root dir':
-    dir_path => "${tftp_base_dir}${windows_dir}",
-  }
-
   file { "${scriptdir}/debian-post.sh":
     ensure  => file,
     content => epp('pxe_install/scripts/debian-post.sh.epp', {
