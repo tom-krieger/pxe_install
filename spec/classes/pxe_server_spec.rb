@@ -776,7 +776,7 @@ describe 'pxe_install' do
             'mode'   => '0755',
           )
 
-        is_expected.to contain_file('/var/lib/tftpboot/ipexe.efi')
+        is_expected.to contain_file('/var/lib/tftpboot/ipxe.efi')
           .with(
             'ensure' => 'file',
             'source' => 'http://boot.ipxe.org/ipxe.efi',

@@ -129,14 +129,6 @@ class pxe_install::tftp (
     mode   => '0755',
   })
 
-  ensure_resource('file', ["${basedir}/pxelinux.0"], {
-    ensure => file,
-    source => 'puppet:///modules/pxe_install/pxelinux.0',
-    owner  => 'root',
-    group  => 'root',
-    mode   => '0644',
-  })
-
   ensure_resource('file', ["${basedir}/${pxedir}"], {
     ensure       => directory,
     purge        => true,

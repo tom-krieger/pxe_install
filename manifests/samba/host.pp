@@ -29,6 +29,21 @@
 # @param puppetmaster
 #    The hostname of the puppet master.
 #
+# @param puppetenv
+#    The environment the puppet agant uses.
+#
+# @param puppetrole
+#    The role the node should get.
+#
+# @param datacenter
+#    The datacenter the host is located in.
+#
+# @param agent
+#    Accepts 'y' or 'n' and controls if the puppet agant is installed.
+#
+# @param challenge_password
+#    The challenge password (eyaml encrypted) for auto signing the CSR.
+#
 # @param iso
 #    An ISO image to use.
 #

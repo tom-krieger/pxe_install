@@ -16,22 +16,22 @@ class pxe_install::params {
   $install_unzip = false
   $syslinux_files = {
     '/' => {
-      'pxelinux.0' => '/bios/core/pxelinux.0',
-      'lpxelinux.0' => '/bios/core/lpxelinux.0',
-      'ldlinux.c32' => '/bios/com32/elflink/ldlinux/ldlinux.c32',
-      'bootx64.efi' => '/efi64/efi/syslinux.efi',
-      'ldlinux.e64' => '/efi64/com32/elflink/ldlinux/ldlinux.e64',
+      'pxelinux.0'   => '/bios/core/pxelinux.0',
+      'lpxelinux.0'  => '/bios/core/lpxelinux.0',
+      'ldlinux.c32'  => '/bios/com32/elflink/ldlinux/ldlinux.c32',
+      'bootx64.efi'  => '/efi64/efi/syslinux.efi',
+      'ldlinux.e64'  => '/efi64/com32/elflink/ldlinux/ldlinux.e64',
     },
     '/bios' => {
       'libcom32.c32' => '/bios/com32/lib/libcom32.c32',
-      'libutil.c32' => '/bios/com32/libutil/libutil.c32',
-      'linux.c32' => '/bios/com32/modules/linux.c32',
+      'libutil.c32'  => '/bios/com32/libutil/libutil.c32',
+      'linux.c32'    => '/bios/com32/modules/linux.c32',
       'vesamenu.c32' => '/bios/com32/menu/vesamenu.c32',
     },
     '/efi64' => {
       'libcom32.c32' => '/efi64/com32/lib/libcom32.c32',
-      'libutil.c32' => '/efi64/com32/libutil/libutil.c32',
-      'linux.c32' => '/efi64/com32/modules/linux.c32',
+      'libutil.c32'  => '/efi64/com32/libutil/libutil.c32',
+      'linux.c32'    => '/efi64/com32/modules/linux.c32',
       'vesamenu.c32' => '/efi64/com32/menu/vesamenu.c32',
     },
     '/winpe' => {

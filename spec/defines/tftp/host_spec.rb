@@ -108,6 +108,16 @@ describe 'pxe_install::tftp::host' do
             'mode'   => '0644',
           )
 
+        is_expected.to contain_file('/tftpboot/windows')
+          .with(
+            'ensure' => 'directory',
+          )
+
+        is_expectec.to contain_pxe_instal__: parent_dirs('create windows directory')
+          .with(
+            'parent_dirs' => '/tftpboot/windows',
+          )
+
         if os_facts[:osfamily].casecmp('debian').zero?
           is_expected.to contain_file('/etc/default/tftpd-hpa')
             .with(
