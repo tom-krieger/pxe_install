@@ -391,24 +391,6 @@ define pxe_install::kickstart (
       },
     }
 
-    if has_key($network_data, 'filename') {
-
-      $dhcp_file_data = {
-        filename  => $network_data['filename'],
-      }
-
-    } elsif has_key($scenario_data, 'filename') {
-
-      $dhcp_file_data = {
-        filename => $scenario_data['filename'],
-      }
-
-    } else {
-
-      $dhcp_file_data = {}
-
-    }
-
     $dhcp_ipxe_filename_data = has_key($network_data, 'ipxe_filename') ? {
       true    => {
         ipxe_filename => $network_data['ipxe_filename'],
@@ -421,6 +403,30 @@ define pxe_install::kickstart (
         ipxe_bootstrap => $network_data['ipxe_bootstrap'],
       },
       default => {},
+    }
+
+    if has_key($network_data, 'ipxe_bootstrap') and has_key($network_data, 'ipxe_bootstrap') {
+      $dhcp_file_data = {}
+    } else {
+
+      if has_key($network_data, 'filename') {
+
+        $dhcp_file_data = {
+          filename  => $network_data['filename'],
+        }
+
+      } elsif has_key($scenario_data, 'filename') {
+
+        $dhcp_file_data = {
+          filename => $scenario_data['filename'],
+        }
+
+      } else {
+
+        $dhcp_file_data = {}
+
+      }
+
     }
 
     $dhcp_host_data = merge($dhcp_base_data, $dhcp_file_data, $dhcp_ipxe_filename_data, $dhcp_ipxe_bootstrap_data)

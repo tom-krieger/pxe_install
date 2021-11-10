@@ -33,6 +33,7 @@ describe 'pxe_install::tftp::host' do
         group => 'tftpd',
         tftpserverbin => '/sbin/tftpd',
         directory => '/tftpboot',
+        windows_directory => '/windows',
         addfress => '0.0.0.0',
       },
     }
@@ -53,14 +54,6 @@ describe 'pxe_install::tftp::host' do
             'group'  => 'root',
             'mode'   => '0644',
           )
-
-        is_expected.to contain_file('/tftpboot/pxelinux.0')
-          .with(
-          'ensure' => 'file',
-          'owner'  => 'root',
-          'group'  => 'root',
-          'mode'   => '0644',
-        )
 
         is_expected.to contain_file('/tftpboot/pxelinux.cfg/default')
           .with(
@@ -113,9 +106,9 @@ describe 'pxe_install::tftp::host' do
             'ensure' => 'directory',
           )
 
-        is_expectec.to contain_pxe_instal__: parent_dirs('create windows directory')
+        is_expected.to contain_pxe_install__parent_dirs('create windows directory')
           .with(
-            'parent_dirs' => '/tftpboot/windows',
+            'dir_path' => '/tftpboot/windows',
           )
 
         if os_facts[:osfamily].casecmp('debian').zero?

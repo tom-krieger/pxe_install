@@ -86,6 +86,7 @@ define pxe_install::tftp::host (
   {
     fail('A Windows node needs a mirror_host and a mirror_uri to create a TFTP entry!')
   }
+
   $octets = split($title, /\./)
   $hex = sprintf('%<a>02x%<b>02x%<c>02x%<d>02x', {
     'a' => $octets[0],

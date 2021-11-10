@@ -555,14 +555,6 @@ describe 'pxe_install' do
             'recurse'      => true,
           )
 
-        is_expected.to contain_file('/var/lib/tftpboot/pxelinux.0')
-          .with(
-            'ensure' => 'file',
-            'owner'  => 'root',
-            'group'  => 'root',
-            'mode'   => '0644',
-          )
-
         is_expected.to contain_file('/var/lib/tftpboot/pxelinux.cfg/0A000020')
           .with(
             'ensure' => 'present',
