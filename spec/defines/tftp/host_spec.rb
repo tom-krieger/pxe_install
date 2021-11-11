@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'pp'
 
 describe 'pxe_install::tftp::host' do
   let(:title) { '10.0.0.1' }
@@ -54,6 +55,21 @@ describe 'pxe_install::tftp::host' do
             'group'  => 'root',
             'mode'   => '0644',
           )
+
+        content = catalogue.resource('file', '/tftpboot/pxelinux.cfg/0A000001').send(:parameters)[:content]
+        expected_lines = [
+          'path /boot-screens',
+          'prompt 0',
+          'timeout 0',
+          'default ks',
+          '',
+          'label ks',
+          '        menu label ^ks',
+          '        menu default',
+          '        kernel /linux',
+          '        append noprompt url= priority=critical vga=788 initrd=/initrd.gz interface= auto=true log_host=127.0.0.1 log_port=514 puppetenv=none role=none dc=none ---',
+        ]
+        expect(content.split("\n")).to match_array(expected_lines)
 
         is_expected.to contain_file('/tftpboot/pxelinux.cfg/default')
           .with(
@@ -119,6 +135,16 @@ describe 'pxe_install::tftp::host' do
               'group'  => 'root',
               'mode'   => '0644',
             )
+          content = catalogue.resource('file', '/etc/default/tftpd-hpa').send(:parameters)[:content]
+          expected_lines = [
+            '# /etc/default/tftpd-hpa',
+            '',
+            'TFTP_USERNAME="tftpd"',
+            'TFTP_DIRECTORY="/tftpboot"',
+            'TFTP_ADDRESS="172.16.254.254:67"',
+            'TFTP_OPTIONS="--secure -4 -v -v -v -v -m /etc/tftpd.map"',
+          ]
+          expect(content.split("\n")).to match_array(expected_lines)
         else
           is_expected.to contain_file('/etc/xinetd.d/tftp')
             .with(

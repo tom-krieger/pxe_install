@@ -253,6 +253,16 @@ class pxe_install (
     create_aliases    => $create_aliases,
   }
 
+  $tftpboot_dir = has_key($tftpd, 'directory') ? {
+    true => $tftpd['directory'],
+    default => '/var/lib/tftpboot',
+  }
+
+  $windows_dir = has_key($tftpd, 'windows_directory') ? {
+    true    => $tftpd['windows_directory'],
+    default => '/windows',
+  }
+
   $machines.each |$hostname, $data| {
 
     pxe_install::kickstart { $hostname:
@@ -265,6 +275,8 @@ class pxe_install (
       tftp_entry         => has_key($services, 'tftpd'),
       puppetmaster       => $puppetmaster,
       challenge_password => $challenge_password,
+      tftpboot_dir       => $tftpboot_dir,
+      windows_dir        => $windows_dir,
     }
 
   }

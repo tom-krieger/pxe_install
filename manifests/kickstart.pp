@@ -30,6 +30,12 @@
 # @param challenge_password
 #    The password for autosining agent CSRs.
 #
+# @param tftpboot_dir
+#    Tftpboot directory
+#
+# @param windows_dir
+#    Windows directory to use.
+#
 # @example
 #   pxe_install::kickstart { 'namevar': }
 #
@@ -44,6 +50,8 @@ define pxe_install::kickstart (
   Boolean $dhcp_entry,
   Boolean $tftp_entry,
   Sensitive[String] $challenge_password,
+  Stdlib::Absolutepath $tftpboot_dir,
+  String $windows_dir,
 ) {
   $hostname     = $title
   $parameter    = $data['parameter']
@@ -142,16 +150,6 @@ define pxe_install::kickstart (
     default => 'default',
   }
 
-  $basedir = has_key($pxe_install::tftp::tftp, 'directory') ? {
-    true => $pxe_install::tftp::tftp['directory'],
-    default => '/var/lib/tftpboot',
-  }
-
-  $windows_dir = has_key($pxe_install::tftp::tftp, 'windows_directory') ? {
-    true    => $pxe_install::tftp::tftp['windows_directory'],
-    default => '/windows',
-  }
-
   $iso = has_key($network_data, 'iso') ? {
     true    => $network_data['iso'],
     default => '',
@@ -229,7 +227,7 @@ define pxe_install::kickstart (
       $ksurl = ''
 
       pxe_install::samba::host { $hostname:
-        tftpboot_dir       => "${basedir}${windows_dir}",
+        tftpboot_dir       => "${tftpboot_dir}${windows_dir}",
         osversion          => $data['osversion'],
         iso                => $iso,
         boot_architecture  => $scenario_data['boot_architecture'],
@@ -243,7 +241,7 @@ define pxe_install::kickstart (
         puppetrole         => $parameter['role'],
         datacenter         => $parameter['dc'],
         agent              => $parameter['agent'],
-        challenge_password => $pxe_install::challenge_password,
+        challenge_password => $challenge_password,
       }
     }
     default: {
