@@ -110,7 +110,7 @@ class pxe_install::apache (
     $aliases = []
   }
 
-  apache::vhost { $servername:
+  apache::vhost { $servername: #lint:ignore:security_apache_no_ssl_vhost
     port              => 80,
     docroot           => $documentroot,
     servername        => $servername,

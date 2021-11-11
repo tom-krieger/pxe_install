@@ -1,4 +1,5 @@
-# @summary Download syslinux archive
+# @summary 
+#    Download syslinux archive
 #
 # Download syslinux archive and distribute files into tftpboot 
 #
@@ -97,7 +98,7 @@ class pxe_install::syslinux (
       } else {
 
         exec { "copying file ${dst}-${dir}":
-          command => "cp /opt/pxe_install/${archive}${src} ${tftpboot_dir}${dir}/${dst}",
+          command => "cp /opt/pxe_install/${archive}${src} ${tftpboot_dir}${dir}/${dst}", #lint:ignore:security_class_or_define_parameter_in_exec
           path    => ['/bin/', '/usr/bin'],
           unless  => "test -f ${tftpboot_dir}${dir}/${dst}",
           require => [Archive["${archive}.tar.gz"], File["${tftpboot_dir}${dir}"]],
