@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 * added Samba support to enable PXE installation of Windows
 * added Windows PXE installation support, create dhcp entries and tftp entries
 * added support for uefi and bios installations
+* manage tftpboot directory, download syslinux and wimboot
 
 ## v0.2.4
 
