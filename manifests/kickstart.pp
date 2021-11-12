@@ -228,22 +228,19 @@ define pxe_install::kickstart (
       } elsif has_key($defaults, 'isos') {
 
         $isos = $defaults['isos']
+
         echo { "iso for ${ostype.downcase()}":
-          message  => 'has iso defaults',
+          message  => "ISO: ${ostype.downcase()} - ${isos[$ostype.downcase()][$data['osversion']]}",
           loglevel => 'info',
           withpath => false
         }
+
         if
             has_key($isos, $ostype.downcase()) and
             has_key($isos[$ostype.downcase()], $data['osversion'])
         {
-          echo { "iso for ${ostype.downcase()}":
-            message  => "ISO: ${ostype.downcase()} - ${isos[$ostype.downcase()][$data['osversion']]}",
-            loglevel => 'info',
-            withpath => false
-          }
 
-          $iso = $defaults['isos'][$ostype.downcase()][$data['osversion']]
+          $iso = $isos[$ostype.downcase()][$data['osversion']]
         }
 
       } else {
