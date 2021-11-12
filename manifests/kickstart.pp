@@ -222,11 +222,22 @@ define pxe_install::kickstart (
       $ksurl = ''
 
       if has_key($network_data, 'iso') {
+
         $iso = $network_data['iso']
+
       } elsif has_key($defaults, 'isos') {
-        if has_key($defaults['isos'], $ostype.downcase()) and has_key($defaults['isos'][$ostype.downcase()], $data['osversion']) {
+
+        $isos = $defaults['isos']
+        if has_key($isos, $ostype.downcase()) and has_key($isos[$ostype.downcase()], $data['osversion']) {
+          echo {"iso for ${ostype.downcase(}":
+            message  => "ISO: ${ostype.downcase()} - ${isos[$ostype.downcase()][$data['osversion']]}",
+            loglevel => 'info',
+            withpath => false
+          }
+
           $iso = $defaults['isos'][$ostype.downcase()][$data['osversion']]
         }
+
       } else {
         $iso = ''
       }

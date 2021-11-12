@@ -14,7 +14,7 @@ pxe_install::machines:
         - 10.0.0.25
       boot_architecture: uefi
     ostype: windows
-    osversion: '2019'
+    osversion: "2019"
     parameter:
       env: production
       role: test
