@@ -229,7 +229,7 @@ define pxe_install::kickstart (
 
         $isos = $defaults['isos']
         if has_key($isos, $ostype.downcase()) and has_key($isos[$ostype.downcase()], $data['osversion']) {
-          echo {"iso for ${ostype.downcase(}":
+          echo { "iso for ${ostype.downcase()}":
             message  => "ISO: ${ostype.downcase()} - ${isos[$ostype.downcase()][$data['osversion']]}",
             loglevel => 'info',
             withpath => false
