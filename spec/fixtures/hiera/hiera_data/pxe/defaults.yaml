@@ -21,7 +21,7 @@ pxe_install::defaults:
       windows_support: true
     efi64:
       boot_architecture: uefi
-      filename: bootx64.efi
+      filename: iso
       http: true
       windows_support: false
     ipxe:
@@ -29,6 +29,9 @@ pxe_install::defaults:
       filename: ipxe_winpe.efi
       http: true
       windows_support: true
+  isos:
+    windows:
+      2019: SW_DVD9_Win_Server_STD_CORE_2019_1809.1_64Bit_English_DC_STD_MLF_X22-02970.ISO
   partitioning:
     example:
       "/boot":

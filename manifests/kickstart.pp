@@ -150,11 +150,6 @@ define pxe_install::kickstart (
     default => 'default',
   }
 
-  $iso = has_key($network_data, 'iso') ? {
-    true    => $network_data['iso'],
-    default => '',
-  }
-
   $boot_architecture = has_key($network_data, 'boot_architecture') ? {
     true    => $network_data['boot_architecture'],
     default => '',
@@ -225,6 +220,16 @@ define pxe_install::kickstart (
       $mirror_host = $pxe_install::mirrors['windows']['mirror_host']
       $mirror_uri = $pxe_install::mirrors['windows']['mirror_uri']
       $ksurl = ''
+
+      if has_key($network_data, 'iso') {
+        $iso = $network_data['iso']
+      } elsif has_key($defaults, 'isos') {
+        if has_key($defaults['isos'], $ostype.downcase()) and has_key($defaults['isos'][$ostype.downcase()], $data['osversion']) {
+          $iso = $defaults['isos'][$ostype.downcase()][$data['osversion']]
+        }
+      } else {
+        $iso = ''
+      }
 
       pxe_install::samba::host { $hostname:
         tftpboot_dir       => "${tftpboot_dir}${windows_dir}",
