@@ -229,12 +229,6 @@ define pxe_install::kickstart (
 
         $isos = $defaults['isos']
 
-        echo { "iso for ${ostype.downcase()} - ${isos[$ostype.downcase()][$data['osversion']]}":
-          message  => "ISO: ${ostype.downcase()} - ${isos[$ostype.downcase()][$data['osversion']]}",
-          loglevel => 'info',
-          withpath => false
-        }
-
         if
             has_key($isos, $ostype.downcase()) and
             has_key($isos[$ostype.downcase()], $data['osversion'])
@@ -244,12 +238,9 @@ define pxe_install::kickstart (
         }
 
       } else {
+
         $iso = ''
-        echo { 'no isos':
-          message  => 'has iso defaults',
-          loglevel => 'info',
-          withpath => false
-        }
+
       }
 
       pxe_install::samba::host { $hostname:
