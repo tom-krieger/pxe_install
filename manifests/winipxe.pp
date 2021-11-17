@@ -1,4 +1,4 @@
-# @summary 
+# @summary
 #    Install windows ipxe files
 #
 # Download and install Windows ipxe files
@@ -31,12 +31,11 @@ class pxe_install::winipxe (
   String $group                         = 'root',
   String $mode                          = '0755',
 ) {
-  file { "${tftpboot_dir}/ipxe.efi":
-    ensure => file,
+  archive { "${tftpboot_dir}/ipxe.efi":
+    ensure => present,
     source => $pxe_install::ipxefile,
-    owner  => $owner,
+    user   => $owner,
     group  => $group,
-    mode   => $mode,
   }
 
   file { "${tftpboot_dir}/winpe.ipxe":
