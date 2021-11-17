@@ -1,4 +1,5 @@
-# @summary 
+# @summary
+
 #    Create kickstart file
 #
 # Create a kickstart/preseed file with partitioning information, tftpboot entry and dhcp entry

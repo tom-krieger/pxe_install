@@ -1,4 +1,5 @@
-# @summary Create a host entry for a Windows node
+# @summary
+#    Create a host entry for a Windows node
 #
 # Create a host entry for a Windows node on the Samba share
 #
