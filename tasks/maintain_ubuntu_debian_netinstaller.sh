@@ -10,6 +10,7 @@ arch_dir=`dirname $PT_archive`
 filename=`basename $PT_archive`
 archive="/tmp/${filename}"
 
+echo "downloading $PT_archive to $archive"
 curl -kSsL -o "${archive}" "$PT_archive"
 if [ $? != 0 ] ; then
     echo "Download of net installer archive failed!"
@@ -52,6 +53,7 @@ else
 fi
 
 mkdir -p "${basedir}/${os}/${osvers}"
+echo "copying recursively $src ${basedir}/${os}/${osvers}/"
 cp -r $src "${basedir}/${os}/${osvers}/"
 rm -f $archive
 

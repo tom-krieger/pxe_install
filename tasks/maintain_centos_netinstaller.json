@@ -5,15 +5,16 @@
     "parameters": {
       "tftp_basedir": {
         "description": "The base directory of the tftpd server.",
-        "type": "String"
+        "type": "String",
+        "default": "/var/lib/tftpboot"
       },
       "archive": {
-          "description": "The URL including file to download the net installer.",
+          "description": "The URL including file to download the net installer from.",
           "type": "String"
       },
       "os": {
         "description": "The operating system",
-        "type": "Enum[ubuntu,debian,centos]"
+        "type": "Enum[centos]"
       },
       "os_version": {
         "description": "The os version",

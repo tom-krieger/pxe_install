@@ -37,6 +37,7 @@ fi
 cd /tmp/installer/isolinux
 mkdir -p "${basedir}/${os}/${osvers}/${ossubvers}"
 for f in boot.msg initrd.img isolinux.bin isolinux.cfg vmlinuz splash.png ; do
+    echo "copying $f ${basedir}/${os}/${osvers}/${ossubvers}/"
     cp $f "${basedir}/${os}/${osvers}/${ossubvers}/"
 done
 
