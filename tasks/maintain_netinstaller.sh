@@ -104,9 +104,9 @@ basedir=$PT_tftp_basedir
 os=$PT_os
 osvers=$PT_os_version
 ossubvers=$PT_os_subversion
-arch_name=`basename $PT_archive`
-arch_dir=`dirname $PT_archive`
-filename=`basename $PT_archive`
+arch_name=`basename $PT_archive_url`
+arch_dir=`dirname $PT_archive_url`
+filename=`basename $PT_archive_url`
 archive="/tmp/${filename}"
 
 case $os in
@@ -121,7 +121,7 @@ case $os in
             exit 2
         fi
 
-        download_installer "${archive}" "${PT_archive}"
+        download_installer "${archive}" "${PT_archive_url}"
         install_centos "${archive}" "${basedir}" "${os}" "${osvers}" "${ossubvers}"
         ;;
 
@@ -131,7 +131,7 @@ case $os in
             exit 2
         fi
 
-        download_installer "${archive}" "${PT_archive}"
+        download_installer "${archive}" "${PT_archive_url}"
         install_debian_ubuntu "${arch_name}" "${archive}" "${basedir}" "${os}" "${osvers}"
         ;;
 
@@ -141,7 +141,7 @@ case $os in
             exit 2
         fi
 
-        download_installer "${archive}" "${PT_archive}"
+        download_installer "${archive}" "${PT_archive_url}"
         install_debian_ubuntu "${arch_name}" "${archive}" "${basedir}" "${os}" "${osvers}"
         ;;
     *)

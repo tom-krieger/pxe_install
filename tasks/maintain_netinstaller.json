@@ -8,7 +8,7 @@
       "type": "String[1]",
       "default": "/var/lib/tftpboot"
     },
-    "archive": {
+    "archive_url": {
         "description": "The URL including file to download the net installer from.",
         "type": "String[1]"
     },
