@@ -5,12 +5,12 @@
     "parameters": {
       "tftp_basedir": {
         "description": "The base directory of the tftpd server.",
-        "type": "String",
+        "type": "String[1]",
         "default": "/var/lib/tftpboot"
       },
       "archive": {
           "description": "The URL including file to download the net installer from.",
-          "type": "String"
+          "type": "String[1]"
       },
       "os": {
         "description": "The operating system",
@@ -18,11 +18,11 @@
       },
       "os_version": {
         "description": "The os version",
-        "type": "String"
+        "type": "String[1]"
       },
       "os_subversion": {
         "description": "The os subversion like 'u9'",
-        "type": "String"
+        "type": "String[1]"
       }
     }
   }
