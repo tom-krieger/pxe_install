@@ -8,7 +8,7 @@
         "type": "String"
       },
       "archive": {
-          "description": "The full path and name of the net installer archive.",
+          "description": "The URL including file to download the net installer.",
           "type": "String"
       },
       "os": {

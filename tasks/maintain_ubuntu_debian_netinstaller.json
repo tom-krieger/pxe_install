@@ -8,12 +8,12 @@
         "type": "String"
       },
       "archive": {
-          "description": "The full path and name of the net installer archive.",
+          "description": "The URL to download the net installer archive.",
           "type": "String"
       },
       "os": {
         "description": "The operating system",
-        "type": "Enum[ubuntu,debian,centos]"
+        "type": "Enum[ubuntu,debian]"
       },
       "os_version": {
         "description": "The os version",

@@ -3,11 +3,19 @@
 set -e
 
 basedir=$PT_tftp_basedir
-archive=$PT_archive
 os=$PT_os
 osvers=$PT_os_version
 arch_name=`basename $archive`
 arch_dir=`dirname $archive`
+filename=`basename $archive`
+archive="/tmp/${flename}"
+
+
+curl -kSsL -o "${archive}" "$PT_archive"
+if [ $? != 0 ] ; then
+    echo "Download of net installer archive failed!"
+    exit 1
+fi
 
 rm -rf /tmp/installer
 

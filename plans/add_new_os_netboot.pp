@@ -12,8 +12,8 @@
 # @param os_version
 #    The os version
 #
-# @param netinstaller_file
-#    The path to the net installer archive
+# @param netinstaller_url
+#    The URL to donload the netinstaller file.
 #
 # @param tftp_basedir
 #    The base directory on the tftp server to install to
@@ -25,7 +25,7 @@ plan pxe_install::add_new_os_netboot (
   TargetSpec $nodes,
   Enum['ubuntu', 'debian', 'centos'] $os,
   String $os_version,
-  Stdlib::Absolutepath $netinstaller_file,
+  Stdlib::HTTPUrl $netinstaller_url,
   Stdlib::Absolutepath $tftp_basedir          = '/var/lib/tftpboot',
   Optional[String] $os_subversion             = '',
 ) {
@@ -57,15 +57,13 @@ plan pxe_install::add_new_os_netboot (
   get_targets($nodes).each |$target| {
     $target.apply_prep()
     $myfacts = facts($target)
-    $remote_file = "/tmp/${basename($netinstaller_file)}"
-    upload_file($netinstaller_file, $remote_file, $target, "Uploading netboot file ${netinstaller_file} to ${remote_file}")
 
     case $os {
       'debian', 'ubuntu': {
         $res = run_task('pxe_install::maintain_ubuntu_debian_netinstaller', $nodes,
                         '_catch_errors' => true,
                         'tftp_basedir' => $tftp_basedir,
-                        'archive' => $remote_file,
+                        'archive' => $netinstaller_url,
                         'os' => $os,
                         'os_version' => $os_version)
       }
@@ -73,7 +71,7 @@ plan pxe_install::add_new_os_netboot (
         $res = run_task('pxe_install::maintain_centos_netinstaller', $nodes,
                         '_catch_errors' => true,
                         'tftp_basedir' => $tftp_basedir,
-                        'archive' => $remote_file,
+                        'archive' => $netinstaller_url,
                         'os' => $os,
                         'os_version' => $os_version,
                         'os_subversion' => $os_subversion)
