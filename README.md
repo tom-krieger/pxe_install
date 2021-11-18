@@ -20,12 +20,11 @@
       * [Node partition configuration](#node-partition-configuration)
     * [Default values](#default-values)
     * [Minimal node configuration examples](#minima-node-configuration-examples)
-4. [Plans](#plans)
-5. [Tasks](#tasks)
-6. [Unit tests](#unit-tests)
-7. [Limitations](#limitations)
-8. [Development](#development)
-9. [Known issues](*known-issues)
+4. [Tasks](#tasks)
+5. [Unit tests](#unit-tests)
+6. [Limitations](#limitations)
+7. [Development](#development)
+8. [Known issues](*known-issues)
 
 ## `Description`
 
@@ -569,18 +568,10 @@ pxe_install::defaults:
 
 You can find more examples in the `spec/fixtures/hiera/hiera_data/pxe` folder.
 
-## Plans
-
-`add_new_os_netboot`:
-This plan adds the netboot files for a new OS. It accepts a netboot.tar.gz file for Debian and Ubuntu and needs an Netinstaller ISO file for CentOS.
-
 ## Tasks
 
-`maintain_centos_netinstaller`:
-This task is called from the `add_new_os_netboot` plan. It installs the CentOS netboot files from the netboot ISO image.
-
-`maintain_ubuntu_debian_netinstaller`:
-This tasl is called from the `add_new_os_netboot` plan. It installs the Ubuntu or Debian netinstaller files.
+`maintain_netinstaller`:
+This task can be called directly nd it will download the needed net installer image and install the files into the tftpboot directory.
 
 `create_password`:
 This task helps you to create SHA512 encrypted passwords. It uses the above mentioned Python code. This task has to run on the Puppet primary server.
