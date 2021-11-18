@@ -8,7 +8,7 @@ osvers=$PT_os_version
 arch_name=`basename $PT_archive`
 arch_dir=`dirname $PT_archive`
 filename=`basename $PT_archive`
-archive="/tmp/${flename}"
+archive="/tmp/${filename}"
 
 curl -kSsL -o "${archive}" "$PT_archive"
 if [ $? != 0 ] ; then

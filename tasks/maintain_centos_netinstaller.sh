@@ -7,7 +7,7 @@ ossubvers=$PT_os_subversion
 arch_name=`basename $PT_archive`
 arch_dir=`dirname $PT_archive`
 filename=`basename $PT_archive`
-archive="/tmp/${flename}"
+archive="/tmp/${filename}"
 
 echo "downloading $PT_archive to $archive"
 curl -kSsL -o "${archive}" "$PT_archive"
