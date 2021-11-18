@@ -9,6 +9,7 @@ arch_dir=`dirname $PT_archive`
 filename=`basename $PT_archive`
 archive="/tmp/${flename}"
 
+echo "downloading $PT_archive to $archive"
 curl -kSsL -o "${archive}" "$PT_archive"
 if [ $? != 0 ] ; then
     echo "Download of net installer archive failed!"
