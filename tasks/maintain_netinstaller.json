@@ -1,0 +1,28 @@
+{
+  "description": "Maintain CentOS/Ubuntu/Debian net installer files",
+  "input_method": "environment",
+  "supports_noop": false,
+  "parameters": {
+    "tftp_basedir": {
+      "description": "The base directory of the tftpd server.",
+      "type": "String[1]",
+      "default": "/var/lib/tftpboot"
+    },
+    "archive": {
+        "description": "The URL including file to download the net installer from.",
+        "type": "String[1]"
+    },
+    "os": {
+      "description": "The operating system",
+      "type": "Enum[centos,ubuntu,debian]"
+    },
+    "os_version": {
+      "description": "The os version",
+      "type": "String[1]"
+    },
+    "os_subversion": {
+      "description": "The os subversion like 'u9'",
+      "type": "Optional[String[1]]"
+    }
+  }
+}

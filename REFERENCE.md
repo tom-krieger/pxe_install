@@ -43,12 +43,7 @@ Create the partion entries for presdeed.
 ### Tasks
 
 * [`create_password`](#create_password): Outputs a SHA512 encrypted password for use with node installation.
-* [`maintain_centos_netinstaller`](#maintain_centos_netinstaller): Maintain Ubuntu/Debian net installer
-* [`maintain_ubuntu_debian_netinstaller`](#maintain_ubuntu_debian_netinstaller): Maintain Ubuntu/Debian net installer
-
-### Plans
-
-* [`pxe_install::add_new_os_netboot`](#pxe_installadd_new_os_netboot): Add a new of to tftpboot directory
+* [`maintain_netinstaller`](#maintain_netinstaller): Maintain CentOS/Ubuntu/Debian net installer
 
 ## Classes
 
@@ -402,9 +397,9 @@ Data type: `String[1]`
 
 The password to encrypt
 
-### <a name="maintain_centos_netinstaller"></a>`maintain_centos_netinstaller`
+### <a name="maintain_netinstaller"></a>`maintain_netinstaller`
 
-Maintain Ubuntu/Debian net installer
+Maintain CentOS/Ubuntu/Debian net installer
 
 **Supports noop?** false
 
@@ -412,120 +407,31 @@ Maintain Ubuntu/Debian net installer
 
 ##### `tftp_basedir`
 
-Data type: `String`
+Data type: `String[1]`
 
 The base directory of the tftpd server.
 
 ##### `archive`
 
-Data type: `String`
+Data type: `String[1]`
 
-The URL including file to download the net installer.
+The URL including file to download the net installer from.
 
 ##### `os`
 
-Data type: `Enum[ubuntu,debian,centos]`
+Data type: `Enum[centos,ubuntu,debian]`
 
 The operating system
 
 ##### `os_version`
 
-Data type: `String`
+Data type: `String[1]`
 
 The os version
 
 ##### `os_subversion`
 
-Data type: `String`
+Data type: `Optional[String[1]]`
 
 The os subversion like 'u9'
-
-### <a name="maintain_ubuntu_debian_netinstaller"></a>`maintain_ubuntu_debian_netinstaller`
-
-Maintain Ubuntu/Debian net installer
-
-**Supports noop?** false
-
-#### Parameters
-
-##### `tftp_basedir`
-
-Data type: `String`
-
-The base directory of the tftpd server.
-
-##### `archive`
-
-Data type: `String`
-
-The URL to download the net installer archive.
-
-##### `os`
-
-Data type: `Enum[ubuntu,debian]`
-
-The operating system
-
-##### `os_version`
-
-Data type: `String`
-
-The os version
-
-## Plans
-
-### <a name="pxe_installadd_new_os_netboot"></a>`pxe_install::add_new_os_netboot`
-
-Upload a net installer source and distribute the files into the tftpboot directory.
-
-#### Parameters
-
-The following parameters are available in the `pxe_install::add_new_os_netboot` plan:
-
-* [`nodes`](#nodes)
-* [`os`](#os)
-* [`os_version`](#os_version)
-* [`netinstaller_url`](#netinstaller_url)
-* [`tftp_basedir`](#tftp_basedir)
-* [`os_subversion`](#os_subversion)
-
-##### <a name="nodes"></a>`nodes`
-
-Data type: `TargetSpec`
-
-The target nodes
-
-##### <a name="os"></a>`os`
-
-Data type: `Enum['ubuntu', 'debian', 'centos']`
-
-The os to work on
-
-##### <a name="os_version"></a>`os_version`
-
-Data type: `String`
-
-The os version
-
-##### <a name="netinstaller_url"></a>`netinstaller_url`
-
-Data type: `Stdlib::HTTPUrl`
-
-The URL to donload the netinstaller file.
-
-##### <a name="tftp_basedir"></a>`tftp_basedir`
-
-Data type: `Stdlib::Absolutepath`
-
-The base directory on the tftp server to install to
-
-Default value: `'/var/lib/tftpboot'`
-
-##### <a name="os_subversion"></a>`os_subversion`
-
-Data type: `Optional[String]`
-
-This parameter in needed for CentOS and Redhat. You can give a subversion line "u3".
-
-Default value: `''`
 
