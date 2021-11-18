@@ -5,11 +5,10 @@ set -e
 basedir=$PT_tftp_basedir
 os=$PT_os
 osvers=$PT_os_version
-arch_name=`basename $archive`
-arch_dir=`dirname $archive`
-filename=`basename $archive`
+arch_name=`basename $PT_archive`
+arch_dir=`dirname $PT_archive`
+filename=`basename $PT_archive`
 archive="/tmp/${flename}"
-
 
 curl -kSsL -o "${archive}" "$PT_archive"
 if [ $? != 0 ] ; then

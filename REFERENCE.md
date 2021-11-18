@@ -420,7 +420,7 @@ The base directory of the tftpd server.
 
 Data type: `String`
 
-The full path and name of the net installer archive.
+The URL including file to download the net installer.
 
 ##### `os`
 
@@ -458,11 +458,11 @@ The base directory of the tftpd server.
 
 Data type: `String`
 
-The full path and name of the net installer archive.
+The URL to download the net installer archive.
 
 ##### `os`
 
-Data type: `Enum[ubuntu,debian,centos]`
+Data type: `Enum[ubuntu,debian]`
 
 The operating system
 
@@ -485,7 +485,7 @@ The following parameters are available in the `pxe_install::add_new_os_netboot` 
 * [`nodes`](#nodes)
 * [`os`](#os)
 * [`os_version`](#os_version)
-* [`netinstaller_file`](#netinstaller_file)
+* [`netinstaller_url`](#netinstaller_url)
 * [`tftp_basedir`](#tftp_basedir)
 * [`os_subversion`](#os_subversion)
 
@@ -507,11 +507,11 @@ Data type: `String`
 
 The os version
 
-##### <a name="netinstaller_file"></a>`netinstaller_file`
+##### <a name="netinstaller_url"></a>`netinstaller_url`
 
-Data type: `Stdlib::Absolutepath`
+Data type: `Stdlib::HTTPUrl`
 
-The path to the net installer archive
+The URL to donload the netinstaller file.
 
 ##### <a name="tftp_basedir"></a>`tftp_basedir`
 
