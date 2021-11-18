@@ -1,5 +1,4 @@
 # @summary
-
 #    Create kickstart file
 #
 # Create a kickstart/preseed file with partitioning information, tftpboot entry and dhcp entry
@@ -236,6 +235,11 @@ define pxe_install::kickstart (
         {
 
           $iso = $isos[$ostype.downcase()][$data['osversion']]
+
+        } else {
+
+          $iso = ''
+
         }
 
       } else {

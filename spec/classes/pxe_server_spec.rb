@@ -768,13 +768,12 @@ describe 'pxe_install' do
             'mode'   => '0755',
           )
 
-        is_expected.to contain_file('/var/lib/tftpboot/ipxe.efi')
+        is_expected.to contain_archive('/var/lib/tftpboot/ipxe.efi')
           .with(
-            'ensure' => 'file',
+            'ensure' => 'present',
             'source' => 'http://boot.ipxe.org/ipxe.efi',
-            'owner'  => 'root',
+            'user'   => 'root',
             'group'  => 'root',
-            'mode'   => '0755',
           )
 
         is_expected.to contain_file('/var/lib/tftpboot/winpe.ipxe')

@@ -1,4 +1,4 @@
-# @summary 
+# @summary
 #    Download syslinux archive
 #
 # Download syslinux archive and distribute files into tftpboot 
