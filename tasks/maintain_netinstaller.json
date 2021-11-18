@@ -4,24 +4,24 @@
   "supports_noop": false,
   "parameters": {
     "tftp_basedir": {
-      "description": "The base directory of the tftpd server.",
+      "description": "The base directory of the tftpd server where the net installer files go to.",
       "type": "String[1]",
       "default": "/var/lib/tftpboot"
     },
     "archive_url": {
-        "description": "The URL including file to download the net installer from.",
+        "description": "Where to download he net installer from.",
         "type": "String[1]"
     },
     "os": {
-      "description": "The operating system",
+      "description": "The operating system.",
       "type": "Enum[centos,ubuntu,debian]"
     },
     "os_version": {
-      "description": "The os version",
+      "description": "The operting system version, depending on the OS.",
       "type": "String[1]"
     },
     "os_subversion": {
-      "description": "The os subversion like 'u9'",
+      "description": "The operating system subversion for CentOS like 'u9'.",
       "type": "Optional[String[1]]"
     }
   }

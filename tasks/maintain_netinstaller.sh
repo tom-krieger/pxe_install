@@ -1,11 +1,16 @@
-#!/bin/sh
+#!/bin/bash
 
 # Puppet Task Name: maintain_netinstaller
+#
+# Maintain the net installer files for CentOS, Ubuntu and Debian. 
+# The needed file will be downloaded from the internet
+# or from an internel webserver.
 
-set -e
+set +e
 
+# Downlod net installer
 function download_installer() {
-    echo "downloading $1 to $2"
+    echo "downloading $2 to $1"
     curl -kSsL -o "${1}" "${2}"
     if [ $? != 0 ] ; then
         echo "Download of net installer archive failed!"
@@ -13,6 +18,7 @@ function download_installer() {
     fi
 }
 
+# unpack and install net installer files
 function install_debian_ubuntu() {
 
     arch_name=$1
@@ -57,11 +63,12 @@ function install_debian_ubuntu() {
     fi
 
     mkdir -p "${basedir}/${os}/${osvers}"
-    echo "copying recursively $src ${basedir}/${os}/${osvers}/"
+    echo "copying recursively $src to ${basedir}/${os}/${osvers}/"
     cp -r $src "${basedir}/${os}/${osvers}/"
     rm -f $archive
 }
 
+# unpack and install net instller files
 function install_centos() {
 
     archive=$1
@@ -91,7 +98,7 @@ function install_centos() {
     cd /tmp/installer/isolinux
     mkdir -p "${basedir}/${os}/${osvers}/${ossubvers}"
     for f in boot.msg initrd.img isolinux.bin isolinux.cfg vmlinuz splash.png ; do
-        echo "copying $f ${basedir}/${os}/${osvers}/${ossubvers}/"
+        echo "copying $f to ${basedir}/${os}/${osvers}/${ossubvers}/"
         cp $f "${basedir}/${os}/${osvers}/${ossubvers}/"
     done
 
@@ -109,10 +116,18 @@ arch_dir=`dirname $PT_archive_url`
 filename=`basename $PT_archive_url`
 archive="/tmp/${filename}"
 
+echo
+echo "Download      : ${PT_archive_url}"
+echo "OS            : ${os}"
+echo "OS version    : ${osvers}"
+if [ -z "${ossubvers}" ] ; then
+    echo "OS sub version: ${ossubvers}"
+fi
+
 case $os in
     'centos')
         if [ "${osvers}" != "7" -a "${osvers}" != "8" ] ; then
-            echo "CentOS support version 7 and 8 only!"
+            echo "CentOS supports version 7 and 8 only!"
             exit 2
         fi
 
