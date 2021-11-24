@@ -43,7 +43,7 @@ Create the partion entries for presdeed.
 ### Tasks
 
 * [`create_password`](#create_password): Outputs a SHA512 encrypted password for use with node installation.
-* [`maintain_netinstaller`](#maintain_netinstaller): Maintain CentOS/Ubuntu/Debian net installer
+* [`maintain_netinstaller`](#maintain_netinstaller): Maintain CentOS/Ubuntu/Debian net installer files
 
 ## Classes
 
@@ -399,7 +399,7 @@ The password to encrypt
 
 ### <a name="maintain_netinstaller"></a>`maintain_netinstaller`
 
-Maintain CentOS/Ubuntu/Debian net installer
+Maintain CentOS/Ubuntu/Debian net installer files
 
 **Supports noop?** false
 
@@ -409,29 +409,29 @@ Maintain CentOS/Ubuntu/Debian net installer
 
 Data type: `String[1]`
 
-The base directory of the tftpd server.
+The base directory of the tftpd server where the net installer files go to.
 
-##### `archive`
+##### `archive_url`
 
 Data type: `String[1]`
 
-The URL including file to download the net installer from.
+Where to download he net installer from.
 
 ##### `os`
 
 Data type: `Enum[centos,ubuntu,debian]`
 
-The operating system
+The operating system.
 
 ##### `os_version`
 
 Data type: `String[1]`
 
-The os version
+The operting system version, depending on the OS.
 
 ##### `os_subversion`
 
 Data type: `Optional[String[1]]`
 
-The os subversion like 'u9'
+The operating system subversion for CentOS like 'u9'.
 

@@ -571,7 +571,7 @@ You can find more examples in the `spec/fixtures/hiera/hiera_data/pxe` folder.
 ## Tasks
 
 `maintain_netinstaller`:
-This task can be called directly nd it will download the needed net installer image and install the files into the tftpboot directory.
+This task can be called directly nd it will download the needed net installer image and install the files into the tftpboot directory. Here's an example for an CentOS 8 netinstaller URL: [http://centos.intergenia.de/8-stream/isos/x86_64/CentOS-Stream-8-x86_64-latest-boot.iso](http://centos.intergenia.de/8-stream/isos/x86_64/CentOS-Stream-8-x86_64-latest-boot.iso)
 
 `create_password`:
 This task helps you to create SHA512 encrypted passwords. It uses the above mentioned Python code. This task has to run on the Puppet primary server.
