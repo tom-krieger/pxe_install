@@ -1,6 +1,6 @@
 path <%= $path %>
 prompt 0
-timeout 0
+timeout 1
 UI vesamenu.c32
 default ks
 
