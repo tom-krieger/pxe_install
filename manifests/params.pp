@@ -89,18 +89,21 @@ class pxe_install::params {
         'boot_architecture' => 'bios',
         'filename' => 'lpxelinux.0',
         'http' => true,
+        'path' => 'bios',
         'windows_support' => true
       },
       'efi64'  => {
         'boot_architecture' => 'uefi',
         'filename' => 'bootx64.efi',
         'http' => true,
+        'path' => 'efi64',
         'windows_support' => false,
       },
       'ipxe' => {
         'boot_architecture' => 'uefi',
         'filename' => 'ipxe_winpe.efi',
         'http' => true,
+        'path' => '',
         'windows_support' => true,
       },
     },
