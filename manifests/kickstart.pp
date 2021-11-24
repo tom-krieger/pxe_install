@@ -505,7 +505,7 @@ define pxe_install::kickstart (
       ensure        => $ensure,
       ostype        => $ostype,
       prefix        => $prefix,
-      path          => $path,
+      path          => $scenario_data,
       ksurl         => $ksurl,
       ksdevice      => $network_data['ksdevice'],
       puppetenv     => $env,
