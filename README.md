@@ -23,7 +23,7 @@
 4. [Tasks](#tasks)
 5. [Unit tests](#unit-tests)
 6. [Limitations](#limitations)
-7. [Development](#development)
+7. [Contributors](#contributors)
 8. [Known issues](*known-issues)
 
 ## `Description`
@@ -582,11 +582,11 @@ Unit tests are mainly covered by the main `pxe_install_spec.rb` file.
 
 ## Limitations
 
-This module is written for my private install server. Therefore it is limited to what I needed. Especially paritioning is limited to partitions and logical LVM volumes.
+This module was initially written for my private install server. Therefore it is limited to what I needed. Especially paritioning is currentlylimited to partitions and logical LVM volumes.
 
-## Development
+## Contributors
 
-In the Development section, tell other users the ground rules for contributing to your project and how they should submit their work.
+Special thanks to my collegue Kevin for his support with Windows PXE installation.
 
 ## Known issues
 
