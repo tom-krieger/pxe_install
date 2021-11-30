@@ -98,7 +98,7 @@ control-repo/
 ├── data/                                 # Hiera data directory.
 │   ├── nodes/                            # Node-specific data goes here.
 │   ├── pxe/                              # Global PXE install data goes here.
-│   ├── pxe/nodes/                        # Node configutation goes here.
+│   ├── pxe/nodes/                        # Node configutation for PXE installs goes here.
 │   └── common.yaml                       # Common data goes here.
 ├── manifests/
 │   └── site.pp                           # The “main” manifest that contains a default node definition.
