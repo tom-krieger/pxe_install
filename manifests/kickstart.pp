@@ -188,7 +188,7 @@ define pxe_install::kickstart (
     'debian': {
       $template_start = 'pxe_install/debian/kickstart.epp'
       $template_finish = 'pxe_install/debian/kickstart-end.epp'
-      $mirror_kost = $pxe_install::mirrors['debian']['mirror_host']
+      $mirror_host = $pxe_install::mirrors['debian']['mirror_host']
       $mirror_uri = $pxe_install::mirrors['debian']['mirror_uri']
       $ksurl = "http://${pxe_install::repo_server}/kickstart/${hostname}"
       $installserverurl = ''

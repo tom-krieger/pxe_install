@@ -42,11 +42,11 @@ class pxe_install::params {
 
   $mirrors = {
     'debian' => {
-      'mirror_host' => 'https://repos.example.com',
+      'mirror_host' => 'repos.example.com',
       'mirror_uri'  => '/debian',
     },
     'ubuntu' => {
-      'mirror_host' => 'https://repos.example.com',
+      'mirror_host' => 'repos.example.com',
       'mirror_uri'  => '/ubuntu',
     },
     'centos' => {
