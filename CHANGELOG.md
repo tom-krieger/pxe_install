@@ -2,9 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
-## 0.3.1
+## 0.3.2
 
 * fixed a proplem with Debian preseed files
+
+## 0.3.1
+
+* broken, not published
 
 ## v0.3.0
 
