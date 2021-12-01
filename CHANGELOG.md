@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.3.1
+
+* fixed a proplem with Debian preseed files
+
 ## v0.3.0
 
 * added Samba support to enable PXE installation of Windows
