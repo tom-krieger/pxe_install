@@ -34,19 +34,14 @@ define pxe_install::partitioning::debian (
 ) {
 
   $nr = 400
-
-  concat::fragment { "${hostname}-partition-start":
-    content => epp($template_partitioning, {}),
-    target  => $kickstart_file,
-    order   => $nr,
-  }
-
   $devices = get_partition_devices($partitioning)
 
-  echo { "devices ${hostname}-${devices}":
-    message  => "${hostname}-${devices}",
-    loglevel => 'info',
-    withpath => false,
+  concat::fragment { "${hostname}-partition-start":
+    content => epp($template_partitioning, {
+      autopart     => $devices,
+    }),
+    target  => $kickstart_file,
+    order   => $nr,
   }
 
   $partitioning.each |$partition, $partition_data| {
