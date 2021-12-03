@@ -9,17 +9,12 @@ Puppet::Functions.create_function(:getdevices) do
   def devices(partitioning)
     device_list = []
     pp partitioning
-    if partitioning.nil? || partitioning.empty? 
-      'fail'
-    else
-    #partitioning.each do |part, part_data| 
-    #  pp part_data
-   #   if part_data.key?('device')
-    #    device_list.push($part_data['device'])
-    #  end
-    #end
-    #device_list.join(' ')
-      'ok'
+    return 'fail' if partitioning.empty? 
+    partitioning.each do |part, part_data| 
+      if part_data.key?('device')
+        device_list.push($part_data['device'])
+      end
     end
+    device_list.join(' ')
   end
 end
