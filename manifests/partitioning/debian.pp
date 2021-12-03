@@ -41,9 +41,10 @@ define pxe_install::partitioning::debian (
     order   => $nr,
   }
 
-  $devices = $partitioning.filter |$key, $data| {
+  $devices = $partitioning.reduce( [] ) |$memo, $x| {
+    $data = $partitioning[$x[0]]
     if has_key($data, 'device') {
-      downcase($data['device'])
+      $memo + [ downcase($data['device']) ]
     }
   }
 
