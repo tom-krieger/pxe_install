@@ -16,5 +16,6 @@ Puppet::Functions.create_function(:getdevices) do
     #  end
     #end
     #device_list.join(' ')
+    'ok'
   end
 end
