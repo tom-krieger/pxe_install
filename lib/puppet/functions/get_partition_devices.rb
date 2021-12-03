@@ -7,6 +7,7 @@ Puppet::Functions.create_function(:get_partition_devices) do
   end
 
   def get_partition_devices(partitioning)
+    call_function('sprintf', "%s", partitioning)
     device_list = []
     return 'fail' if partitioning.empty? 
     partitioning.each do |part, part_data| 
