@@ -41,6 +41,18 @@ define pxe_install::partitioning::debian (
     order   => $nr,
   }
 
+  $devices = $partitioning.filter |$key, $value| {
+    if has_key($value, 'device') {
+      $value['device']
+    }
+  }
+
+  echo { "devices ${devices}":
+    message  => $devices,
+    loglevel => 'info',
+    withpath => false,
+  }
+
   $partitioning.each |$partition, $partition_data| {
 
     $min = has_key($partition_data, 'min') ? {
@@ -99,6 +111,11 @@ define pxe_install::partitioning::debian (
       default => $partition,
     }
 
+    $defautignore = has_key($partition_data, 'defaultignore') ? {
+      true    => $partition_data['defaultignore'],
+      default => false,
+    }
+
     $device = has_key($partition_data, 'device') ?  {
       true    => $partition_data['device'],
       default => '',
@@ -128,21 +145,22 @@ define pxe_install::partitioning::debian (
 
     concat::fragment { "${hostname}-${partition}":
       content => epp($template_part_entry, {
-        min        => $min,
-        prio       => $prio,
-        max        => $max,
-        fstype     => $fstype,
-        primary    => $primary,
-        bootable   => $bootable,
-        format     => $format,
-        method     => $method,
-        filesystem => $filesystem,
-        label      => $label,
-        mountpoint => $mountpoint,
-        device     => $device,
-        vgname     => $vgname,
-        lvname     => $lvname,
-        invg       => $invg,
+        min          => $min,
+        prio         => $prio,
+        max          => $max,
+        fstype       => $fstype,
+        primary      => $primary,
+        bootable     => $bootable,
+        format       => $format,
+        method       => $method,
+        filesystem   => $filesystem,
+        label        => $label,
+        mountpoint   => $mountpoint,
+        device       => $device,
+        vgname       => $vgname,
+        lvname       => $lvname,
+        invg         => $invg,
+        defautignore => $defautignore,
       }),
       target  => $kickstart_file,
       order   => $order,
