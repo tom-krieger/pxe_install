@@ -20,7 +20,7 @@
                   <%- if $label != '' { -%>
                   label{ boot }                           \
                   <%- } -%>
-                  <%- if $mountpoint != '' { -%>
+                  <%- if $mountpoint != '' and $vgname == '' { -%>
                   mountpoint{ <%= $mountpoint %> }                     \
                   <%- } -%>
                   <%- if $device != '' { -%>
