@@ -9,6 +9,9 @@ Puppet::Functions.create_function(:getdevices) do
   def devices(partitioning)
     device_list = []
     pp partitioning
+    if partitioning.nil? || partitioning.empty? 
+      'fail'
+    else
     #partitioning.each do |part, part_data| 
     #  pp part_data
    #   if part_data.key?('device')
@@ -16,6 +19,7 @@ Puppet::Functions.create_function(:getdevices) do
     #  end
     #end
     #device_list.join(' ')
-    'ok'
+      'ok'
+    end
   end
 end
