@@ -3,6 +3,9 @@
 ### Partitioning
 ###############################################################################
 # d-i partman-auto/disk string /dev/sda
+<%- if ! empty($autopart) { -%>
+d-i partman-auto/disk string <%= $autopart %>
+<%- } -%>
 d-i partman-auto/method string lvm
 d-i partman-lvm/device_remove_lvm boolean true
 d-i partman-lvm/confirm boolean true

@@ -19,6 +19,7 @@ define pxe_install::partitioning::ubuntu (
   String $hostname,
   Hash $partitioning,
   String $kickstart_file,
+  Optional[String] $autopart = '',
 ) {
   $template_partitioning = 'pxe_install/ubuntu/partition.epp'
   $template_part_entry = 'pxe_install/ubuntu/partition_entry.epp'
@@ -28,6 +29,7 @@ define pxe_install::partitioning::ubuntu (
     hostname              => $hostname,
     partitioning          => $partitioning,
     kickstart_file        => $kickstart_file,
+    autopart              => $autopart,
     template_partitioning => $template_partitioning,
     template_part_entry   => $template_part_entry,
     template_part_finish  => $template_part_finish,

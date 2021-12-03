@@ -28,6 +28,7 @@ define pxe_install::partitioning::debian (
   String $hostname,
   Hash $partitioning,
   String $kickstart_file,
+  Optional[String] $autopart              = '',
   Optional[String] $template_partitioning = 'pxe_install/debian/partition.epp',
   Optional[String] $template_part_entry   = 'pxe_install/debian/partition_entry.epp',
   Optional[String] $template_part_finish  = 'pxe_install/debian/partition_finish.epp',
@@ -36,7 +37,9 @@ define pxe_install::partitioning::debian (
   $nr = 400
 
   concat::fragment { "${hostname}-partition-start":
-    content => epp($template_partitioning, {}),
+    content => epp($template_partitioning, {
+      autopart => $autopart,
+    }),
     target  => $kickstart_file,
     order   => $nr,
   }

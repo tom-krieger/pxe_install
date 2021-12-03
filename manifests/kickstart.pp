@@ -80,6 +80,11 @@ define pxe_install::kickstart (
 
   $defaults = $pxe_install::defaults
 
+  $autopart = has_key($data, 'autopart') ? {
+    true    => $data['autopart'],
+    default => '',
+  }
+
   if has_key($data, 'partitioning') {
     $partitioning = $data['partitioning']
   } elsif has_key($data, 'partitiontable') and has_key($defaults['partitioning'], $data['partitiontable']) {
@@ -197,6 +202,7 @@ define pxe_install::kickstart (
         hostname       => $hostname,
         partitioning   => $partitioning,
         kickstart_file => $kickstart_file,
+        autopart       => $autopart,
       }
 
     }
@@ -213,6 +219,7 @@ define pxe_install::kickstart (
         hostname       => $hostname,
         partitioning   => $partitioning,
         kickstart_file => $kickstart_file,
+        autopart       => $autopart,
       }
 
     }
