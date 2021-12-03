@@ -1,4 +1,7 @@
           <%= $min %> <%= $prio %> <%= $max %> <%= $fstype %>                                \
+                  <%- if $defaultignore { -%>
+                  $defaultignore{ }                      \
+                  <%- } -%>
                   <%- if $primary { -%>
                   $primary{ }                             \
                   <%- } -%>
