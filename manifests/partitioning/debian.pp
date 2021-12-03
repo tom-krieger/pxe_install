@@ -41,7 +41,11 @@ define pxe_install::partitioning::debian (
     order   => $nr,
   }
 
-  $devices = $partitioning.filter |$key, $data| { has_key($data, 'device') }
+  $devices = $partitioning.filter |$key, $data| {
+    if has_key($data, 'device') {
+      downcase($data['device'])
+    }
+  }
 
   echo { "devices ${hostname}-${devices}":
     message  => "${hostname}-${devices}",
