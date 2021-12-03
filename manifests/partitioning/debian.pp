@@ -102,7 +102,7 @@ define pxe_install::partitioning::debian (
       default => $partition,
     }
 
-    $defautignore = has_key($partition_data, 'defaultignore') ? {
+    $defaultignore = has_key($partition_data, 'defaultignore') ? {
       true    => $partition_data['defaultignore'],
       default => false,
     }
@@ -136,22 +136,22 @@ define pxe_install::partitioning::debian (
 
     concat::fragment { "${hostname}-${partition}":
       content => epp($template_part_entry, {
-        min          => $min,
-        prio         => $prio,
-        max          => $max,
-        fstype       => $fstype,
-        primary      => $primary,
-        bootable     => $bootable,
-        format       => $format,
-        method       => $method,
-        filesystem   => $filesystem,
-        label        => $label,
-        mountpoint   => $mountpoint,
-        device       => $device,
-        vgname       => $vgname,
-        lvname       => $lvname,
-        invg         => $invg,
-        defautignore => $defautignore,
+        min           => $min,
+        prio          => $prio,
+        max           => $max,
+        fstype        => $fstype,
+        primary       => $primary,
+        bootable      => $bootable,
+        format        => $format,
+        method        => $method,
+        filesystem    => $filesystem,
+        label         => $label,
+        mountpoint    => $mountpoint,
+        device        => $device,
+        vgname        => $vgname,
+        lvname        => $lvname,
+        invg          => $invg,
+        defaultignore => $defaultignore,
       }),
       target  => $kickstart_file,
       order   => $order,
