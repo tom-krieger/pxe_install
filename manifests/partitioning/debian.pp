@@ -41,7 +41,7 @@ define pxe_install::partitioning::debian (
     order   => $nr,
   }
 
-  $devices = getdevices($partitioning)
+  $devices = get_partition_devices($partitioning)
 
   echo { "devices ${hostname}-${devices}":
     message  => "${hostname}-${devices}",
