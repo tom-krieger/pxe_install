@@ -47,8 +47,8 @@ define pxe_install::partitioning::debian (
     }
   }
 
-  echo { "devices ${devices}":
-    message  => $devices,
+  echo { "devices ${hostname}-${devices}":
+    message  => "${hostname}-${devices}",
     loglevel => 'info',
     withpath => false,
   }
