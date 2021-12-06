@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.3.3
+
+Enable Debian and Ubuntu preseeds with more than one disk. Introduced defaultignore flag 
+for DEbain und Ubunto preseeds.
+
 ## 0.3.2
 
 * fixed a proplem with Debian preseed files

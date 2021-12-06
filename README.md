@@ -374,7 +374,7 @@ The available options:
 
 ##### `Ubuntu/Debian`
 
-A difference is that an `order` is needed for the concat fragments. Otherwirse the partition table will not work during preseed.
+A difference is that an `order` is needed for the concat fragments. Otherwirse the partition table will not work during preseed. If you have more than one disk in your partitioning infrmation, the partitioning is scanned before to create a `partman/auto-disk` entry with all availabe disk devices.
 
 Here're some small examples:
 
@@ -428,6 +428,7 @@ The special value "-1" is used to indicate unlimited partition size.
 * `fstype`:  the filesystem type, e. g. ext4
 * `primary`: accepts `true` or `false` and makes a partition a primary partitio
 * `bootable`: accepts `true` or `false` and makes a partition bootable
+* `defaultignore`: Used to void a partition definition so that it is ignored in the default case. That is to say it will be valid in the LVM case.
 * `method`: how to deal with the partition. Can have the following values:
   * format: format the partiotn
   * lvm: for volume groups
