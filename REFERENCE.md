@@ -38,6 +38,7 @@ Create the partion entries for presdeed.
 
 ### Functions
 
+* [`get_partition_devices`](#get_partition_devices): get_partition_devices.rb Examin partitioning information of Debian/Ubuntu hosts and get all used disk devices
 * [`pxe_install::hex_ip`](#pxe_installhex_ip): Convert a ip from digits into hex.
 
 ### Tasks
@@ -362,6 +363,28 @@ Data type: `Stdlib::Unixpath`
 The directories to be created.
 
 ## Functions
+
+### <a name="get_partition_devices"></a>`get_partition_devices`
+
+Type: Ruby 4.x API
+
+get_partition_devices.rb
+Examin partitioning information of Debian/Ubuntu hosts and get all
+used disk devices
+
+#### `get_partition_devices(Hash $partitioning)`
+
+get_partition_devices.rb
+Examin partitioning information of Debian/Ubuntu hosts and get all
+used disk devices
+
+Returns: `String`
+
+##### `partitioning`
+
+Data type: `Hash`
+
+
 
 ### <a name="pxe_installhex_ip"></a>`pxe_install::hex_ip`
 

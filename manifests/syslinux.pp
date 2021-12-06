@@ -97,8 +97,9 @@ class pxe_install::syslinux (
 
       } else {
 
+        $cmd = "cp /opt/pxe_install/${archive}${src} ${tftpboot_dir}${dir}/${dst}"
         exec { "copying file ${dst}-${dir}":
-          command => "cp /opt/pxe_install/${archive}${src} ${tftpboot_dir}${dir}/${dst}", #lint:ignore:security_class_or_define_parameter_in_exec
+          command => $cmd, #lint:ignore:security_class_or_define_parameter_in_exec
           path    => ['/bin/', '/usr/bin'],
           unless  => "test -f ${tftpboot_dir}${dir}/${dst}",
           require => [Archive["${archive}.tar.gz"], File["${tftpboot_dir}${dir}"]],
