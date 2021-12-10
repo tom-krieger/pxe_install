@@ -46,7 +46,7 @@ This module configures an Apache webserver with http and https access. The neede
 
 ### `Beginning with pxe_install`
 
-It is highly recommended, to add all configuration into the install server's Hiera node definition file. Here's a short example how you can organize this in your conreol repository. The example is reduced to the parts regarding the PXE install server.
+It is highly recommended, to add all configuration into the install server's Hiera node definition file. Here's a short example how you can organize this in your control repository. The example is reduced to the parts regarding the PXE install server.
 
 Your Hiera configuration file `hiera.yaml` can look like this.
 
