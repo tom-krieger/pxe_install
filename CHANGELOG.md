@@ -2,9 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## 0.3.4
+## 0.3.5
 
 _install_ is deprecated for redhat 8 kickstarts and will no longer included into Redhat 8 kickstarts.
+
+## 0.3.4
+
+not published
+
 ## 0.3.3
 
 Enable Debian and Ubuntu preseeds with more than one disk. Introduced defaultignore flag 
