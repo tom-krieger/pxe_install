@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-#get_partition_devices.rb
+# get_partition_devices.rb
 # Examin partitioning information of Debian/Ubuntu hosts and get all
 # used disk devices
 Puppet::Functions.create_function(:get_partition_devices) do
