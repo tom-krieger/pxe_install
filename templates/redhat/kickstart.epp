@@ -15,6 +15,6 @@ rootpw --iscrypted <%= $rootpw %>
 selinux --disabled
 skipx
 timezone --isUtc <%= $timezone %>
-<% if $osversion < '8' { %>
+<% if $osversion < '8' { -%>
 install
-<% } -%>
+<% } %>
