@@ -263,8 +263,8 @@ class pxe_install (
     default => '/windows',
   }
 
-  $windows_config_dir = has_key($tftpd, 'windows_config_dirrectory') ? {
-    true    => $tftpd['windows_config_dirrectory'],
+  $windows_config_dir = has_key($tftpd, 'windows_config_directory') ? {
+    true    => $tftpd['windows_config_directory'],
     default => '',
   }
 

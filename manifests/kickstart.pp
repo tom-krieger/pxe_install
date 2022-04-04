@@ -253,7 +253,7 @@ define pxe_install::kickstart (
       }
 
       pxe_install::samba::host { $hostname:
-        tftpboot_dir       => "${tftpboot_dir}${windows_dir}",
+        tftpboot_dir       => "${tftpboot_dir}${windows_dir}${windows_config_dir}",
         osversion          => $data['osversion'],
         iso                => $iso,
         boot_architecture  => $scenario_data['boot_architecture'],
