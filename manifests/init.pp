@@ -273,13 +273,37 @@ class pxe_install (
     default => '',
   }
 
-  pxe_install::parent_dirs { 'create tftpboot windows install dir':
-    dir_path => "${tftpboot_dir}${windows_dir}/install",
+  pxe_install::parent_dirs { 'create tftpboot windows scripts dir':
+    dir_path => "${tftpboot_dir}${windows_dir}/scripts",
   }
 
-  file { "${tftpboot_dir}${windows_dir}/install/install.ps1":
+  pxe_install::parent_dirs { 'create tftpboot windows unattend dir':
+    dir_path => "${tftpboot_dir}${windows_dir}/unattend",
+  }
+
+  file { "${tftpboot_dir}${windows_dir}/scripts/install.ps1":
     ensure  => file,
     content => epp('pxe_install/windows/install.ps1.epp', {
+      domain => $windows_domain,
+    }),
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0755',
+  }
+
+  file { "${tftpboot_dir}${windows_dir}/unattend/2019_bios.xml":
+    ensure  => file,
+    content => epp('pxe_install/windows/2019_bios.xml.epp', {
+      domain => $windows_domain,
+    }),
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0755',
+  }
+
+  file { "${tftpboot_dir}${windows_dir}/unattend/2019_uefi.xml":
+    ensure  => file,
+    content => epp('pxe_install/windows/2019_uefi.xml.epp', {
       domain => $windows_domain,
     }),
     owner   => 'root',

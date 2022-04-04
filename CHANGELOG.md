@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.3.6
+
+* Added unattended install configurations for Windows 2019 Server
+* Added Windows install script template
+* Create directory structure within tftpboot directory
+
 ## 0.3.5
 
 _install_ is deprecated for redhat 8 kickstarts and will no longer included into Redhat 8 kickstarts.

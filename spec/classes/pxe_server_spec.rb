@@ -34,9 +34,14 @@ describe 'pxe_install' do
             'dir_path' => '/export/repos/www',
           )
 
-        is_expected.to contain_pxe_install__parent_dirs('create tftpboot windows install dir')
+        is_expected.to contain_pxe_install__parent_dirs('create tftpboot windows scripts dir')
           .with(
-            'dir_path' => '/var/lib/tftpboot/windows/winpe/install',
+            'dir_path' => '/var/lib/tftpboot/windows/winpe/scripts',
+          )
+
+        is_expected.to contain_pxe_install__parent_dirs('create tftpboot windows unattend dir')
+          .with(
+            'dir_path' => '/var/lib/tftpboot/windows/winpe/unattend',
           )
 
         is_expected.to contain_file('/export')
@@ -59,7 +64,12 @@ describe 'pxe_install' do
             'ensure'  => 'directory',
           )
 
-        is_expected.to contain_file('/var/lib/tftpboot/windows/winpe/install')
+        is_expected.to contain_file('/var/lib/tftpboot/windows/winpe/scripts')
+          .with(
+            'ensure' => 'directory',
+          )
+
+        is_expected.to contain_file('/var/lib/tftpboot/windows/winpe/unattend')
           .with(
             'ensure' => 'directory',
           )
@@ -93,7 +103,23 @@ describe 'pxe_install' do
             'mode'    => '0644',
           )
 
-        is_expected.to contain_file('/var/lib/tftpboot/windows/winpe/install/install.ps1')
+        is_expected.to contain_file('/var/lib/tftpboot/windows/winpe/scripts/install.ps1')
+          .with(
+            'ensure'  => 'file',
+            'owner'   => 'root',
+            'group'   => 'root',
+            'mode'    => '0755',
+          )
+
+        is_expected.to contain_file('/var/lib/tftpboot/windows/winpe/unattend/2019_bios.xml')
+          .with(
+            'ensure'  => 'file',
+            'owner'   => 'root',
+            'group'   => 'root',
+            'mode'    => '0755',
+          )
+
+        is_expected.to contain_file('/var/lib/tftpboot/windows/winpe/unattend/2019_uefi.xml')
           .with(
             'ensure'  => 'file',
             'owner'   => 'root',
