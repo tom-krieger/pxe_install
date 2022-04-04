@@ -36,6 +36,9 @@
 # @param windows_dir
 #    Windows directory to use.
 #
+# @param windows_config_dir
+#    Directory to write windows nodes configuration
+#
 # @example
 #   pxe_install::kickstart { 'namevar': }
 #
@@ -52,6 +55,7 @@ define pxe_install::kickstart (
   Sensitive[String] $challenge_password,
   Stdlib::Absolutepath $tftpboot_dir,
   String $windows_dir,
+  String $windows_config_dir,
 ) {
   $hostname     = $title
   $parameter    = $data['parameter']
