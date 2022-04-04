@@ -263,6 +263,30 @@ class pxe_install (
     default => '/windows',
   }
 
+  $windows_config_dir = has_key($tftpd, 'windows_config_dirrectory') ? {
+    true    => $tftpd['windows_config_dirrectory'],
+    default => '',
+  }
+
+  $windows_domain = has_key($tftpd, 'windows_domain') ? {
+    true    => $tftpd['windows_domain'],
+    default => '',
+  }
+
+  pxe_install::parent_dirs { 'create tftpboot windows install dir':
+    dir_path => "${tftpboot_dir}${windows_dir}/install",
+  }
+
+  file { "${tftpboot_dir}${windows_dir}/install/install.ps1":
+    ensure  => file,
+    content => epp('pxe_install/windows/install.ps1.epp', {
+      domain => $windows_domain,
+    }),
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0755',
+  }
+
   $machines.each |$hostname, $data| {
 
     pxe_install::kickstart { $hostname:
@@ -277,6 +301,7 @@ class pxe_install (
       challenge_password => $challenge_password,
       tftpboot_dir       => $tftpboot_dir,
       windows_dir        => $windows_dir,
+      windows_config_dir => $windows_config_dir,
     }
 
   }

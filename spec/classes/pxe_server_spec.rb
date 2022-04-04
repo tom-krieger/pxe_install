@@ -34,6 +34,11 @@ describe 'pxe_install' do
             'dir_path' => '/export/repos/www',
           )
 
+        is_expected.to contain_pxe_install__parent_dirs('create tftpboot windows install dir')
+          .with(
+            'dir_path' => '/var/lib/tftpboot/windows/winpe/install',
+          )
+
         is_expected.to contain_file('/export')
           .with(
             'ensure'  => 'directory',
@@ -52,6 +57,11 @@ describe 'pxe_install' do
         is_expected.to contain_file('/export/repos/www')
           .with(
             'ensure'  => 'directory',
+          )
+
+        is_expected.to contain_file('/var/lib/tftpboot/windows/winpe/install')
+          .with(
+            'ensure' => 'directory',
           )
 
         is_expected.to contain_file('/export/repos/kickstart')
@@ -81,6 +91,14 @@ describe 'pxe_install' do
             'owner'   => 'root',
             'group'   => 'root',
             'mode'    => '0644',
+          )
+
+        is_expected.to contain_file('/var/lib/tftpboot/windows/winpe/install/install.ps1')
+          .with(
+            'ensure'  => 'file',
+            'owner'   => 'root',
+            'group'   => 'root',
+            'mode'    => '0755',
           )
 
         is_expected.to contain_class('pxe_install::dhcp')
