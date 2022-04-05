@@ -51,7 +51,8 @@ $mount = Mount-DiskImage -ImagePath "${drive}:\$($config.version)\$($config.iso)
 $isodrive = ($mount | Get-Volume).DriveLetter
 
 # Read target unattend.xml and define its namespace
-[xml]$unattend = Get-Content -Raw -Path "${drive}:\unattend\$($config.version)_$($config.boot_architecture).xml"
+# [xml]$unattend = Get-Content -Raw -Path "${drive}:\unattend\$($config.version)_$($config.boot_architecture).xml"
+[xml]$unattend = Get-Content -Raw -Path "${drive}:\unattend\${config.hostname}.xml"
 $ns = New-Object System.Xml.XmlNamespaceManager($unattend.NameTable)
 $ns.AddNamespace("ns", $unattend.DocumentElement.NamespaceURI)
 

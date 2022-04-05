@@ -471,6 +471,8 @@ describe 'pxe_install' do
               },
               'ostype' => 'windows',
               'osversion' => '2019',
+              'locale' => 'en-US',
+              'keyboard' => 'en-US',
               'parameter' => {
                 'env' => 'production',
                 'role' => 'test',
@@ -513,7 +515,7 @@ describe 'pxe_install' do
             'puppetenv'  => 'production',
             'puppetrole' => 'test',
             'datacenter' => 'test',
-            'locale'     => 'en_US.UTF-8',
+            'locale'     => 'en-US',
             'keymap'     => 'de',
             'loghost'    => '10.0.0.25',
             'logport'    => 514,
@@ -568,6 +570,16 @@ describe 'pxe_install' do
             'gateway'           => '10.0.0.4',
             'dns'               => ['10.0.0.62', '10.0.0.63', '10.0.0.25'],
             'puppetmaster'      => 'pmaster.localdomain',
+          )
+
+        is_expected.to contain_pxe_install__samba__unattend('ct04')
+          .with(
+            'boot'              => 'uefi',
+            'unattend_dir'      => '/var/lib/tftpboot/windows/winpe/unattend',
+            'osversion'         => '2019',
+            'win_domain'        => 'example.com',
+            'win_locale'        => 'en-US',
+            'win_input_locale'  => 'en-US',
           )
 
         is_expected.to contain_file('/var/lib/tftpboot')
@@ -644,6 +656,14 @@ describe 'pxe_install' do
             'owner'  => 'root',
             'group'  => 'root',
             'mode'   => '0644',
+          )
+
+        is_expected.to contain_file('/var/lib/tftpboot/windows/winpe/unattend/ct04.xml')
+          .with(
+            'ensure' => 'file',
+            'owner' => 'root',
+            'group' => 'root',
+            'mode' => '0644',
           )
 
         is_expected.to contain_archive('syslinux-6.03.tar.gz')

@@ -188,6 +188,24 @@ define pxe_install::kickstart (
     default => join($defaults['dns'], ','),
   }
 
+  if has_key($network_data, 'domain') {
+    $domain = $network_data['domain']
+  } elsif $defaults['domain'] != '' {
+    $domain = $defaults['domain']
+  } else {
+    fail("No domain for ${hostname} given and no default domain available!")
+  }
+
+  $locale = has_key($data, 'locale') ? {
+    true    => $data['locale'],
+    default => $defaults['locale'],
+  }
+
+  $keyboard = has_key($data, 'keyboard') ? {
+    true    => $data['keyboard'],
+    default => $defaults['keyboard'],
+  }
+
   case $ostype.downcase() {
     'debian': {
       $template_start = 'pxe_install/debian/kickstart.epp'
@@ -269,6 +287,15 @@ define pxe_install::kickstart (
         agent              => $parameter['agent'],
         challenge_password => $challenge_password,
       }
+
+      pxe_install::samba::unattend { $hostname:
+        boot             => $scenario_data['boot_architecture'],
+        unattend_dir     => "${tftpboot_dir}${windows_dir}/unattend",
+        osversion        => $data['osversion'],
+        win_domain       => $domain,
+        win_locale       => $keyboard,
+        win_input_locale => $locale,
+      }
     }
     default: {
       $template_start = 'pxe_install/redhat/kickstart.epp'
@@ -298,14 +325,6 @@ define pxe_install::kickstart (
     default => 'y',
   }
 
-  if has_key($network_data, 'domain') {
-    $domain = $network_data['domain']
-  } elsif $defaults['domain'] != '' {
-    $domain = $defaults['domain']
-  } else {
-    fail("No domain for ${hostname} given and no default domain available!")
-  }
-
   $rootpw = has_key($data, 'rootpw') ? {
     true    => $data['rootpw'],
     default => $defaults['rootpw']
@@ -319,16 +338,6 @@ define pxe_install::kickstart (
   $country = has_key($data, 'country') ? {
     true    => $data['country'],
     default => $defaults['country'],
-  }
-
-  $locale = has_key($data, 'locale') ? {
-    true    => $data['locale'],
-    default => $defaults['locale'],
-  }
-
-  $keyboard = has_key($data, 'keyboard') ? {
-    true    => $data['keyboard'],
-    default => $defaults['keyboard'],
   }
 
   $timezone = has_key($data, 'timezone') ? {
