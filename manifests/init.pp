@@ -281,6 +281,16 @@ class pxe_install (
     dir_path => "${tftpboot_dir}${windows_dir}/unattend",
   }
 
+  $win_locale = has_key($defaults, 'win_locale') ? {
+    true  => $defaults['win_locale'],
+    false => 'en-US',
+  }
+
+  $win_input_locale = has_key($defaults, 'win_input_locale') ? {
+    true  => $defaults['win_input_locale'],
+    false => 'en-US',
+  }
+
   file { "${tftpboot_dir}${windows_dir}/scripts/install.ps1":
     ensure  => file,
     content => epp('pxe_install/windows/install.ps1.epp', {
@@ -294,7 +304,9 @@ class pxe_install (
   file { "${tftpboot_dir}${windows_dir}/unattend/2019_bios.xml":
     ensure  => file,
     content => epp('pxe_install/windows/2019_bios.xml.epp', {
-      domain => $windows_domain,
+      domain           => $windows_domain,
+      win_locale       => $win_locale,
+      win_input_locale => $win_input_locale,
     }),
     owner   => 'root',
     group   => 'root',
@@ -304,7 +316,9 @@ class pxe_install (
   file { "${tftpboot_dir}${windows_dir}/unattend/2019_uefi.xml":
     ensure  => file,
     content => epp('pxe_install/windows/2019_uefi.xml.epp', {
-      domain => $windows_domain,
+      domain           => $windows_domain,
+      win_locale       => $win_locale,
+      win_input_locale => $win_input_locale,
     }),
     owner   => 'root',
     group   => 'root',
