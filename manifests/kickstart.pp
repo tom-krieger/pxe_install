@@ -293,8 +293,8 @@ define pxe_install::kickstart (
         unattend_dir     => "${tftpboot_dir}${windows_dir}/unattend",
         osversion        => $data['osversion'],
         win_domain       => $domain,
-        win_locale       => $keyboard,
-        win_input_locale => $locale,
+        win_locale       => $locale,
+        win_input_locale => $keyboard,
       }
     }
     default: {
