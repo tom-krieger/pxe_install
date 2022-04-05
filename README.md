@@ -153,7 +153,7 @@ pxe_install::services:
 
 ##### `TFTP service`
 
-For the tftp service please provide the packages and service name to use. The `group` option is only needed on RedHat/CentOS operating systems. 
+For the tftp service please provide the packages and service name to use. The `group` option is only needed on RedHat/CentOS operating systems.
 
 > If you do not enable this service you have to take care yorself to create the TFTP entries.
 
@@ -180,7 +180,7 @@ Configuration example:
 
 ##### `DHCP service`
 
-The DHCP service can serve as a full DHCP service. This means you can define static DHCP entried for all nodes regardless if these nodes need install services. The dhcp service configuration has a `hosts` part where you can configure all these nodes. 
+The DHCP service can serve as a full DHCP service. This means you can define static DHCP entried for all nodes regardless if these nodes need install services. The dhcp service configuration has a `hosts` part where you can configure all these nodes.
 
 > If you do not enable the DHCP service, you have to take care about the DHCP entries yourself.
 
