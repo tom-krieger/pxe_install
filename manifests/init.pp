@@ -263,6 +263,68 @@ class pxe_install (
     default => '/windows',
   }
 
+  $windows_config_dir = has_key($tftpd, 'windows_config_directory') ? {
+    true    => $tftpd['windows_config_directory'],
+    default => '',
+  }
+
+  $windows_domain = has_key($tftpd, 'windows_domain') ? {
+    true    => $tftpd['windows_domain'],
+    default => '',
+  }
+
+  pxe_install::parent_dirs { 'create tftpboot windows scripts dir':
+    dir_path => "${tftpboot_dir}${windows_dir}/scripts",
+  }
+
+  pxe_install::parent_dirs { 'create tftpboot windows unattend dir':
+    dir_path => "${tftpboot_dir}${windows_dir}/unattend",
+  }
+
+  $win_locale = has_key($defaults, 'win_locale') ? {
+    true  => $defaults['win_locale'],
+    false => 'en-US',
+  }
+
+  $win_input_locale = has_key($defaults, 'win_input_locale') ? {
+    true  => $defaults['win_input_locale'],
+    false => 'en-US',
+  }
+
+  file { "${tftpboot_dir}${windows_dir}/scripts/install.ps1":
+    ensure  => file,
+    content => epp('pxe_install/windows/install.ps1.epp', {
+      domain => $windows_domain,
+    }),
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0755',
+  }
+
+  file { "${tftpboot_dir}${windows_dir}/unattend/2019_bios.xml":
+    ensure  => file,
+    content => epp('pxe_install/windows/2019_bios.xml.epp', {
+      domain           => $windows_domain,
+      win_locale       => $win_locale,
+      win_input_locale => $win_input_locale,
+    }),
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0755',
+  }
+
+  file { "${tftpboot_dir}${windows_dir}/unattend/2019_uefi.xml":
+    ensure  => file,
+    content => epp('pxe_install/windows/2019_uefi.xml.epp', {
+      domain           => $windows_domain,
+      win_locale       => $win_locale,
+      win_input_locale => $win_input_locale,
+    }),
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0755',
+  }
+
   $machines.each |$hostname, $data| {
 
     pxe_install::kickstart { $hostname:
@@ -277,6 +339,7 @@ class pxe_install (
       challenge_password => $challenge_password,
       tftpboot_dir       => $tftpboot_dir,
       windows_dir        => $windows_dir,
+      windows_config_dir => $windows_config_dir,
     }
 
   }

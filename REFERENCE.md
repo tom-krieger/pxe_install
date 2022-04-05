@@ -34,6 +34,7 @@
 
 Create the partion entries for presdeed.
 * `pxe_install::samba::host`: Create a host entry for a Windows node
+* `pxe_install::samba::unattend`: create unattended boot file
 * `pxe_install::tftp::host`: Create a tftp server entry for a host.
 
 ### Functions

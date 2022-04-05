@@ -36,6 +36,9 @@
 # @param windows_dir
 #    Windows directory to use.
 #
+# @param windows_config_dir
+#    Directory to write windows nodes configuration
+#
 # @example
 #   pxe_install::kickstart { 'namevar': }
 #
@@ -52,6 +55,7 @@ define pxe_install::kickstart (
   Sensitive[String] $challenge_password,
   Stdlib::Absolutepath $tftpboot_dir,
   String $windows_dir,
+  String $windows_config_dir,
 ) {
   $hostname     = $title
   $parameter    = $data['parameter']
@@ -184,6 +188,24 @@ define pxe_install::kickstart (
     default => join($defaults['dns'], ','),
   }
 
+  if has_key($network_data, 'domain') {
+    $domain = $network_data['domain']
+  } elsif $defaults['domain'] != '' {
+    $domain = $defaults['domain']
+  } else {
+    fail("No domain for ${hostname} given and no default domain available!")
+  }
+
+  $locale = has_key($data, 'locale') ? {
+    true    => $data['locale'],
+    default => $defaults['locale'],
+  }
+
+  $keyboard = has_key($data, 'keyboard') ? {
+    true    => $data['keyboard'],
+    default => $defaults['keyboard'],
+  }
+
   case $ostype.downcase() {
     'debian': {
       $template_start = 'pxe_install/debian/kickstart.epp'
@@ -249,7 +271,7 @@ define pxe_install::kickstart (
       }
 
       pxe_install::samba::host { $hostname:
-        tftpboot_dir       => "${tftpboot_dir}${windows_dir}",
+        tftpboot_dir       => "${tftpboot_dir}${windows_dir}${windows_config_dir}",
         osversion          => $data['osversion'],
         iso                => $iso,
         boot_architecture  => $scenario_data['boot_architecture'],
@@ -264,6 +286,15 @@ define pxe_install::kickstart (
         datacenter         => $parameter['dc'],
         agent              => $parameter['agent'],
         challenge_password => $challenge_password,
+      }
+
+      pxe_install::samba::unattend { $hostname:
+        boot             => $scenario_data['boot_architecture'],
+        unattend_dir     => "${tftpboot_dir}${windows_dir}/unattend",
+        osversion        => $data['osversion'],
+        win_domain       => $domain,
+        win_locale       => $keyboard,
+        win_input_locale => $locale,
       }
     }
     default: {
@@ -294,14 +325,6 @@ define pxe_install::kickstart (
     default => 'y',
   }
 
-  if has_key($network_data, 'domain') {
-    $domain = $network_data['domain']
-  } elsif $defaults['domain'] != '' {
-    $domain = $defaults['domain']
-  } else {
-    fail("No domain for ${hostname} given and no default domain available!")
-  }
-
   $rootpw = has_key($data, 'rootpw') ? {
     true    => $data['rootpw'],
     default => $defaults['rootpw']
@@ -315,16 +338,6 @@ define pxe_install::kickstart (
   $country = has_key($data, 'country') ? {
     true    => $data['country'],
     default => $defaults['country'],
-  }
-
-  $locale = has_key($data, 'locale') ? {
-    true    => $data['locale'],
-    default => $defaults['locale'],
-  }
-
-  $keyboard = has_key($data, 'keyboard') ? {
-    true    => $data['keyboard'],
-    default => $defaults['keyboard'],
   }
 
   $timezone = has_key($data, 'timezone') ? {

@@ -1,6 +1,6 @@
 {
   "name": "tomkrieger-pxe_install",
-  "version": "0.3.3",
+  "version": "0.3.5",
   "author": "Thomas Krieger",
   "summary": "Setup CentOS/Debian pxe installation server to serve CentOS/Debian/ubuntu/Windows installations.",
   "license": "Apache-2.0",
@@ -76,7 +76,7 @@
       "version_requirement": ">= 4.10.0 < 8.0.0"
     }
   ],
-  "pdk-version": "2.2.0",
-  "template-url": "pdk-default#2.2.0",
-  "template-ref": "tags/2.2.0-0-g2381db6"
+  "pdk-version": "2.4.0",
+  "template-url": "pdk-default#2.4.0",
+  "template-ref": "tags/2.4.0-0-gfa6b6d2"
 }

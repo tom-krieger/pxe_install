@@ -81,7 +81,7 @@ define pxe_install::samba::host (
   String $group                                   = 'root',
   String $mode                                    = '0644',
 ) {
-  $mac_string = join(split($macaddress, '[:]'), '')
+  $mac_string = join(split($macaddress, '[:]'), '').upcase
   $dns_servers = "\"${join($dns, '","')}\""
 
   file { "${tftpboot_dir}/${mac_string}.cfg":

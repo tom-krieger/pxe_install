@@ -1,0 +1,127 @@
+# Functions
+function Convert-IpAddressToMaskLength([string] $dottedIpAddressString)
+{
+  $result = 0; 
+  # ensure we have a valid IP address
+  [IPAddress] $ip = $dottedIpAddressString;
+  $octets = $ip.IPAddressToString.Split('.');
+  foreach($octet in $octets)
+  {
+    while(0 -ne $octet) 
+    {
+      $octet = ($octet -shl 1) -band [byte]::MaxValue
+      $result++; 
+    }
+  }
+  return $result;
+}
+
+#########################################################################
+# Start of script execution
+#########################################################################
+
+# Needs to match the network drive that gets mapped
+$drive = 'I'
+
+# Retrieve MAC address of active NIC(s)
+$macs = Get-CimInstance win32_networkadapterconfiguration | Where-Object IpEnabled -eq $true | Select-Object MacAddress -Unique | ForEach { $_.MacAddress -replace ":","" }
+
+# Retrieve configuration for MAC address. Assumes only 1 match.
+$mac = ''
+$macs | ForEach-Object {
+  Write-Host "Searching for configuration file at: ${drive}:\config\${_}.cfg"
+  if (Test-Path "${drive}:\config\${_}.cfg") {
+    $mac = $_
+    Write-Host "File ${drive}:\config\${_}.cfg found, parsing data..."
+    $config = Get-Content -Raw -Path "${drive}:\config\${_}.cfg" | ConvertFrom-Json
+  }
+}
+
+# Show config if found, exit otherwise
+if ($config) {
+  Write-Output "Parsed configuration info for this node, running with:"
+  $config | fl
+} else {
+  Write-Output "No configuration info found for this node, aborting!"
+  Exit 1
+}
+
+# Mount Windows ISO and retrieve driveletter
+$mount = Mount-DiskImage -ImagePath "${drive}:\$($config.version)\$($config.iso)" -StorageType ISO
+$isodrive = ($mount | Get-Volume).DriveLetter
+
+# Read target unattend.xml and define its namespace
+# [xml]$unattend = Get-Content -Raw -Path "${drive}:\unattend\$($config.version)_$($config.boot_architecture).xml"
+[xml]$unattend = Get-Content -Raw -Path "${drive}:\unattend\$($config.hostname).xml"
+$ns = New-Object System.Xml.XmlNamespaceManager($unattend.NameTable)
+$ns.AddNamespace("ns", $unattend.DocumentElement.NamespaceURI)
+
+# Set ComputerName in unattend.xml
+($unattend.SelectSingleNode("//ns:settings[@pass='specialize']", $ns).component | `
+  Where-Object name -eq 'Microsoft-Windows-Shell-Setup').ComputerName = $config.hostname
+
+# Set IPv4 address
+$cidrAddress = "$($config.ipaddress)/$(Convert-IpAddressToMaskLength($config.subnet))"
+($unattend.SelectSingleNode("//ns:settings[@pass='specialize']", $ns).component | `
+  Where-Object name -eq 'Microsoft-Windows-TCPIP').interfaces.interface.unicastipaddresses.ipaddress.'#text' = $cidrAddress
+
+# Set IPv4 default gateway
+($unattend.SelectSingleNode("//ns:settings[@pass='specialize']", $ns).component | `
+  Where-Object name -eq 'Microsoft-Windows-TCPIP').interfaces.interface.routes.route.nexthopaddress = $config.gateway
+
+# Set IPv4 DNS client
+$dns = ($unattend.SelectSingleNode("//ns:settings[@pass='specialize']", $ns).component | `
+  Where-Object name -eq 'Microsoft-Windows-DNS-Client').interfaces.interface.dnsserversearchorder.ipaddress
+
+if ($config.dns.count -ge $dns.count) {
+  # We have equal or more DNS servers to set than space in the Unattend file. Only set as many as we have space for.
+  For ( $i = 0; $i -le ($dns.count - 1); $i++ ) {
+    $dns[$i].'#text' = $config.dns[$i]
+  }
+} elseif ($config.dns.count -lt $dns.count) {
+  # We have less DNS servers to set than can be configured in the Unattend file. Remove entries we don't need.
+  For ( $i = 0; $i -le ($config.dns.count - 1); $i++ ) {
+    $dns[$i].'#text' = $config.dns[$i]
+  }
+  $amount_to_remove = $dns.count - $config.dns.count
+  For ( $i = $config.dns.count; $i -lt $dns.count; $i++ ) {
+    ($unattend.SelectSingleNode("//ns:settings[@pass='specialize']", $ns).component | `
+      Where-Object name -eq 'Microsoft-Windows-DNS-CLient').interfaces.interface.dnsserversearchorder.removechild($dns[$i])
+  }
+}
+
+# Set Puppet Agent Install command in unattend.xml
+if ($config.puppet_agent = "y") {
+  $base_cmd     = 'powershell -command Add-Content -NoNewLine -Path C:\Windows\Setup\Scripts\SetupComplete.cmd -Value'
+  $download_cmd = "`$webClient.DownloadFile(''https://$($config.puppet_server):8140/packages/current/install.ps1'', ''install.ps1'')"
+  $agent_cmd1   = ".\install.ps1 -v agent:certname=$($config.hostname).<%= $domain %>"
+  $agent_cmd2   = "extension_requests:pp_role=$($config.role) extension_requests:pp_environment=$($config.agent_environment)"
+  $agent_cmd3   = "extension_requests:pp_datacenter=$($config.datacenter)"
+  $agent_cmd4   = "custom_attributes:challengePassword=''$($config.challenge_password)''"
+
+  (($unattend.SelectSingleNode("//ns:settings[@pass='specialize']", $ns).component | `
+    Where-Object name -eq 'Microsoft-Windows-Deployment').runsynchronous.runsynchronouscommand | `
+    Where-Object Description -eq 'Download Puppet Agent').Path = "${base_cmd} '${download_cmd}; '"
+
+  (($unattend.SelectSingleNode("//ns:settings[@pass='specialize']", $ns).component | `
+    Where-Object name -eq 'Microsoft-Windows-Deployment').runsynchronous.runsynchronouscommand | `
+    Where-Object Description -eq 'Install Puppet Agent 1').Path = "${base_cmd} '${agent_cmd1} '"
+
+  (($unattend.SelectSingleNode("//ns:settings[@pass='specialize']", $ns).component | `
+    Where-Object name -eq 'Microsoft-Windows-Deployment').runsynchronous.runsynchronouscommand | `
+    Where-Object Description -eq 'Install Puppet Agent 2').Path = "${base_cmd} '${agent_cmd2} '"
+
+  (($unattend.SelectSingleNode("//ns:settings[@pass='specialize']", $ns).component | `
+    Where-Object name -eq 'Microsoft-Windows-Deployment').runsynchronous.runsynchronouscommand | `
+    Where-Object Description -eq 'Install Puppet Agent 3').Path = "${base_cmd} '${agent_cmd3} '"
+
+  (($unattend.SelectSingleNode("//ns:settings[@pass='specialize']", $ns).component | `
+    Where-Object name -eq 'Microsoft-Windows-Deployment').runsynchronous.runsynchronouscommand | `
+    Where-Object Description -eq 'Install Puppet Agent 4').Path = "${base_cmd} '${agent_cmd4}'"
+}
+
+# Save unattend.xml for this node using its MAC address
+$unattend.Save("X:\unattend.xml")
+
+# Start Windows Setup, passing the unattended answer file
+& "${isodrive}:\setup.exe" /unattend:X:\unattend.xml
