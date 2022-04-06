@@ -174,6 +174,21 @@
                     <Path>powershell -command Add-Content -NoNewLine -Path C:\Windows\Setup\Scripts\SetupComplete.cmd -Value &apos;custom_attributes:challengePassword=&apos;&apos;abc123&apos;&apos;&apos;</Path>
                     <Description>Install Puppet Agent 4</Description>
                 </RunSynchronousCommand>
+                <RunSynchronousCommand wcm:action="add">
+                    <Order>11</Order>
+                    <Path>powershell -command Add-Content -NoNewLine -Path C:\Windows\Setup\Scripts\SetupComplete.cmd -Value &apos; ; &apos;</Path>
+                    <Description>Install Puppet Agent 5</Description>
+                </RunSynchronousCommand>
+                <RunSynchronousCommand wcm:action="add">
+                    <Order>12</Order>
+                    <Path>powershell -command Add-Content -NoNewLine -Path C:\Windows\Setup\Scripts\SetupComplete.cmd -Value &apos; C:\Program Files\Puppet Labs\Puppet\bin\puppet.bat agent -t; &apos;</Path>
+                    <Description>Puppet Agent Run 1</Description>
+                </RunSynchronousCommand>
+                <RunSynchronousCommand wcm:action="add">
+                    <Order>13</Order>
+                    <Path>powershell -command Add-Content -NoNewLine -Path C:\Windows\Setup\Scripts\SetupComplete.cmd -Value &apos; C:\Program Files\Puppet Labs\Puppet\bin\puppet.bat agent -t; &apos;</Path>
+                    <Description>Puppet Agent Run 2</Description>
+                </RunSynchronousCommand>
             </RunSynchronous>
         </component>
     </settings>
