@@ -1,6 +1,6 @@
 # @summary Create a partion table for Ubuntu systems
 #
-#  Create the partion entries for presdeed.
+# Create the partion entries for presdeed.
 #
 # @param hostname
 #    The hostname.

@@ -7,7 +7,7 @@ All notable changes to this project will be documented in this file.
 * Added unattended install configurations for Windows 2019 Server
 * Added Windows install script template
 * Create directory structure within tftpboot directory
-* configurable windows locale settings
+* configurable windows locale and input locale settings
 
 ## 0.3.5
 

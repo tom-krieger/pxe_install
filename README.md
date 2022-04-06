@@ -267,9 +267,10 @@ The node configuration includes general settings for a node like the root passwo
 | | timezone | Timezone setting, e. g. Europe/Berlin | yes |
 | | ostype | The OS type. Valid values are `debian`, `ubuntu` and `CentOS` | - |
 | | osversion | The `osversion` is necessary for CentOS only and is the major number of the OS to install, e. g. 8.| - |
-| | keyboard | The keyboard layout to use, e. g. `de(Macintosh, no dead keys)`. Please make sure to use a keyboard layout supported by the OS you install. | yes |
+| | keyboard | The keyboard layout to use, e. g. `de(Macintosh, no dead keys)`. Please make sure to use a keyboard layout supported by the OS you install. For Windows you need to set a value consisting of the input locale and the locate e. g. `0409:00000407` which is German keyboard layout and en-US locale. | yes |
 | | keymap | The keymap used for `debian` and `ubuntu` | yes |
 | | language | The language used for the installer. For CentOS it is set to the language and the flavour, e. g. en_US. For Debian and Ubuntu it is a two character language setting, e. g. en. | yes |
+| | locale | The locale setting for Linux e. g. en-US.UTF-8 or for Windows e. g. en-US | yes |
 | | path | For Debian and Ubuntu nodes, there is a `path` needed which points to the boot screen files within the tftpboot directory. If you do not set this parameter it will be set to `<prefix>/boot-screens` by default. | - |
 
 #### `Node network configuration`

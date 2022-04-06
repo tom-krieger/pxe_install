@@ -31,8 +31,6 @@
 * `pxe_install::partitioning::debian`: Create a partion table for Debian systems
 * `pxe_install::partitioning::redhat`: ACreate partitioning for redhat/CentOPS systems
 * `pxe_install::partitioning::ubuntu`: Create a partion table for Ubuntu systems
-
-Create the partion entries for presdeed.
 * `pxe_install::samba::host`: Create a host entry for a Windows node
 * `pxe_install::samba::unattend`: create unattended boot file
 * `pxe_install::tftp::host`: Create a tftp server entry for a host.

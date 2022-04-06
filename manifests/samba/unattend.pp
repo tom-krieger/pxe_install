@@ -1,9 +1,6 @@
 # @summary create unattended boot file
 #
-# Create a configuration file according to host configuration
-#
-# @param hostname
-#    The windows server short hostname
+# Create a configuration file according to host configuration.
 #
 # @param boot
 #    The boot method
