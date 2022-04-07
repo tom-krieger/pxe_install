@@ -13,7 +13,7 @@
 #     Example: centos/7/u9
 #
 # @param path
-#     The path where the boot-screens for Debian and Ubuntu are found, relative
+#     The path where the boot-screens for Debian, Ubuntu and Windows are found, relative
 #     to the tftboot dirctory, e. g. ubuntu/18.04/amd64/boot-screens
 #     path is not needed with RedHat and CentOS.
 #
