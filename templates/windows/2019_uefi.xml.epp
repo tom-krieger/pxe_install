@@ -181,11 +181,41 @@
                 </RunSynchronousCommand>
                 <RunSynchronousCommand wcm:action="add">
                     <Order>12</Order>
-                    <Path>powershell -command Add-Content -Path C:\Windows\Setup\Scripts\SetupComplete.cmd -Value &apos;C:\Program Files\Puppet Labs\Puppet\bin\puppet.bat agent -t; &apos;</Path>
+                    <Path>powershell -command Add-Content -Path C:\Windows\Setup\Scripts\SetupComplete.cmd -Value &apos;while (Test-Path -Path C:/ProgramData/PuppetLabs/puppet/cache/state/agent_catalog_run.lock) { &apos;</Path>
                     <Description>Puppet Agent Run 1</Description>
                 </RunSynchronousCommand>
                 <RunSynchronousCommand wcm:action="add">
                     <Order>13</Order>
+                    <Path>powershell -command Add-Content -Path C:\Windows\Setup\Scripts\SetupComplete.cmd -Value &apos;sleep10 &apos;</Path>
+                    <Description>Puppet Agent Run 1</Description>
+                </RunSynchronousCommand>
+                <RunSynchronousCommand wcm:action="add">
+                    <Order>14</Order>
+                    <Path>powershell -command Add-Content -Path C:\Windows\Setup\Scripts\SetupComplete.cmd -Value &apos;} &apos;</Path>
+                    <Description>Puppet Agent Run 1</Description>
+                </RunSynchronousCommand>
+                <RunSynchronousCommand wcm:action="add">
+                    <Order>15</Order>
+                    <Path>powershell -command Add-Content -Path C:\Windows\Setup\Scripts\SetupComplete.cmd -Value &apos;C:\Program Files\Puppet Labs\Puppet\bin\puppet.bat agent -t; &apos;</Path>
+                    <Description>Puppet Agent Run 1</Description>
+                </RunSynchronousCommand>
+                <RunSynchronousCommand wcm:action="add">
+                    <Order>16</Order>
+                    <Path>powershell -command Add-Content -Path C:\Windows\Setup\Scripts\SetupComplete.cmd -Value &apos;while (Test-Path -Path C:/ProgramData/PuppetLabs/puppet/cache/state/agent_catalog_run.lock) { &apos;</Path>
+                    <Description>Puppet Agent Run 1</Description>
+                </RunSynchronousCommand>
+                <RunSynchronousCommand wcm:action="add">
+                    <Order>17</Order>
+                    <Path>powershell -command Add-Content -Path C:\Windows\Setup\Scripts\SetupComplete.cmd -Value &apos;sleep10 &apos;</Path>
+                    <Description>Puppet Agent Run 1</Description>
+                </RunSynchronousCommand>
+                <RunSynchronousCommand wcm:action="add">
+                    <Order>18</Order>
+                    <Path>powershell -command Add-Content -Path C:\Windows\Setup\Scripts\SetupComplete.cmd -Value &apos;} &apos;</Path>
+                    <Description>Puppet Agent Run 1</Description>
+                </RunSynchronousCommand>
+                <RunSynchronousCommand wcm:action="add">
+                    <Order>19</Order>
                     <Path>powershell -command Add-Content -Path C:\Windows\Setup\Scripts\SetupComplete.cmd -Value &apos;C:\Program Files\Puppet Labs\Puppet\bin\puppet.bat agent -t; &apos;</Path>
                     <Description>Puppet Agent Run 2</Description>
                 </RunSynchronousCommand>
