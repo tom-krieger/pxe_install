@@ -93,7 +93,7 @@ lookup_options:
 
 The folder structure of your conreol repository should loo like this to get the above configurations work.
 
-```
+```bash
 control-repo/
 ├── data/                                 # Hiera data directory.
 │   ├── nodes/                            # Node-specific data goes here.

@@ -19,7 +19,7 @@ not published
 
 ## 0.3.3
 
-Enable Debian and Ubuntu preseeds with more than one disk. Introduced defaultignore flag 
+Enable Debian and Ubuntu preseeds with more than one disk. Introduced defaultignore flag
 for DEbain und Ubunto preseeds.
 
 ## 0.3.2
