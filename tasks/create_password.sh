@@ -10,6 +10,6 @@ if [ -z "${PT_password}" ] ; then
     exit 1
 fi
 
-python3 -c 'import crypt; print(crypt.crypt("${PT_PASSWORD}", crypt.mksalt(crypt.METHOD_SHA512)))'
+/usr/bin/openssl passwd -6 ${PT_password}
 
 exit 0
