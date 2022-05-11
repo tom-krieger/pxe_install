@@ -1,0 +1,82 @@
+
+%pre --interpreter /bin/bash --log /tmp/ks-pre.log.1
+for i in `cat /proc/cmdline` ; do
+
+    echo "$i" >>/tmp/cmdline
+
+        case $i in
+        *=*)
+                key=`echo $i | cut -f 1 -d '='`
+                value=`echo $i | cut -f 2 -d'='`
+                case $key in
+                "actkey")
+                        activationkey=$value
+                        echo $activationkey > "/tmp/actkey"
+                        echo "activationkey = $activationkey"
+                ;;
+                "puppetenv")
+                        puppetenv=$value
+                        echo "puppetenv = $puppetenv"
+                        echo "$puppetenv" >/tmp/puppetenv
+                        ;;
+                "puppetrole")
+                        role=$value
+                        echo "role = $role"
+                        echo "$role" >/tmp/puppetrole
+                        ;;
+                "dc")
+                        datacenter=$value
+                        echo "datacenter = $datacenter"
+                        echo "$datacenter" >/tmp/datacenter
+                        ;;
+                esac
+        ;;
+        esac
+
+done
+
+hostname=`hostname`
+ifconfig -a
+%end
+
+%post --nochroot --log /tmp/post_nochroot.log
+echo "post nochroot" >/dev/tty3
+cp /etc/resolv.conf /mnt/sysimage/etc/resolv.conf
+NW=/mnt/sysimage/etc/sysconfig/network
+IFDIR=/mnt/sysimage/etc/sysconfig/network-scripts
+
+hostname="<%= $fqdn %>"
+
+echo "127.0.0.1          localhost.localdomain localhost" >/mnt/sysimage/etc/hosts
+echo "<%= $ip %>        <%= $fqdn %> <%= $hostname %>" >>/mnt/sysimage/etc/hosts
+echo "<%= $reposerverip %>        <%= $reposerver %>" >>/mnt/sysimage/etc/hosts
+echo "${PUPPETMASTERIP}        ${PUPPETMASTER}" >>/mnt/sysimage/etc/hosts
+
+cp /tmp/actkey /mnt/sysimage/tmp/
+cp /tmp/puppetenv /mnt/sysimage/tmp/
+cp /tmp/puppetrole /mnt/sysimage/tmp/
+cp /tmp/datacenter /mnt/sysimage/tmp/
+%end
+
+%post
+if [ -x /bin/curl -o -x /usr/bin/curl ] ; then
+        echo "using curl for download"
+        echo "using curl for download" >/dev/tty3
+        curl -s -k -o /tmp/postinstall.sh https://<%= $reposerver %><%= $scripturl %>/redhat-post.sh
+else
+        echo "using wget for download"
+        echo "using wget for download" >/dev/tty3
+        wget -O /tmp/postinstall.sh -q https://<%= $reposerver %><%= $scripturl %>/redhat-post.sh
+fi
+/bin/bash /tmp/postinstall.sh <%= $agent %> 2>&1 >/var/log/postinstall.log
+
+echo "finished post install" >/dev/tty3
+%end
+
+
+%packages
+<%- if $osversion < "8" { -%>
+ntp
+<%- } -%>
+net-tools
+%end

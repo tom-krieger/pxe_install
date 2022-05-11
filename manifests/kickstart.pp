@@ -242,8 +242,8 @@ define pxe_install::kickstart (
 
     }
     'fedora': {
-      $template_start = 'pxe_install/redhat/kickstart.epp'
-      $template_finish = 'pxe_install/redhat/kickstart-end.epp'
+      $template_start = 'pxe_install/fedora/kickstart.epp'
+      $template_finish = 'pxe_install/fedora/kickstart-end.epp'
 
       if has_key($pxe_install::mirrors['fedora'], $data['osversion']) {
 
@@ -259,7 +259,7 @@ define pxe_install::kickstart (
         }
 
       } else {
-        fail("No mirror defined for ${hostname} for CentOS ${data['osversion']}")
+        fail("No mirror defined for ${hostname} for Fedora ${data['osversion']}")
       }
     }
     'windows': {
@@ -533,6 +533,7 @@ define pxe_install::kickstart (
 
   if  $ostype.downcase() == 'centos' or
       $ostype.downcase() == 'redhat' or
+      $ostype.downcase() == 'fedora' or
       $ostype.downcase() == 'windows'
   {
     $osvers = has_key($data, 'osversion') ? {

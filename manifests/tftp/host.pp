@@ -175,6 +175,23 @@ define pxe_install::tftp::host (
         *       => $file_data,
       }
     }
+    'fedora': {
+      #Fedora
+      file { $filename:
+        content => epp('pxe_install/fedora/tftp-entry.epp', {
+          prefix      => $prefix,
+          ksurl       => $ksurl,
+          ksdevice    => $ksdevice,
+          puppetenv   => $puppetenv,
+          puppetrole  => $puppetrole,
+          datacenter  => $datacenter,
+          ks          => $ks,
+          mirror_host => $mirror_host,
+          mirror_uri  => $mirror_uri,
+        }),
+        *       => $file_data,
+      }
+    }
     default: {
       # RedHat/CentOS
       file { $filename:

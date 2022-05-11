@@ -1,0 +1,21 @@
+<%= $type %> <%= $partname %><%- if $vgname != '' { -%>
+ --vgname=<%= $vgname -%>
+<%- } -%><%- if $fstype != '' { -%>
+ --fstype=<%= $fstype -%>
+<%- } -%><%- if $size != 0 { -%>
+ --size=<%= $size -%>
+<%- } -%><%- if $primary == true { -%>
+ --asprimary<% } -%><%- if $grow == true { -%>
+ --grow<%- } -%><%- if $ondisk != '' { -%>
+ --ondisk=<%= $ondisk -%>
+<%- } -%><%- if $pvol != '' { -%>
+ <%= $pvol -%>
+<%- } -%><%- if $diskname != '' { -%>
+ --name=<%= $diskname -%>
+<%- } -%><%- if $disk_device != '' { -%>
+ --device <%= $disk_device -%>
+<%- } -%><%- if $level != '' { -%>
+  --level=<%= $level -%>
+<%- } -%><%- if $part_disks != '' { -%>
+ <%= $part_disks -%>
+<%- } %>

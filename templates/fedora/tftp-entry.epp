@@ -1,0 +1,8 @@
+prompt 0
+timeout 1
+display <%= $prefix %>/boot.msg
+default ks
+
+label ks
+        kernel <%= $prefix %>/vmlinuz
+        append <%= $ks %>=<%= $ksurl %> initrd=<%= $prefix %>/initrd.img inst.stage2=<%= $mittor_host %><%= $mirror_uri %> ip=dhcp puppetenv=<%= $puppetenv %> puppetrole=<%= $puppetrole %> dc=<%= $datacenter %>
