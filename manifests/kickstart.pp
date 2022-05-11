@@ -238,6 +238,27 @@ define pxe_install::kickstart (
       }
 
     }
+    'fedora': {
+      $template_start = 'pxe_install/redhat/kickstart.epp'
+      $template_finish = 'pxe_install/redhat/kickstart-end.epp'
+
+      if has_key($pxe_install::mirrors['fedora'], $data['osversion']) {
+
+        $mirror_host = $pxe_install::mirrors['fedora'][$data['osversion']]['mirror_host']
+        $mirror_uri = $pxe_install::mirrors['fedora'][$data['osversion']]['mirror_uri']
+        $ksurl = "http://${pxe_install::repo_server}/kickstart/${hostname}"
+        $installserverurl = "${mirror_host}${mirror_uri}"
+
+        pxe_install::partitioning::redhat { $hostname:
+          hostname       => $hostname,
+          partitioning   => $partitioning,
+          kickstart_file => $kickstart_file,
+        }
+
+      } else {
+        fail("No mirror defined for ${hostname} for CentOS ${data['osversion']}")
+      }
+    }
     'windows': {
       $mirror_host = $pxe_install::mirrors['windows']['mirror_host']
       $mirror_uri = $pxe_install::mirrors['windows']['mirror_uri']
@@ -350,6 +371,21 @@ define pxe_install::kickstart (
     default => $defaults['keymap'],
   }
 
+  $xconfig = has_key($data, 'xconfig') ? {
+    true  => 'xconfig',
+    false => 'skipx',
+  }
+
+  $defaultdesktop = has_key($data, 'defaultdesktop') ? {
+    true  => $data['defaultdesktop'],
+    false => 'GNOME',
+  }
+
+  $startxonboot = has_key($data, 'startxonboot') ? {
+    true  => true,
+    false => false,
+  }
+
   $ks_fqdn = "${hostname}.${domain}"
 
   if $ostype.downcase != 'windows' {
@@ -385,6 +421,9 @@ define pxe_install::kickstart (
         scripturl        => $scripturl,
         user             => $user,
         osversion        => $data['osversion'],
+        xconfig          => $xconfig,
+        defaultdesktop   => $defaultdesktop,
+        startxonboot     => $startxonboot,
       }),
       target  => $kickstart_file,
     }
