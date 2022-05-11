@@ -79,6 +79,7 @@ define pxe_install::tftp::host (
   Optional[String] $mirror_host = '',
   Optional[String] $mirror_uri  = '',
   Optional[Hash] $scenario_data = {},
+  Optional[String] $stage2      = '',
 ) {
 
   if  $ostype.downcase() == 'windows' and
@@ -188,6 +189,7 @@ define pxe_install::tftp::host (
           ks          => $ks,
           mirror_host => $mirror_host,
           mirror_uri  => $mirror_uri,
+          stage2      => $stage2,
         }),
         *       => $file_data,
       }
