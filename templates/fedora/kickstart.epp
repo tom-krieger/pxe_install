@@ -17,4 +17,4 @@ skipx
 <% } else { %>
 xconfig --defaultdesktop=<%= $defaultdesktop %> <% if $startxonboot { -%>--startxonboot<% } -%>
 <% } %>
-timezone --isUtc <%= $timezone %>
+timezone --utc <%= $timezone %>
