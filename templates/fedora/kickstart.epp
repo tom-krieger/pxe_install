@@ -18,6 +18,3 @@ skipx
 xconfig --defaultdesktop=<%= $defaultdesktop %> <% if $startxonboot { -%>--startxonboot<% } -%>
 <% } %>
 timezone --isUtc <%= $timezone %>
-<% if $osversion < '8' { -%>
-install
-<% } %>
