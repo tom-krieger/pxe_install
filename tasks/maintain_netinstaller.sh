@@ -68,7 +68,7 @@ function install_debian_ubuntu() {
     rm -f $archive
 }
 
-# unpack and install net instller files
+# unpack and install net installer files CentOS
 function install_centos() {
 
     archive=$1
@@ -107,6 +107,44 @@ function install_centos() {
     rm -f $archive
 }
 
+# unpack and install net installer files Fedora
+function install_fedora() {
+
+    archive=$1
+    basedir=$2
+    os=$3
+    osvers=$4
+
+    if [[ $archive =~ \.iso$ ]] ; then
+        mnt=$(mount | grep "/tmp/installer")
+        if [ ! -z "$mnt" ] ; then
+            umount /tmp/installer
+        fi
+        rm -rf /tmp/installer
+        mkdir -p /tmp/installer
+        mount -o loop $archive /tmp/installer
+    else
+        echo "Only iso files are accepted for Fedora!"
+        exit 2
+    fi
+
+    if [ ! -d /tmp/installer/isolinux ] ; then
+        echo "Seems not to be a valid netinstaller iso!"
+        exit 2
+    fi
+
+    cd /tmp/installer/isolinux
+    mkdir -p "${basedir}/${os}/${osvers}"
+    for f in boot.msg initrd.img isolinux.bin isolinux.cfg vmlinuz splash.png ; do
+        echo "copying $f to ${basedir}/${os}/${osvers}/"
+        cp $f "${basedir}/${os}/${osvers}/"
+    done
+
+    cd /tmp
+    umount /tmp/installer
+    rm -f $archive
+}
+
 basedir=$PT_tftp_basedir
 os=$PT_os
 osvers=$PT_os_version
@@ -138,6 +176,16 @@ case $os in
 
         download_installer "${archive}" "${PT_archive_url}"
         install_centos "${archive}" "${basedir}" "${os}" "${osvers}" "${ossubvers}"
+        ;;
+
+    'fedora')
+         if [ "${osvers}" != "35" -a "${osvers}" != "36" ] ; then
+            echo "Fedora supports version 35 and 36 only!"
+            exit 2
+        fi
+
+        download_installer "${archive}" "${PT_archive_url}"
+        install_fedora "${archive}" "${basedir}" "${os}" "${osvers}"
         ;;
 
     'ubuntu')
