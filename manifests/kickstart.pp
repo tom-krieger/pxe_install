@@ -531,6 +531,11 @@ define pxe_install::kickstart (
     default => '',
   }
 
+  $stage2 = has_key($data, 'stage2') ? {
+    true  => $data['stage2'],
+    false => "${mirror_host}${mirror_uri}"
+  }
+
   if  $ostype.downcase() == 'centos' or
       $ostype.downcase() == 'redhat' or
       $ostype.downcase() == 'fedora' or
@@ -575,6 +580,7 @@ define pxe_install::kickstart (
       mirror_host   => $mirror_host,
       mirror_uri    => $mirror_uri,
       scenario_data => $scenario_data,
+      stage2        => $stage2,
     }
 
   }
