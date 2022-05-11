@@ -77,8 +77,11 @@ define pxe_install::kickstart (
     'windows': {
       $lookupkey = 'windows'
     }
+    'fedora': {
+      $lookupkey = 'fedora'
+    }
     default: {
-      fail("Unsupported os: ${ostype}. Only Debian, Ubuntu, Redhat, CentOS and Windows are supported.")
+      fail("Unsupported os: ${ostype}. Only Debian, Ubuntu, Redhat, CentOS, Fedora and Windows are supported.")
     }
   }
 
