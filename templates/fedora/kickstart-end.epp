@@ -1,5 +1,5 @@
 
-%pre --interpreter /bin/bash --log /tmp/ks-pre.log.1
+%pre --interpreter /bin/bash --log /tmp/ks_pre.log
 
 for i in `cat /proc/cmdline` ; do
 
@@ -40,7 +40,7 @@ hostname=`hostname`
 ifconfig -a
 %end
 
-%post --nochroot --log /tmp/post_nochroot.log
+%post --nochroot --log /tmp/ks_post_nochroot.log
 echo "post nochroot" >/dev/tty3
 
 hostname="<%= $fqdn %>"
@@ -59,7 +59,7 @@ echo "post nochroot finished" >/dev/tty3
 
 %end
 
-%post
+%post --log=/root/ks_post_chroot.log
 echo "post chroot" >/dev/tty3
 
 if [ -x /bin/curl -o -x /usr/bin/curl ] ; then
