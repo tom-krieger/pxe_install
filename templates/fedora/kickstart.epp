@@ -19,5 +19,5 @@ xconfig --defaultdesktop=<%= $defaultdesktop %> <% if $startxonboot { -%>--start
 <% } %>
 timezone --utc <%= $timezone %>
 <% if ! empty($user) { %>
-user --name=<%= $user['username'] %> --gecos=<%= $user['fullname'] %> --iscrypted --password=<%= $user['password'] %>
+user --name=<%= $user['username'] %> --gecos="<%= $user['fullname'] %>" --iscrypted --password=<%= $user['password'] %>
 <% } %>
