@@ -8,12 +8,10 @@ keyboard <%= $keyboard %>
 lang <%= $lang %>
 logging --host=<%= $loghost %>
 url --url=<%= $installserverurl %>
-<% 
-$dns_array = split($dnsserver, '[,]') 
+<%
+$dns = "--nameserver=${split($dnsserver, '[,]').join(' --nameserver=')}"
 %>
-network --bootproto=static --device=<%= $ksdevice %> --gateway=<%= $gateway %> --ip=<%= $ip %> --netmask=<%= $netmask %> --hostname=<%= $fqdn %> <% $dns_array.each |$dns| { -%>
---nameserver=<%= $dns %> 
-<% } %>
+network --bootproto=static --device=<%= $ksdevice %> --gateway=<%= $gateway %> --ip=<%= $ip %> --netmask=<%= $netmask %> --hostname=<%= $fqdn %> <%= $dns %>
 reboot
 rootpw --iscrypted <%= $rootpw %>
 selinux --disabled
