@@ -109,7 +109,6 @@ function cleanupRpmDbFiles() {
 	[ -f /var/lib/rpm/__db.003 ] && /bin/rm /var/lib/rpm/__db.003
 
 	/usr/bin/dnf clean all && rm -rf /var/cache/dnf  && /usr/bin/dnf upgrade -y && /usr/bin/dnf update -y
-	/usr/bin/yum clean all
 
 }
 

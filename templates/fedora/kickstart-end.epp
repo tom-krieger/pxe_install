@@ -42,8 +42,6 @@ ifconfig -a
 
 %post --nochroot --log /tmp/post_nochroot.log
 echo "post nochroot" >/dev/tty3
-NW=/mnt/sysroot/etc/sysconfig/network
-IFDIR=/mnt/sysroot/etc/sysconfig/network-scripts
 
 hostname="<%= $fqdn %>"
 
