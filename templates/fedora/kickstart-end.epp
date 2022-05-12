@@ -41,21 +41,21 @@ ifconfig -a
 
 %post --nochroot --log /tmp/post_nochroot.log
 echo "post nochroot" >/dev/tty3
-cp /etc/resolv.conf /mnt/sysimage/etc/resolv.conf
-NW=/mnt/sysimage/etc/sysconfig/network
-IFDIR=/mnt/sysimage/etc/sysconfig/network-scripts
+p /etc/resolv.conf /mnt/sysroot/etc/resolv.conf
+NW=/mnt/sysroot/etc/sysconfig/network
+IFDIR=/mnt/sysroot/etc/sysconfig/network-scripts
 
 hostname="<%= $fqdn %>"
 
-echo "127.0.0.1          localhost.localdomain localhost" >/mnt/sysimage/etc/hosts
-echo "<%= $ip %>        <%= $fqdn %> <%= $hostname %>" >>/mnt/sysimage/etc/hosts
-echo "<%= $reposerverip %>        <%= $reposerver %>" >>/mnt/sysimage/etc/hosts
-echo "${PUPPETMASTERIP}        ${PUPPETMASTER}" >>/mnt/sysimage/etc/hosts
+echo "127.0.0.1          localhost.localdomain localhost" >/mnt/sysroot/etc/hosts
+echo "<%= $ip %>        <%= $fqdn %> <%= $hostname %>" >>/mnt/sysroot/etc/hosts
+echo "<%= $reposerverip %>        <%= $reposerver %>" >>/mnt/sysroot/etc/hosts
+echo "${PUPPETMASTERIP}        ${PUPPETMASTER}" >>/mnt/sysroot/etc/hosts
 
-cp /tmp/actkey /mnt/sysimage/tmp/
-cp /tmp/puppetenv /mnt/sysimage/tmp/
-cp /tmp/puppetrole /mnt/sysimage/tmp/
-cp /tmp/datacenter /mnt/sysimage/tmp/
+cp /tmp/actkey /mnt/sysroot/tmp/
+cp /tmp/puppetenv /mnt/sysroot/tmp/
+cp /tmp/puppetrole /mnt/sysroot/tmp/
+cp /tmp/datacenter /mnt/sysroot/tmp/
 %end
 
 %post
