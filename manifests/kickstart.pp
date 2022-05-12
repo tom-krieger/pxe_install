@@ -391,6 +391,11 @@ define pxe_install::kickstart (
 
   $ks_fqdn = "${hostname}.${domain}"
 
+  $bootproto = has_key($network_data, 'bootproto') ? {
+    true  => $network_data['bootproto'],
+    false => 'dhcp',
+  }
+
   if $ostype.downcase != 'windows' {
 
     concat::fragment { "${hostname}-start":
@@ -406,6 +411,7 @@ define pxe_install::kickstart (
         ip               => $network_data['fixedaddress'],
         netmask          => $network_data['netmask'],
         gateway          => $network_data['gateway'],
+        bootproto        => $network_data['bootproto'],
         dnsservers       => $dns_data,
         hostname         => $hostname,
         rootpw           => $rootpw,

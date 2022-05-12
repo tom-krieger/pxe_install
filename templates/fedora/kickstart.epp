@@ -11,7 +11,13 @@ url --url=<%= $installserverurl %>
 <%
 $dns = "--nameserver=${split($dnsservers, '[,]').join(' --nameserver=')}"
 %>
+<% if $bootproto == 'dhcp' or $bootproto == 'bootp' { %>
 network --bootproto=dhcp --device=<%= $ksdevice %>
+<% } elsif $bootproto == 'static' { %>
+network --bootproto=static --device=<%= $ksdevice %> --gateway=<%= $gateway %> --ip=<%= $ip %> --netmask=<%= $netmask %> --hostname=<%= $fqdn %> <%= $dns %>
+<% } elsif $bootproto == 'ibft' { %>
+network --bootproto=ibft
+<% } %>
 rootpw --iscrypted <%= $rootpw %>
 selinux --disabled
 <% if $xconfig == 'skipx' { %>
