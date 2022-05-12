@@ -11,8 +11,7 @@ url --url=<%= $installserverurl %>
 <%
 $dns = "--nameserver=${split($dnsservers, '[,]').join(' --nameserver=')}"
 %>
-network --bootproto=static --device=<%= $ksdevice %> --gateway=<%= $gateway %> --ip=<%= $ip %> --netmask=<%= $netmask %> --hostname=<%= $fqdn %> <%= $dns %>
-reboot
+network --bootproto=dhcp --device=<%= $ksdevice %>
 rootpw --iscrypted <%= $rootpw %>
 selinux --disabled
 <% if $xconfig == 'skipx' { %>
