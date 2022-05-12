@@ -9,7 +9,7 @@ lang <%= $lang %>
 logging --host=<%= $loghost %>
 url --url=<%= $installserverurl %>
 <%
-$dns = "--nameserver=${split($dnsserver, '[,]').join(' --nameserver=')}"
+$dns = "--nameserver=${split($dnsservers, '[,]').join(' --nameserver=')}"
 %>
 network --bootproto=static --device=<%= $ksdevice %> --gateway=<%= $gateway %> --ip=<%= $ip %> --netmask=<%= $netmask %> --hostname=<%= $fqdn %> <%= $dns %>
 reboot
