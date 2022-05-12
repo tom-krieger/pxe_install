@@ -1,6 +1,6 @@
 
 %pre --interpreter /bin/bash --log /tmp/ks-pre.log.1
-ls -la /proc
+
 for i in `cat /proc/cmdline` ; do
 
     echo "$i" >>/tmp/cmdline
@@ -54,9 +54,14 @@ cp /tmp/actkey /mnt/sysroot/tmp/
 cp /tmp/puppetenv /mnt/sysroot/tmp/
 cp /tmp/puppetrole /mnt/sysroot/tmp/
 cp /tmp/datacenter /mnt/sysroot/tmp/
+
+echo "post nochroot finished" >/dev/tty3
+
 %end
 
 %post
+echo "post chroot" >/dev/tty3
+
 if [ -x /bin/curl -o -x /usr/bin/curl ] ; then
         echo "using curl for download"
         echo "using curl for download" >/dev/tty3
