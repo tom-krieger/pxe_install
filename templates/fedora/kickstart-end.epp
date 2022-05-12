@@ -42,7 +42,6 @@ ifconfig -a
 
 %post --nochroot --log /tmp/post_nochroot.log
 echo "post nochroot" >/dev/tty3
-# cp /etc/resolv.conf /mnt/sysroot/etc/resolv.conf
 NW=/mnt/sysroot/etc/sysconfig/network
 IFDIR=/mnt/sysroot/etc/sysconfig/network-scripts
 
@@ -63,11 +62,11 @@ cp /tmp/datacenter /mnt/sysroot/tmp/
 if [ -x /bin/curl -o -x /usr/bin/curl ] ; then
         echo "using curl for download"
         echo "using curl for download" >/dev/tty3
-        curl -s -k -o /tmp/postinstall.sh https://<%= $reposerver %><%= $scripturl %>/redhat-post.sh
+        curl -s -k -o /tmp/postinstall.sh https://<%= $reposerver %><%= $scripturl %>/fedora-post.sh
 else
         echo "using wget for download"
         echo "using wget for download" >/dev/tty3
-        wget -O /tmp/postinstall.sh -q https://<%= $reposerver %><%= $scripturl %>/redhat-post.sh
+        wget -O /tmp/postinstall.sh -q https://<%= $reposerver %><%= $scripturl %>/fedora-post.sh
 fi
 /bin/bash /tmp/postinstall.sh <%= $agent %> 2>&1 >/var/log/postinstall.log
 
