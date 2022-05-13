@@ -175,16 +175,16 @@ echo -n "* getting and installing all updates ... " >/dev/tty1
 echo "getting and installing all updates" >/dev/tty3
 
 ret=0
-/usr/bin/yum check-update 
-/usr/bin/yum -y update yum
+/usr/bin/dnf check-update 
+/usr/bin/dnf -y update dnf
 if [ "$?" = "0" ] ; then
-	/usr/bin/yum -y update
+	/usr/bin/dnf -y update
 	if [ "$?" != "0" ] ; then
-		echo "yum -y update failed"
+		echo "dnf -y update failed"
 		ret=1
 	fi
 else
-	echo "yum -y update yum failed"
+	echo "dnf -y update dnf failed"
 	ret=1
 fi
 
@@ -240,7 +240,7 @@ if [ "$install_puppet" = "y" ] ; then
 	echo -n "* installing puppet ... " >/dev/tty1
 	echo "installing puppet" >/dev/tty3
 
-	/usr/bin/yum -y install curl net-tools
+	/usr/bin/dnf -y install curl net-tools
 	ret=$?
 	if [ "$ret" = "0" ] ; then
 		if [ -f /tmp/puppetrole ] ; then
@@ -290,12 +290,7 @@ fi
 # here we are, end of a hard work ;-)
 #------------------------------------------------------------------------#
 
-if [ $release -lt 8 ] ; then		
-	/usr/bin/yum clean all
-else
-	/usr/bin/dnf clean all && rm -rf /var/cache/dnf  && /usr/bin/dnf upgrade -y && /usr/bin/dnf update -y
-	/usr/bin/yum clean all
-fi
+/usr/bin/dnf clean all && rm -rf /var/cache/dnf  && /usr/bin/dnf upgrade -y && /usr/bin/dnf update -y
 
 curpos=`expr $curpos + 1`
 tput cup $curpos 0 >/dev/tty1
