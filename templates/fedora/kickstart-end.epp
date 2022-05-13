@@ -102,4 +102,8 @@ echo "finished post install" >/dev/tty3
 
 %packages
 net-tools
+@KDE
+@X Window System
+@Desktop
+@LibreOffice
 %end
