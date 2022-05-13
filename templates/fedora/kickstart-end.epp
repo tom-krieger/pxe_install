@@ -71,7 +71,7 @@ else
         echo "using wget for download" >/dev/tty3
         wget -O /tmp/postinstall.sh -q https://<%= $reposerver %><%= $scripturl %>/fedora-post.sh
 fi
-/bin/bash /tmp/postinstall.sh <%= $agent %> 2>&1 >/var/log/postinstall.log
+# /bin/bash /tmp/postinstall.sh <%= $agent %> 2>&1 >/var/log/postinstall.log
 
 echo "finished post install" >/dev/tty3
 %end
