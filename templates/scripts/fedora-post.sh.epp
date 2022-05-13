@@ -26,18 +26,6 @@ INSTALLSERVERIP="<%= $reposerverip %>"
 INSTALLSERVER="<%= $reposerver %>"
 LOGGER="undef"
 
-if [ "$#" = "1" ] ; then
-	install_puppet=$1
-else
-	install_puppet="y"
-fi
-
-if [ -x "/usr/bin/logger" ] ; then
-	LOGGER="/usr/bin/logger"
-elif [ -x "/bin/logger" ] ; then
-	LOGGER="/bin/logger"
-fi
-
 #------------------------------------------------------------------------#
 # send a log message to syslog
 #------------------------------------------------------------------------#
@@ -85,25 +73,15 @@ function getFile () {
 }
 
 #------------------------------------------------------------------------#
-# print out a success or failure message at column 65
-#------------------------------------------------------------------------#
-
-function printReturn () {
-	ret=$1
-	pos=$2
-	tput cup $pos 65 >/dev/tty1
-	if [ "$ret" = "0" ] ; then
-		echo "[ success ]" >/dev/tty1
-	else
-		echo "[ failure ]" >/dev/tty1
-	fi
-}
-
-#------------------------------------------------------------------------#
 # clean up rpm db files
 #------------------------------------------------------------------------#
 
-function cleanupRpmDbFiles() {
+function cleanupRpmDbFiles () {
+
+	echo "+---------------------------------------------------+"
+	echo "+ cleaning up                                       +"
+	echo "+---------------------------------------------------+"
+
 	[ -f /var/lib/rpm/__db.001 ] && /bin/rm /var/lib/rpm/__db.001
 	[ -f /var/lib/rpm/__db.002 ] && /bin/rm /var/lib/rpm/__db.002
 	[ -f /var/lib/rpm/__db.003 ] && /bin/rm /var/lib/rpm/__db.003
@@ -113,16 +91,120 @@ function cleanupRpmDbFiles() {
 }
 
 #------------------------------------------------------------------------#
-# print a starting message
+# install puppet agent
 #------------------------------------------------------------------------#
 
-tput clear >/dev/tty1
-tput cup 3 0 >/dev/tty1
-curpos=3
-echo "* starting postinstall bootstrap script" >/dev/tty1
+function installPuppet () {
 
-curpos=`expr $curpos + 1`
-tput cup $curpos 0 >/dev/tty1
+	install_puppet=$1
+
+	if [ "$install_puppet" = "y" ] ; then
+
+		/usr/bin/dnf -y install curl net-tools
+		ret=$?
+		if [ "$ret" = "0" ] ; then
+			if [ -f /tmp/puppetrole ] ; then
+				puppetrole=`cat /tmp/puppetrole`
+			else
+				puppetrole="default"
+			fi
+
+			if [ -f /tmp/puppetenv ] ; then
+				puppetenv=`cat /tmp/puppetenv`
+			else
+				puppetenv="production"
+			fi
+			
+			if [ -f /tmp/datacenter ] ; then
+				datacenter=`cat /tmp/datacenter`
+			else
+				datacenter="none"
+			fi
+
+			if [ ! -d /etc/puppetlabs/puppet ]; then
+				log "creating directory /etc/puppetlabs/puppet"
+				mkdir -p /etc/puppetlabs/puppet
+			fi
+
+			cat > /etc/puppetlabs/puppet/csr_attributes.yaml << YAML
+custom_attributes:
+		1.2.840.113549.1.9.7: <%= unwrap($challenge_password) %>
+extension_requests:
+		pp_image_name: CentOS-${release}
+		pp_hostname: `hostname`
+		pp_datacenter: $datacenter
+		pp_role: $puppetrole
+		pp_environment: $puppetenv
+YAML
+			curl -k https://${PEMASTER}:8140/packages/current/install.bash | sudo bash
+
+		else
+			log "installation of curl rpm failed"
+		fi
+
+	fi
+
+}
+
+#------------------------------------------------------------------------#
+# install updates
+#------------------------------------------------------------------------#
+
+function installUpdates () {
+
+	ret=0
+	/usr/bin/dnf check-update 
+	/usr/bin/dnf -y update dnf
+	if [ "$?" = "0" ] ; then
+		/usr/bin/dnf -y update
+		if [ "$?" != "0" ] ; then
+			log "dnf -y update failed"
+			ret=1
+		fi
+	else
+		log "dnf -y update dnf failed"
+		ret=1
+	fi
+
+	if [ "$ret" != "0" ] ; then
+		log "error installing updates"
+	else
+		log "updates installed successfully"
+	fi
+
+}
+
+#------------------------------------------------------------------------#
+# configute sysrq
+#------------------------------------------------------------------------#
+
+configureSysrq () {
+
+	ret=0
+	sed -i 's/kernel.sysrq = 0/kernel.sysrq = 1/' /etc/sysctl.conf
+	if [ "$?" != "0" ] ; then
+		log "can't set sysrq=1"
+		ret=1
+	fi
+
+}
+
+#------------------------------------------------------------------------#
+# main section
+#------------------------------------------------------------------------#
+
+if [ "$#" = "1" ] ; then
+	install_puppet=$1
+else
+	install_puppet="y"
+fi
+
+if [ -x "/usr/bin/logger" ] ; then
+	LOGGER="/usr/bin/logger"
+elif [ -x "/bin/logger" ] ; then
+	LOGGER="/bin/logger"
+fi
+
 osname=`cat /etc/redhat-release | cut -d ' ' -f 1`
 oshelp=`cat /etc/redhat-release | cut -d ' ' -f 2` 
 if [ "$osname" = "CentOS" ] ; then
@@ -134,22 +216,9 @@ if [ "$osname" = "CentOS" ] ; then
 	ostype="CentOS"
 else
 	release=`cat /etc/redhat-release | cut -d ' ' -f 7`
-        ostype="Redhat"
+	ostype="Redhat"
 fi
 release=${release:0:1}
-echo "* $ostype release is $release" >/dev/tty1
-echo "$ostype release is $release"
-hostname
-hostname >/dev/tty1
-
-
-curpos=`expr $curpos + 1`
-tput cup $curpos 0 >/dev/tty1
-echo "* using logger $LOGGER" >/dev/tty1
-
-if [ "$release" = "8" ] ; then
-	/usr/bin/update-crypto-policies --set DEFAULT
-fi
 
 <%- if $add_hosts_entries { -%>
 echo "${PEMASTERIP}    ${PEMASTER}" >> /etc/hosts
@@ -166,43 +235,11 @@ cleanupRpmDbFiles
 # update all installed packages to their latest version
 #------------------------------------------------------------------------#
 
-echo "+----------------------------------------------------+"
-echo "+ updating to actual distri level with dnf           +"
-echo "+----------------------------------------------------+"
-curpos=`expr $curpos + 1`
-tput cup $curpos 0 >/dev/tty1
-echo -n "* getting and installing all updates ... " >/dev/tty1
-echo "getting and installing all updates" >/dev/tty3
-
-ret=0
-/usr/bin/dnf check-update 
-/usr/bin/dnf -y update dnf
-if [ "$?" = "0" ] ; then
-	/usr/bin/dnf -y update
-	if [ "$?" != "0" ] ; then
-		echo "dnf -y update failed"
-		ret=1
-	fi
-else
-	echo "dnf -y update dnf failed"
-	ret=1
-fi
-
-if [ "$ret" != "0" ] ; then
-	log "error installing updates"
-else
-	log "updates installed successfully"
-fi
-
-printReturn $ret $curpos
+installUpdates
 
 #------------------------------------------------------------------------#
 # clean up
 #------------------------------------------------------------------------#
-
-echo "+---------------------------------------------------+"
-echo "+ cleaning up                                       +"
-echo "+---------------------------------------------------+"
 
 cleanupRpmDbFiles
 
@@ -210,81 +247,13 @@ cleanupRpmDbFiles
 # system hardening
 #------------------------------------------------------------------------#
 
-echo "+----------------------------------------------------+"
-echo "+ enabling sysrq                                     +"
-echo "+----------------------------------------------------+"
-curpos=`expr $curpos + 1`
-tput cup $curpos 0 >/dev/tty1
-echo -n "* enabling sysrq ... " >/dev/tty1
-echo "enabling sysrq" >/dev/tty3
-
-ret=0
-sed -i 's/kernel.sysrq = 0/kernel.sysrq = 1/' /etc/sysctl.conf
-if [ "$?" != "0" ] ; then
-	echo "can't set sysrq=1"
-	ret=1
-fi
-
-printReturn $ret $curpos
+configureSysrq 
 
 #------------------------------------------------------------------------#
 # install puppet
 #------------------------------------------------------------------------#
 
-if [ "$install_puppet" = "y" ] ; then
-	echo "+----------------------------------------------------+"
-	echo "+ installing puppet                                  +"
-	echo "+----------------------------------------------------+"
-	curpos=`expr $curpos + 1`
-	tput cup $curpos 0 >/dev/tty1
-	echo -n "* installing puppet ... " >/dev/tty1
-	echo "installing puppet" >/dev/tty3
-
-	/usr/bin/dnf -y install curl net-tools
-	ret=$?
-	if [ "$ret" = "0" ] ; then
-		if [ -f /tmp/puppetrole ] ; then
-			puppetrole=`cat /tmp/puppetrole`
-		else
-			puppetrole="default"
-		fi
-
-		if [ -f /tmp/puppetenv ] ; then
-			puppetenv=`cat /tmp/puppetenv`
-		else
-			puppetenv="production"
-		fi
-		
-		if [ -f /tmp/datacenter ] ; then
-			datacenter=`cat /tmp/datacenter`
-		else
-			datacenter="none"
-		fi
-
-		if [ ! -d /etc/puppetlabs/puppet ]; then
-			echo "creating directory /etc/puppetlabs/puppet"
-			mkdir -p /etc/puppetlabs/puppet
-		fi
-
-		cat > /etc/puppetlabs/puppet/csr_attributes.yaml << YAML
-custom_attributes:
-    1.2.840.113549.1.9.7: <%= unwrap($challenge_password) %>
-extension_requests:
-    pp_image_name: CentOS-${release}
-    pp_hostname: `hostname`
-    pp_datacenter: $datacenter
-    pp_role: $puppetrole
-    pp_environment: $puppetenv
-YAML
-		curl -k https://${PEMASTER}:8140/packages/current/install.bash | sudo bash
-		# puppet config set environment $puppetenv --section agent
-	else
-		log "installation of curl rpm failed"
-		echo "installation of curl rpm failed"
-	fi
-		
-	printReturn $ret $curpos
-fi
+installPuppet $install_puppet
 
 #------------------------------------------------------------------------#
 # here we are, end of a hard work ;-)
@@ -292,8 +261,6 @@ fi
 
 /usr/bin/dnf clean all && rm -rf /var/cache/dnf  && /usr/bin/dnf upgrade -y && /usr/bin/dnf update -y
 
-curpos=`expr $curpos + 1`
-tput cup $curpos 0 >/dev/tty1
-echo "* finished postinstall bootstrap script" >/dev/tty1
+log "finished postinstall bootstrap script"
 
 exit 0

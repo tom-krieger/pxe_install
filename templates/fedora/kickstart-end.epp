@@ -62,16 +62,39 @@ echo "post nochroot finished" >/dev/tty3
 %post --log=/root/ks_post_chroot.log
 echo "post chroot" >/dev/tty3
 
+mkdir -p /etc/puppetlabs/puppet/
+if [ -f /tmp/puppetenv ] ; then 
+        cp /tmp/puppetenv /target/etc/puppetlabs/puppet/
+fi
+if [ -f /tmp/puppetrole ] ; then 
+        cp /tmp/puppetrole /target/etc/puppetlabs/puppet/
+fi
+if [ -f /tmp/datacenter ] ; then 
+        cp /tmp/datacenter /target/etc/puppetlabs/puppet/
+fi
+if [ -f /tmp/install_agent ] ; then 
+        cp /tmp/install_agent /target/etc/puppetlabs/puppet/
+fi
+
+systemctl enable rc-local
+
 if [ -x /bin/curl -o -x /usr/bin/curl ] ; then
         echo "using curl for download"
         echo "using curl for download" >/dev/tty3
-        curl -s -k -o /tmp/postinstall.sh https://<%= $reposerver %><%= $scripturl %>/fedora-post.sh
+        curl -s -k -o /root/fedora-post https://<%= $reposerver %><%= $scripturl %>/fedora-post.sh
 else
         echo "using wget for download"
         echo "using wget for download" >/dev/tty3
-        wget -O /tmp/postinstall.sh -q https://<%= $reposerver %><%= $scripturl %>/fedora-post.sh
+        wget -O /root/fedora-post -q https://<%= $reposerver %><%= $scripturl %>/fedora-post.sh
 fi
-# /bin/bash /tmp/postinstall.sh <%= $agent %> 2>&1 >/var/log/postinstall.log
+
+cat > /etc/rc.d/rc.local << RCL
+#!/bin/bash
+/root/fedora-post
+exit 0
+RCL
+chmod 0755 /root/fedora-post
+chmod 0755 /etc/rc.d/rc.local
 
 echo "finished post install" >/dev/tty3
 %end
