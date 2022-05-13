@@ -261,7 +261,7 @@ installPuppet $install_puppet
 
 /usr/bin/dnf clean all && rm -rf /var/cache/dnf  && /usr/bin/dnf upgrade -y && /usr/bin/dnf update -y
 
-sed -i '/fedora-post/d' /etc/rc.local
+sed -i '/fedora-post/d' /etc/rc.d/rc.local
 
 log "finished postinstall bootstrap script"
 
