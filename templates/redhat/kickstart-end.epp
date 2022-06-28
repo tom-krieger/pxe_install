@@ -78,7 +78,7 @@ echo "finished post install" >/dev/tty3
 <%- if $osversion < "8" { -%>
 ntp
 <%- } -%>
-<% $packages.each |$pkg| { %>
+<% $packages.each |$pkg| { -%>
 <%= $pkg %>
 <% } %>
 %end
