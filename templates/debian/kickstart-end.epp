@@ -14,7 +14,7 @@ d-i mirror/suite string oldstable
 tasksel tasksel/first multiselect standard, ssh-server
 <%- if ! empty($packages) { -%>
 d-i pkgsel/include string <%= $packages %>
-<%- } %>
+<% } -%>
 d-i pkgsel/upgrade select full-upgrade
 
 ###############################################################################
