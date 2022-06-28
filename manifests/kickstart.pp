@@ -398,21 +398,24 @@ define pxe_install::kickstart (
 
   if has_key($data, 'packages') {
 
+    $_packages = $data['packages']
+
   } else {
-    case $ostype.downcase {
-      'centos': {
-        $packages = ['net-tools']
-      }
-      'debian': {
-        $packages = 'openssh-server gnupg2 sudo tar curl net-tools'
-      }
-      'fedora': {
-        $packages = ['net-tools', '@KDE', '@LibreOffice']
-      }
-      default: {
-        $packages = ''
-      }
+
+    $default_packages = has_key($defaults, 'packages') ? {
+      false => {},
+      true  => $defaults['packages'],
     }
+
+    $_packages = has_key($default_packages, $ostype.downcase) ? {
+      false => [],
+      true  => $default_packages[$ostype.downcase],
+    }
+  }
+
+  $packages = $ostype.downcase ? {
+    'debian' => join($_packages, ' '),
+    default => $_packages,
   }
 
   if $ostype.downcase != 'windows' {
