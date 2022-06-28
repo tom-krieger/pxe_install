@@ -396,6 +396,25 @@ define pxe_install::kickstart (
     false => 'dhcp',
   }
 
+  if has_key($data, 'packages') {
+
+  } else {
+    case $ostype.downcase {
+      'centos': {
+        $packages = ['net-tools']
+      }
+      'debian': {
+        $packages = 'openssh-server gnupg2 sudo tar curl net-tools'
+      }
+      'fedora': {
+        $packages = ['net-tools', '@KDE', '@LibreOffice']
+      }
+      default: {
+        $packages = ''
+      }
+    }
+  }
+
   if $ostype.downcase != 'windows' {
 
     concat::fragment { "${hostname}-start":
@@ -433,6 +452,7 @@ define pxe_install::kickstart (
         xconfig          => $xconfig,
         defaultdesktop   => $defaultdesktop,
         startxonboot     => $startxonboot,
+        packages         => $packages,
       }),
       target  => $kickstart_file,
     }
@@ -455,6 +475,7 @@ define pxe_install::kickstart (
           mirror_dir    => $mirror_uri,
           osversion     => $data['osversion'],
           bootdevice    => $bootdevice,
+          packages      => $packages,
         }),
         target  => $kickstart_file,
       }

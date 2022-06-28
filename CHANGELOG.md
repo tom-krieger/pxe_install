@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## 0.3.7
 
 * Added Fedora to maintain_installer task
+* maked additional packages configurable for Debian, CentOS and Fedora
 
 ## 0.3.6
 
