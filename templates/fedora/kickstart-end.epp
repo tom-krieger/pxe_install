@@ -103,5 +103,5 @@ echo "finished post install" >/dev/tty3
 %packages
 <% $packages.each |$pkg| { -%>
 <%= $pkg %>
-<% } %>
+<% } -%>
 %end

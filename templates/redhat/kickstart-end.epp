@@ -80,5 +80,5 @@ ntp
 <%- } -%>
 <% $packages.each |$pkg| { -%>
 <%= $pkg %>
-<% } %>
+<% } -%>
 %end
