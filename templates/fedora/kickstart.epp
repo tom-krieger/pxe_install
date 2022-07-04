@@ -1,0 +1,31 @@
+bootloader --location=mbr
+zerombr
+clearpart --all --initlabel
+text
+firewall --disabled
+firstboot --disable
+keyboard <%= $keyboard %>
+lang <%= $lang %>
+logging --host=<%= $loghost %>
+url --url=<%= $installserverurl %>
+<%
+$dns = "--nameserver=${split($dnsservers, '[,]').join(' --nameserver=')}"
+%>
+<% if $bootproto == 'dhcp' or $bootproto == 'bootp' { %>
+network --bootproto=dhcp --device=<%= $ksdevice %>
+<% } elsif $bootproto == 'static' { %>
+network --bootproto=static --device=<%= $ksdevice %> --gateway=<%= $gateway %> --ip=<%= $ip %> --netmask=<%= $netmask %> --hostname=<%= $fqdn %> <%= $dns %>
+<% } elsif $bootproto == 'ibft' { %>
+network --bootproto=ibft
+<% } %>
+rootpw --iscrypted <%= $rootpw %>
+selinux --disabled
+<% if $xconfig == 'skipx' { %>
+skipx
+<% } else { %>
+xconfig --defaultdesktop=<%= $defaultdesktop %> <% if $startxonboot { -%>--startxonboot<% } -%>
+<% } %>
+timezone --utc <%= $timezone %>
+<% if ! empty($user) { %>
+user --name=<%= $user['username'] %> --gecos="<%= $user['fullname'] %>" --iscrypted --password=<%= $user['password'] %>
+<% } %>

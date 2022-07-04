@@ -1,0 +1,268 @@
+#!/bin/bash
+
+# set -x -v
+
+#------------------------------------------------------------------------#
+#                                                                        #
+# Script:    fedora-post.sh                                              #
+# Date:      30.12.2020                                                  #
+# Version:   0.1                                                         #
+# Author:    Thomas Krieger <tom@tom-krieger.de>                         #
+#                                                                        #
+# History:                                                               #
+# --------                                                               #
+#                                                                        #
+# -----------+-------------------+-------------------------------------- #
+# Date       ! Who               ! Reason                                #
+# -----------+-------------------+-------------------------------------- #
+# 30.12.2020 ! Thomas Krieger    ! initial version                       #
+# -----------+-------------------+-------------------------------------- #
+#                                                                        #
+#------------------------------------------------------------------------#
+
+PEMASTER="<%= $puppetmaster %>"
+PEMASTERIP="<%= $puppetmasterip %>"
+INSTALLSERVERIP="<%= $reposerverip %>"
+INSTALLSERVER="<%= $reposerver %>"
+LOGGER="undef"
+
+#------------------------------------------------------------------------#
+# send a log message to syslog
+#------------------------------------------------------------------------#
+
+function log () {
+
+	if [ ! -z "$1" ] ; then
+
+		if [ "$LOGGER" != "undef" ] ; then
+			$LOGGER -p daemon.info -t postinstall "$1"
+		fi
+
+	fi
+}
+
+#------------------------------------------------------------------------#
+# get a file from the install server
+#------------------------------------------------------------------------#
+
+function getFile () {
+	
+	if [ "$#" != "2" ] ; then
+		echo "wrong argument count for getFile"
+		log "wrong argument count for getFile"
+		ret=2
+	else
+		url=$1
+		outfile=`basename $2`
+		if [ -x "/bin/curl" ] ; then
+			curl -f -s -k -o $outfile $url
+			ret=$?
+		elif [ -x "/usr/bin/wget" ] ; then
+			wget -q -O $outfile $url
+			ret=$?
+		else
+			echo "neither wget nor curl found!"
+			log "neither wget nor curl found!"
+			ret=2
+		fi
+	fi
+
+	log "getFile for $url to $outfile finished with $ret"
+
+	return $ret
+}
+
+#------------------------------------------------------------------------#
+# clean up rpm db files
+#------------------------------------------------------------------------#
+
+function cleanupRpmDbFiles () {
+
+	echo "+---------------------------------------------------+"
+	echo "+ cleaning up                                       +"
+	echo "+---------------------------------------------------+"
+
+	[ -f /var/lib/rpm/__db.001 ] && /bin/rm /var/lib/rpm/__db.001
+	[ -f /var/lib/rpm/__db.002 ] && /bin/rm /var/lib/rpm/__db.002
+	[ -f /var/lib/rpm/__db.003 ] && /bin/rm /var/lib/rpm/__db.003
+
+	/usr/bin/dnf clean all && rm -rf /var/cache/dnf  && /usr/bin/dnf upgrade -y && /usr/bin/dnf update -y
+
+}
+
+#------------------------------------------------------------------------#
+# install puppet agent
+#------------------------------------------------------------------------#
+
+function installPuppet () {
+
+	install_puppet=$1
+
+	if [ "$install_puppet" = "y" ] ; then
+
+		/usr/bin/dnf -y install curl net-tools
+		ret=$?
+		if [ "$ret" = "0" ] ; then
+			if [ -f /tmp/puppetrole ] ; then
+				puppetrole=`cat /tmp/puppetrole`
+			else
+				puppetrole="default"
+			fi
+
+			if [ -f /tmp/puppetenv ] ; then
+				puppetenv=`cat /tmp/puppetenv`
+			else
+				puppetenv="production"
+			fi
+			
+			if [ -f /tmp/datacenter ] ; then
+				datacenter=`cat /tmp/datacenter`
+			else
+				datacenter="none"
+			fi
+
+			if [ ! -d /etc/puppetlabs/puppet ]; then
+				log "creating directory /etc/puppetlabs/puppet"
+				mkdir -p /etc/puppetlabs/puppet
+			fi
+
+			cat > /etc/puppetlabs/puppet/csr_attributes.yaml << YAML
+custom_attributes:
+		1.2.840.113549.1.9.7: <%= unwrap($challenge_password) %>
+extension_requests:
+		pp_image_name: CentOS-${release}
+		pp_hostname: `hostname`
+		pp_datacenter: $datacenter
+		pp_role: $puppetrole
+		pp_environment: $puppetenv
+YAML
+			curl -k https://${PEMASTER}:8140/packages/current/install.bash | sudo bash
+
+		else
+			log "installation of curl rpm failed"
+		fi
+
+	fi
+
+}
+
+#------------------------------------------------------------------------#
+# install updates
+#------------------------------------------------------------------------#
+
+function installUpdates () {
+
+	ret=0
+	/usr/bin/dnf check-update 
+	/usr/bin/dnf -y update dnf
+	if [ "$?" = "0" ] ; then
+		/usr/bin/dnf -y update
+		if [ "$?" != "0" ] ; then
+			log "dnf -y update failed"
+			ret=1
+		fi
+	else
+		log "dnf -y update dnf failed"
+		ret=1
+	fi
+
+	if [ "$ret" != "0" ] ; then
+		log "error installing updates"
+	else
+		log "updates installed successfully"
+	fi
+
+}
+
+#------------------------------------------------------------------------#
+# configute sysrq
+#------------------------------------------------------------------------#
+
+configureSysrq () {
+
+	ret=0
+	sed -i 's/kernel.sysrq = 0/kernel.sysrq = 1/' /etc/sysctl.conf
+	if [ "$?" != "0" ] ; then
+		log "can't set sysrq=1"
+		ret=1
+	fi
+
+}
+
+#------------------------------------------------------------------------#
+# main section
+#------------------------------------------------------------------------#
+
+if [ "$#" = "1" ] ; then
+	install_puppet=$1
+else
+	install_puppet="y"
+fi
+
+if [ -x "/usr/bin/logger" ] ; then
+	LOGGER="/usr/bin/logger"
+elif [ -x "/bin/logger" ] ; then
+	LOGGER="/bin/logger"
+fi
+
+osname=`cat /etc/redhat-release | cut -d ' ' -f 1`
+oshelp=`cat /etc/redhat-release | cut -d ' ' -f 2` 
+if [ "$osname" = "CentOS" ] ; then
+	if [ "$oshelp" = "Linux" ] ; then
+		release=`cat /etc/redhat-release | cut -d ' ' -f 4`
+	else
+		release=`cat /etc/redhat-release | cut -d ' ' -f 3`
+	fi
+	ostype="CentOS"
+else
+	release=`cat /etc/redhat-release | cut -d ' ' -f 7`
+	ostype="Redhat"
+fi
+release=${release:0:1}
+
+<%- if $add_hosts_entries { -%>
+echo "${PEMASTERIP}    ${PEMASTER}" >> /etc/hosts
+echo "${INSTALLSERVERIP}"    ${INSTALLSERVER}" >> /etc/hosts"
+<%- } -%>
+
+#------------------------------------------------------------------------#
+# clean up rpm db files
+#------------------------------------------------------------------------#
+
+cleanupRpmDbFiles
+
+#------------------------------------------------------------------------#
+# update all installed packages to their latest version
+#------------------------------------------------------------------------#
+
+installUpdates
+
+#------------------------------------------------------------------------#
+# clean up
+#------------------------------------------------------------------------#
+
+cleanupRpmDbFiles
+
+#------------------------------------------------------------------------#
+# system hardening
+#------------------------------------------------------------------------#
+
+configureSysrq 
+
+#------------------------------------------------------------------------#
+# install puppet
+#------------------------------------------------------------------------#
+
+installPuppet $install_puppet
+
+#------------------------------------------------------------------------#
+# here we are, end of a hard work ;-)
+#------------------------------------------------------------------------#
+
+/usr/bin/dnf clean all && rm -rf /var/cache/dnf  && /usr/bin/dnf upgrade -y && /usr/bin/dnf update -y
+
+sed -i '/fedora-post/d' /etc/rc.d/rc.local
+
+log "finished postinstall bootstrap script"
+
+exit 0

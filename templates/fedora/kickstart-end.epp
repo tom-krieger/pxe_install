@@ -1,5 +1,6 @@
 
-%pre --interpreter /bin/bash --log /tmp/ks-pre.log.1
+%pre --interpreter /bin/bash --log /tmp/ks_pre.log
+
 for i in `cat /proc/cmdline` ; do
 
     echo "$i" >>/tmp/cmdline
@@ -39,45 +40,67 @@ hostname=`hostname`
 ifconfig -a
 %end
 
-%post --nochroot --log /tmp/post_nochroot.log
+%post --nochroot --log /tmp/ks_post_nochroot.log
 echo "post nochroot" >/dev/tty3
-cp /etc/resolv.conf /mnt/sysimage/etc/resolv.conf
-NW=/mnt/sysimage/etc/sysconfig/network
-IFDIR=/mnt/sysimage/etc/sysconfig/network-scripts
 
 hostname="<%= $fqdn %>"
 
-echo "127.0.0.1          localhost.localdomain localhost" >/mnt/sysimage/etc/hosts
-echo "<%= $ip %>        <%= $fqdn %> <%= $hostname %>" >>/mnt/sysimage/etc/hosts
-echo "<%= $reposerverip %>        <%= $reposerver %>" >>/mnt/sysimage/etc/hosts
-echo "${PUPPETMASTERIP}        ${PUPPETMASTER}" >>/mnt/sysimage/etc/hosts
+echo "127.0.0.1          localhost.localdomain localhost" >/mnt/sysroot/etc/hosts
+echo "<%= $ip %>        <%= $fqdn %> <%= $hostname %>" >>/mnt/sysroot/etc/hosts
+echo "<%= $reposerverip %>        <%= $reposerver %>" >>/mnt/sysroot/etc/hosts
+echo "${PUPPETMASTERIP}        ${PUPPETMASTER}" >>/mnt/sysroot/etc/hosts
 
-cp /tmp/actkey /mnt/sysimage/tmp/
-cp /tmp/puppetenv /mnt/sysimage/tmp/
-cp /tmp/puppetrole /mnt/sysimage/tmp/
-cp /tmp/datacenter /mnt/sysimage/tmp/
+cp /tmp/actkey /mnt/sysroot/tmp/
+cp /tmp/puppetenv /mnt/sysroot/tmp/
+cp /tmp/puppetrole /mnt/sysroot/tmp/
+cp /tmp/datacenter /mnt/sysroot/tmp/
+
+echo "post nochroot finished" >/dev/tty3
+
 %end
 
-%post
+%post --log=/root/ks_post_chroot.log
+echo "post chroot" >/dev/tty3
+
+mkdir -p /etc/puppetlabs/puppet/
+if [ -f /tmp/puppetenv ] ; then 
+        cp /tmp/puppetenv /target/etc/puppetlabs/puppet/
+fi
+if [ -f /tmp/puppetrole ] ; then 
+        cp /tmp/puppetrole /target/etc/puppetlabs/puppet/
+fi
+if [ -f /tmp/datacenter ] ; then 
+        cp /tmp/datacenter /target/etc/puppetlabs/puppet/
+fi
+if [ -f /tmp/install_agent ] ; then 
+        cp /tmp/install_agent /target/etc/puppetlabs/puppet/
+fi
+
+systemctl enable rc-local
+
 if [ -x /bin/curl -o -x /usr/bin/curl ] ; then
         echo "using curl for download"
         echo "using curl for download" >/dev/tty3
-        curl -s -k -o /tmp/postinstall.sh https://<%= $reposerver %><%= $scripturl %>/redhat-post.sh
+        curl -s -k -o /root/fedora-post https://<%= $reposerver %><%= $scripturl %>/fedora-post.sh
 else
         echo "using wget for download"
         echo "using wget for download" >/dev/tty3
-        wget -O /tmp/postinstall.sh -q https://<%= $reposerver %><%= $scripturl %>/redhat-post.sh
+        wget -O /root/fedora-post -q https://<%= $reposerver %><%= $scripturl %>/fedora-post.sh
 fi
-/bin/bash /tmp/postinstall.sh <%= $agent %> 2>&1 >/var/log/postinstall.log
+
+cat > /etc/rc.d/rc.local << RCL
+#!/bin/bash
+/root/fedora-post
+exit 0
+RCL
+chmod 0755 /root/fedora-post
+chmod 0755 /etc/rc.d/rc.local
 
 echo "finished post install" >/dev/tty3
 %end
 
 
 %packages
-<%- if $osversion < "8" { -%>
-ntp
-<%- } -%>
 <% $packages.each |$pkg| { -%>
 <%= $pkg %>
 <% } -%>

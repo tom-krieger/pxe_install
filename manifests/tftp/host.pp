@@ -79,6 +79,7 @@ define pxe_install::tftp::host (
   Optional[String] $mirror_host = '',
   Optional[String] $mirror_uri  = '',
   Optional[Hash] $scenario_data = {},
+  Optional[String] $stage2      = '',
 ) {
 
   if  $ostype.downcase() == 'windows' and
@@ -171,6 +172,24 @@ define pxe_install::tftp::host (
           path        => $_path,
           mirror_host => $mirror_host,
           mirror_uri  => $mirror_uri,
+        }),
+        *       => $file_data,
+      }
+    }
+    'fedora': {
+      #Fedora
+      file { $filename:
+        content => epp('pxe_install/fedora/tftp-entry.epp', {
+          prefix      => $prefix,
+          ksurl       => $ksurl,
+          ksdevice    => $ksdevice,
+          puppetenv   => $puppetenv,
+          puppetrole  => $puppetrole,
+          datacenter  => $datacenter,
+          ks          => $ks,
+          mirror_host => $mirror_host,
+          mirror_uri  => $mirror_uri,
+          stage2      => $stage2,
         }),
         *       => $file_data,
       }

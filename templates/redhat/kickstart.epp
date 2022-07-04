@@ -13,7 +13,11 @@ network --bootproto=static --device=<%= $ksdevice %> --gateway=<%= $gateway %> -
 reboot
 rootpw --iscrypted <%= $rootpw %>
 selinux --disabled
+<% if $xconfig == 'skipx' { %>
 skipx
+<% } else { %>
+xconfig --defaultdesktop=<%= $defaultdesktop %> <% if $startxonboot { -%>--startxonboot<% } -%>
+<% } %>
 timezone --isUtc <%= $timezone %>
 <% if $osversion < '8' { -%>
 install

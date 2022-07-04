@@ -77,8 +77,11 @@ define pxe_install::kickstart (
     'windows': {
       $lookupkey = 'windows'
     }
+    'fedora': {
+      $lookupkey = 'fedora'
+    }
     default: {
-      fail("Unsupported os: ${ostype}. Only Debian, Ubuntu, Redhat, CentOS and Windows are supported.")
+      fail("Unsupported os: ${ostype}. Only Debian, Ubuntu, Redhat, CentOS, Fedora and Windows are supported.")
     }
   }
 
@@ -238,6 +241,27 @@ define pxe_install::kickstart (
       }
 
     }
+    'fedora': {
+      $template_start = 'pxe_install/fedora/kickstart.epp'
+      $template_finish = 'pxe_install/fedora/kickstart-end.epp'
+
+      if has_key($pxe_install::mirrors['fedora'], $data['osversion']) {
+
+        $mirror_host = $pxe_install::mirrors['fedora'][$data['osversion']]['mirror_host']
+        $mirror_uri = $pxe_install::mirrors['fedora'][$data['osversion']]['mirror_uri']
+        $ksurl = "http://${pxe_install::repo_server}/kickstart/${hostname}"
+        $installserverurl = "${mirror_host}${mirror_uri}"
+
+        pxe_install::partitioning::redhat { $hostname:
+          hostname       => $hostname,
+          partitioning   => $partitioning,
+          kickstart_file => $kickstart_file,
+        }
+
+      } else {
+        fail("No mirror defined for ${hostname} for Fedora ${data['osversion']}")
+      }
+    }
     'windows': {
       $mirror_host = $pxe_install::mirrors['windows']['mirror_host']
       $mirror_uri = $pxe_install::mirrors['windows']['mirror_uri']
@@ -350,7 +374,49 @@ define pxe_install::kickstart (
     default => $defaults['keymap'],
   }
 
+  $xconfig = has_key($data, 'xconfig') ? {
+    true  => 'xconfig',
+    false => 'skipx',
+  }
+
+  $defaultdesktop = has_key($data, 'defaultdesktop') ? {
+    true  => $data['defaultdesktop'],
+    false => 'GNOME',
+  }
+
+  $startxonboot = has_key($data, 'startxonboot') ? {
+    true  => true,
+    false => false,
+  }
+
   $ks_fqdn = "${hostname}.${domain}"
+
+  $bootproto = has_key($network_data, 'bootproto') ? {
+    true  => $network_data['bootproto'],
+    false => 'dhcp',
+  }
+
+  if has_key($data, 'packages') {
+
+    $_packages = $data['packages']
+
+  } else {
+
+    $default_packages = has_key($defaults, 'packages') ? {
+      false => {},
+      true  => $defaults['packages'],
+    }
+
+    $_packages = has_key($default_packages, $ostype.downcase) ? {
+      false => [],
+      true  => $default_packages[$ostype.downcase],
+    }
+  }
+
+  $packages = $ostype.downcase ? {
+    'debian' => join($_packages, ' '),
+    default => $_packages,
+  }
 
   if $ostype.downcase != 'windows' {
 
@@ -367,6 +433,7 @@ define pxe_install::kickstart (
         ip               => $network_data['fixedaddress'],
         netmask          => $network_data['netmask'],
         gateway          => $network_data['gateway'],
+        bootproto        => $network_data['bootproto'],
         dnsservers       => $dns_data,
         hostname         => $hostname,
         rootpw           => $rootpw,
@@ -385,6 +452,10 @@ define pxe_install::kickstart (
         scripturl        => $scripturl,
         user             => $user,
         osversion        => $data['osversion'],
+        xconfig          => $xconfig,
+        defaultdesktop   => $defaultdesktop,
+        startxonboot     => $startxonboot,
+        packages         => $packages,
       }),
       target  => $kickstart_file,
     }
@@ -407,6 +478,7 @@ define pxe_install::kickstart (
           mirror_dir    => $mirror_uri,
           osversion     => $data['osversion'],
           bootdevice    => $bootdevice,
+          packages      => $packages,
         }),
         target  => $kickstart_file,
       }
@@ -489,8 +561,14 @@ define pxe_install::kickstart (
     default => '',
   }
 
+  $stage2 = has_key($data, 'stage2') ? {
+    true  => $data['stage2'],
+    false => "${mirror_host}${mirror_uri}"
+  }
+
   if  $ostype.downcase() == 'centos' or
       $ostype.downcase() == 'redhat' or
+      $ostype.downcase() == 'fedora' or
       $ostype.downcase() == 'windows'
   {
     $osvers = has_key($data, 'osversion') ? {
@@ -532,6 +610,7 @@ define pxe_install::kickstart (
       mirror_host   => $mirror_host,
       mirror_uri    => $mirror_uri,
       scenario_data => $scenario_data,
+      stage2        => $stage2,
     }
 
   }

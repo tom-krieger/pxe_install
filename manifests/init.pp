@@ -215,6 +215,26 @@ class pxe_install (
     mode    => '0644',
   }
 
+  file { "${scriptdir}/fedora-post.sh":
+    ensure  => file,
+    content => epp('pxe_install/scripts/fedora-post.sh.epp', {
+      installserver      => $installserver,
+      installserverip    => $installserverip,
+      puppetmaster       => $puppetmaster,
+      puppetmasterip     => $puppetmasterip,
+      kickstart_url      => $kickstart_url,
+      repos_url          => $repos_url,
+      scripturl          => $scripturl,
+      reposerver         => $repo_server,
+      reposerverip       => $repo_server_ip,
+      challenge_password => $challenge_password,
+      add_hosts_entries  => $add_hosts_entries,
+    }),
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+  }
+
   if has_key($services, 'dhcpd') {
     $dhcpd = $services['dhcpd']
     class { 'pxe_install::dhcp':

@@ -103,6 +103,14 @@ describe 'pxe_install' do
             'mode'    => '0644',
           )
 
+        is_expected.to contain_file('/export/repos/pub/fedora-post.sh')
+          .with(
+              'ensure'  => 'file',
+              'owner'   => 'root',
+              'group'   => 'root',
+              'mode'    => '0644',
+            )
+
         is_expected.to contain_file('/var/lib/tftpboot/windows/winpe/scripts/install.ps1')
           .with(
             'ensure'  => 'file',
