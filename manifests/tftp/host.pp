@@ -57,6 +57,9 @@
 # @param scenario_data
 #    Data describing the install scenario.
 #
+# @param stage2
+#    Stage 2 parameter for Fedora installations used in TFTP boot configuration.
+#
 # @example
 #   pxe_install::tftp::host { 'namevar': }
 #
