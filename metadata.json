@@ -1,8 +1,8 @@
 {
   "name": "tomkrieger-pxe_install",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "author": "Thomas Krieger",
-  "summary": "Setup CentOS/Debian pxe installation server to serve CentOS/Debian/ubuntu/Windows installations.",
+  "summary": "Setup CentOS/Debian pxe installation server to serve CentOS/Debian/Ubuntu/Fedora/Windows installations.",
   "license": "Apache-2.0",
   "source": "https://github.com/tom-krieger/pxe_install.git",
   "project_page": "https://github.com/tom-krieger/pxe_install/projects",
@@ -60,7 +60,8 @@
       "operatingsystem": "Ubuntu",
       "operatingsystemrelease": [
         "18.04",
-        "20.04"
+        "20.04",
+        "22.04"
       ]
     },
     {
