@@ -14,7 +14,7 @@
     },
     "os": {
       "description": "The operating system.",
-      "type": "Enum[centos,ubuntu,debian,fedora,almalinux,rocky]"
+      "type": "Enum[centos,ubuntu,debian,fedora,alma,rocky]"
     },
     "os_version": {
       "description": "The operting system version, depending on the OS.",

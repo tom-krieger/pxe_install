@@ -178,7 +178,7 @@ case $os in
         install_centos "${archive}" "${basedir}" "${os}" "${osvers}" "${ossubvers}"
         ;;
 
-    'almalinux')
+    'alma')
         if [ "${osvers}" != "8" -a "${osvers}" != "9" ] ; then
             echo "AlmaLinux supports version 8 and 9 only!"
             exit 2
