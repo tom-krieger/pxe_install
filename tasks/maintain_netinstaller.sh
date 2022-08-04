@@ -178,6 +178,36 @@ case $os in
         install_centos "${archive}" "${basedir}" "${os}" "${osvers}" "${ossubvers}"
         ;;
 
+    'almalinux')
+        if [ "${osvers}" != "8" -a "${osvers}" != "9" ] ; then
+            echo "AlmaLinux supports version 8 and 9 only!"
+            exit 2
+        fi
+
+        if [ -z "${ossubvers}" ] ; then
+            echo "AlmaLinux needs a subversion too!"
+            exit 2
+        fi
+
+        download_installer "${archive}" "${PT_archive_url}"
+        install_centos "${archive}" "${basedir}" "${os}" "${osvers}" "${ossubvers}"
+        ;;
+
+    'rocky')
+        if [ "${osvers}" != "8" -a "${osvers}" != "9" ] ; then
+            echo "Rocky Linux supports version 8 and 9 only!"
+            exit 2
+        fi
+
+        if [ -z "${ossubvers}" ] ; then
+            echo "Rocky Linux needs a subversion too!"
+            exit 2
+        fi
+
+        download_installer "${archive}" "${PT_archive_url}"
+        install_centos "${archive}" "${basedir}" "${os}" "${osvers}" "${ossubvers}"
+        ;;
+
     'fedora')
          if [ "${osvers}" != "35" -a "${osvers}" != "36" ] ; then
             echo "Fedora supports version 35 and 36 only!"
