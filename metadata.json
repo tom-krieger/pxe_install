@@ -2,7 +2,7 @@
   "name": "tomkrieger-pxe_install",
   "version": "0.3.7",
   "author": "Thomas Krieger",
-  "summary": "Setup CentOS/Debian pxe installation server to serve CentOS/Debian/Ubuntu/Fedora/Windows installations.",
+  "summary": "Setup CentOS/Debian PXE installation server to serve CentOS/AlmaLinux/Rocky/Debian/Ubuntu/Fedora/Windows installations.",
   "license": "Apache-2.0",
   "source": "https://github.com/tom-krieger/pxe_install.git",
   "project_page": "https://github.com/tom-krieger/pxe_install/projects",
@@ -57,7 +57,7 @@
       ]
     },
     {
-      "operatingsystem": "Alma",
+      "operatingsystem": "AlmaLinux",
       "operatingsystemrelease": [
         "8"
       ]
