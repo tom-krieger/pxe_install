@@ -18,6 +18,17 @@ function download_installer() {
     fi
 }
 
+function download_installer_wget() {
+    while [ 1 ]; do
+        wget --retry-connrefused --waitretry=1 --read-timeout=20 --timeout=15 --tries=0 --continue --progress=bar -O ${1} ${2}
+        if [ $? = 0 ]
+        then 
+            break 
+        fi # check return value, break if successful (0)
+        sleep 1;
+    done 
+}
+
 # unpack and install net installer files
 function install_debian_ubuntu() {
 
@@ -171,6 +182,36 @@ case $os in
 
         if [ -z "${ossubvers}" ] ; then
             echo "CentOS needs a subversion too!"
+            exit 2
+        fi
+
+        download_installer "${archive}" "${PT_archive_url}"
+        install_centos "${archive}" "${basedir}" "${os}" "${osvers}" "${ossubvers}"
+        ;;
+
+    'alma')
+        if [ "${osvers}" != "8" -a "${osvers}" != "9" ] ; then
+            echo "AlmaLinux supports version 8 and 9 only!"
+            exit 2
+        fi
+
+        if [ -z "${ossubvers}" ] ; then
+            echo "AlmaLinux needs a subversion too!"
+            exit 2
+        fi
+
+        download_installer_wget "${archive}" "${PT_archive_url}"
+        install_centos "${archive}" "${basedir}" "${os}" "${osvers}" "${ossubvers}"
+        ;;
+
+    'rocky')
+        if [ "${osvers}" != "8" -a "${osvers}" != "9" ] ; then
+            echo "Rocky Linux supports version 8 and 9 only!"
+            exit 2
+        fi
+
+        if [ -z "${ossubvers}" ] ; then
+            echo "Rocky Linux needs a subversion too!"
             exit 2
         fi
 

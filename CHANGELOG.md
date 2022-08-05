@@ -5,7 +5,8 @@ All notable changes to this project will be documented in this file.
 ## 0.3.7
 
 * Added Fedora to maintain_installer task
-* maked additional packages configurable for Debian, CentOS and Fedora
+* Additional packages are configurable for Debian, CentOS and Fedora
+* Added Alma Linux and Rocky Linux
 
 ## 0.3.6
 
@@ -16,7 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ## 0.3.5
 
-_install_ is deprecated for redhat 8 kickstarts and will no longer included into Redhat 8 kickstarts.
+_install_ is deprecated for redhat 8 kickstarts and will no longer be included into Redhat 8 kickstarts.
 
 ## 0.3.4
 
@@ -25,7 +26,7 @@ not published
 ## 0.3.3
 
 Enable Debian and Ubuntu preseeds with more than one disk. Introduced defaultignore flag
-for DEbain und Ubunto preseeds.
+for DEbain und Ubuntu preseeds.
 
 ## 0.3.2
 

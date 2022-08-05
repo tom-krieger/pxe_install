@@ -71,7 +71,7 @@ define pxe_install::kickstart (
     'debian', 'ubuntu': {
       $lookupkey = 'debian'
     }
-    'redhat', 'centos': {
+    'redhat', 'centos', 'alma', 'rocky': {
       $lookupkey = 'redhat'
     }
     'windows': {
@@ -81,7 +81,7 @@ define pxe_install::kickstart (
       $lookupkey = 'fedora'
     }
     default: {
-      fail("Unsupported os: ${ostype}. Only Debian, Ubuntu, Redhat, CentOS, Fedora and Windows are supported.")
+      fail("Unsupported os: ${ostype}. Only Debian, Ubuntu, Redhat, CentOS, Alma, Rocky, Fedora and Windows are supported.")
     }
   }
 
@@ -117,7 +117,10 @@ define pxe_install::kickstart (
     fail("A server needs a mac address for installation. ${hostname} has none!")
   }
 
-  if ! has_key($data, 'osversion') and $ensure == 'present' and ($ostype.downcase() == 'centos' or $ostype.downcase() == 'windows') {
+  if
+    ! has_key($data, 'osversion') and $ensure == 'present' and
+    ($ostype.downcase() == 'alma' or$ostype.downcase() == 'rocky' or $ostype.downcase() == 'centos' or $ostype.downcase() == 'windows')
+  {
     fail("Host ${hostname} needs an osversion!")
   }
 
@@ -319,6 +322,48 @@ define pxe_install::kickstart (
         win_domain       => $domain,
         win_locale       => $locale,
         win_input_locale => $keyboard,
+      }
+    }
+    'alma': {
+      $template_start = 'pxe_install/redhat/kickstart.epp'
+      $template_finish = 'pxe_install/redhat/kickstart-end.epp'
+
+      if has_key($pxe_install::mirrors['alma'], $data['osversion']) {
+
+        $mirror_host = $pxe_install::mirrors['alma'][$data['osversion']]['mirror_host']
+        $mirror_uri = $pxe_install::mirrors['alma'][$data['osversion']]['mirror_uri']
+        $ksurl = "http://${pxe_install::repo_server}/kickstart/${hostname}"
+        $installserverurl = "${mirror_host}${mirror_uri}"
+
+        pxe_install::partitioning::redhat { $hostname:
+          hostname       => $hostname,
+          partitioning   => $partitioning,
+          kickstart_file => $kickstart_file,
+        }
+
+      } else {
+        fail("No mirror defined for ${hostname} for Alma Linux ${data['osversion']}")
+      }
+    }
+    'rocky': {
+      $template_start = 'pxe_install/redhat/kickstart.epp'
+      $template_finish = 'pxe_install/redhat/kickstart-end.epp'
+
+      if has_key($pxe_install::mirrors['rocky'], $data['osversion']) {
+
+        $mirror_host = $pxe_install::mirrors['rocky'][$data['osversion']]['mirror_host']
+        $mirror_uri = $pxe_install::mirrors['rocky'][$data['osversion']]['mirror_uri']
+        $ksurl = "http://${pxe_install::repo_server}/kickstart/${hostname}"
+        $installserverurl = "${mirror_host}${mirror_uri}"
+
+        pxe_install::partitioning::redhat { $hostname:
+          hostname       => $hostname,
+          partitioning   => $partitioning,
+          kickstart_file => $kickstart_file,
+        }
+
+      } else {
+        fail("No mirror defined for ${hostname} for CRocky LinuxentOS ${data['osversion']}")
       }
     }
     default: {

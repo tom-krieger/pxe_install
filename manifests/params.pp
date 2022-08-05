@@ -59,6 +59,26 @@ class pxe_install::params {
         'mirror_uri'  => '/centos/8/BaseOS/x86_64/os',
       },
     },
+    'alma' => {
+      '8' => {
+        'mirror_host' => 'https://repos.example.com',
+        'mirror_uri'  => '/centos/7/base/x86_64',
+      },
+      '9' => {
+        'mirror_host' => 'https://repos.example.com',
+        'mirror_uri'  => '/centos/8/BaseOS/x86_64/os',
+      },
+    },
+    'rocky' => {
+      '8' => {
+        'mirror_host' => 'https://repos.example.com',
+        'mirror_uri'  => '/centos/7/base/x86_64',
+      },
+      '9' => {
+        'mirror_host' => 'https://repos.example.com',
+        'mirror_uri'  => '/centos/8/BaseOS/x86_64/os',
+      },
+    },
     'windows' => {
       'mirror_host' => 'https://repos.example.com',
       'mirror_uri'  => '/windows/winpe',

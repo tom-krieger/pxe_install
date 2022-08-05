@@ -441,7 +441,7 @@ Where to download he net installer from.
 
 ##### `os`
 
-Data type: `Enum[centos,ubuntu,debian,fedora]`
+Data type: `Enum[centos,ubuntu,debian,fedora,alma,rocky]`
 
 The operating system.
 
