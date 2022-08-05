@@ -2,10 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.3.8
+
+* Added Alma Linux and Rocky Linux
+
 ## 0.3.7
 
 * Added Fedora to maintain_installer task
-* maked additional packages configurable for Debian, CentOS and Fedora
+* Additional packages are configurable for Debian, CentOS and Fedora
 
 ## 0.3.6
 
