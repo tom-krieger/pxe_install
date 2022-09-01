@@ -12,7 +12,7 @@ logging --level=debug --host=<%= $loghost %>
 url --url=<%= $installserverurl %>
 <% } else { %>
 rhsm --organization="<%= $orgid %>" --activation-key="<%= $actkey %>"
-<% } %>
+<% } -%>
 network --bootproto=static --device=<%= $ksdevice %> --gateway=<%= $gateway %> --ip=<%= $ip %> --netmask=<%= $netmask %> --nameserver=<%= $dnsservers %> --hostname=<%= $fqdn %>
 reboot
 rootpw --iscrypted <%= $rootpw %>
