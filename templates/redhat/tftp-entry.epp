@@ -5,4 +5,4 @@ default ks
 
 label ks
         kernel <%= $prefix %>/vmlinuz
-        append <%= $ks %>=<%= $ksurl %> initrd=<%= $prefix %>/initrd.img devfs=nomount ksdevice=<%= $ksdevice %> puppetenv=<%= $puppetenv %> puppetrole=<%= $puppetrole %> dc=<%= $datacenter %> orgid=<%= $orgid %> actkey=<%= $actkey %>
+        append <%= $ks %>=<%= $ksurl %> initrd=<%= $prefix %>/initrd.img devfs=nomount ksdevice=<%= $ksdevice %> puppetenv=<%= $puppetenv %> puppetrole=<%= $puppetrole %> dc=<%= $datacenter %> <% if ! empty($orgid) { %>orgid=<%= $orgid %><% } %> <% if ! empty($actkey) { %>actkey=<%= $actkey %><% } %>
