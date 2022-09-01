@@ -413,8 +413,8 @@ define pxe_install::kickstart (
   }
 
   $rhcdn = has_key($parameter, 'rhcdn') ? {
-    true  => $parameter['rhcdn'],
-    false => false,
+    true    => $parameter['rhcdn'],
+    default => false,
   }
 
   $actkey = has_key($parameter, 'actkey') ? {
