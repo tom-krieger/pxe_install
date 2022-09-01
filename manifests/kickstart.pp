@@ -414,7 +414,7 @@ define pxe_install::kickstart (
 
   $rhcdn = has_key($parameter, 'rhcdn') ? {
     true    => $parameter['rhcdn'],
-    default => false,
+    default => 'n',
   }
 
   $actkey = has_key($parameter, 'actkey') ? {
