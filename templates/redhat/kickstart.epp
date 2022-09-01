@@ -8,9 +8,9 @@ firstboot --disable
 keyboard <%= $keyboard %>
 lang <%= $lang %>
 logging --level=debug --host=<%= $loghost %>
-<% if empty($orgid) or empty($actkey) { %> 
+<% if empty($orgid) or empty($actkey) { -%> 
 url --url=<%= $installserverurl %>
-<% } else { %>
+<% } else { -%>
 rhsm --organization="<%= $orgid %>" --activation-key="<%= $actkey %>"
 <% } -%>
 network --bootproto=static --device=<%= $ksdevice %> --gateway=<%= $gateway %> --ip=<%= $ip %> --netmask=<%= $netmask %> --nameserver=<%= $dnsservers %> --hostname=<%= $fqdn %>
