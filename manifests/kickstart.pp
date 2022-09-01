@@ -412,6 +412,11 @@ define pxe_install::kickstart (
     false => false,
   }
 
+  $rhcdn = has_key($parameter, 'rhcdn') ? {
+    true  => $parameter['rhcdn'],
+    false => false,
+  }
+
   $actkey = has_key($parameter, 'actkey') ? {
     true  => $parameter['actkey'],
     false => '',
@@ -485,6 +490,7 @@ define pxe_install::kickstart (
           defaultdesktop   => $defaultdesktop,
           startxonboot     => $startxonboot,
           packages         => $packages,
+          rhcdn            => $rhcdn,
           orgid            => $orgid,
           actkey           => $actkey,
       }),
@@ -631,6 +637,8 @@ define pxe_install::kickstart (
       mirror_uri    => $mirror_uri,
       scenario_data => $scenario_data,
       stage2        => $stage2,
+      orgid         => $orgid,
+      actkey        => $actkey,
     }
   }
 }

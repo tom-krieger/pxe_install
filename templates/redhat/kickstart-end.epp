@@ -9,6 +9,11 @@ for i in `cat /proc/cmdline` ; do
                 key=`echo $i | cut -f 1 -d '='`
                 value=`echo $i | cut -f 2 -d'='`
                 case $key in
+                "orgid")
+                        orgid=$value
+                        echo $orgid > "/tmp/orgid"
+                        echo "orgid = $orgid"
+                        ;;
                 "actkey")
                         activationkey=$value
                         echo $activationkey > "/tmp/actkey"
@@ -52,14 +57,25 @@ echo "<%= $ip %>        <%= $fqdn %> <%= $hostname %>" >>/mnt/sysimage/etc/hosts
 echo "<%= $reposerverip %>        <%= $reposerver %>" >>/mnt/sysimage/etc/hosts
 echo "${PUPPETMASTERIP}        ${PUPPETMASTER}" >>/mnt/sysimage/etc/hosts
 
-cp /tmp/actkey /mnt/sysimage/tmp/
-cp /tmp/puppetenv /mnt/sysimage/tmp/
-cp /tmp/puppetrole /mnt/sysimage/tmp/
-cp /tmp/datacenter /mnt/sysimage/tmp/
+[ -f /tmp/actkey ] && cp /tmp/actkey /mnt/sysimage/tmp/
+[ -f /tmp/orgid ] && cp /tmp/orgid /mnt/sysimage/tmp/
+[ -f /tmp/puppetenv ] && cp /tmp/puppetenv /mnt/sysimage/tmp/
+[ -f /tmp/puppetrole ] && cp /tmp/puppetrole /mnt/sysimage/tmp/
+5 -f /tmp/datacenter ] && cp /tmp/datacenter /mnt/sysimage/tmp/
 %end
 
 %post
-if [ -x /bin/curl -o -x /usr/bin/curl ] ; then
+if [ -f /tmp/actkey -a -f /tmp/orgid ]
+then
+        actkey=`cat /tmp/actkey`
+        orgid=`cat /tmp/orgid`
+
+        # subscribe
+        subscription-manager register --org=$orgid --activationkey=$actkey
+fi
+
+if [ -x /bin/curl -o -x /usr/bin/curl ]
+then
         echo "using curl for download"
         echo "using curl for download" >/dev/tty3
         curl -s -k -o /tmp/postinstall.sh https://<%= $reposerver %><%= $scripturl %>/redhat-post.sh

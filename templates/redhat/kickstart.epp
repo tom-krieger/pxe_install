@@ -8,7 +8,7 @@ firstboot --disable
 keyboard <%= $keyboard %>
 lang <%= $lang %>
 logging --level=debug --host=<%= $loghost %>
-<% if empty($orgid) or empty($actkey) { -%> 
+<% if $rhcdn { -%> 
 url --url=<%= $installserverurl %>
 <% } else { -%>
 rhsm --organization="<%= $orgid %>" --activation-key="<%= $actkey %>"
