@@ -350,9 +350,9 @@ define pxe_install::kickstart (
       $template_start = 'pxe_install/redhat/kickstart.epp'
       $template_finish = 'pxe_install/redhat/kickstart-end.epp'
 
-      if has_key($pxe_install::mirrors['centos'], $data['osversion']) {
-        $mirror_host = $pxe_install::mirrors['centos'][$data['osversion']]['mirror_host']
-        $mirror_uri = $pxe_install::mirrors['centos'][$data['osversion']]['mirror_uri']
+      if has_key($pxe_install::mirrors[$ostype.downcase()], $data['osversion']) {
+        $mirror_host = $pxe_install::mirrors[$ostype.downcase()][$data['osversion']]['mirror_host']
+        $mirror_uri = $pxe_install::mirrors[$ostype.downcase()][$data['osversion']]['mirror_uri']
         $ksurl = "http://${pxe_install::repo_server}/kickstart/${hostname}"
         $installserverurl = "${mirror_host}${mirror_uri}"
 
@@ -362,7 +362,7 @@ define pxe_install::kickstart (
           kickstart_file => $kickstart_file,
         }
       } else {
-        fail("No mirror defined for ${hostname} for CentOS ${data['osversion']}")
+        fail("No mirror defined for ${hostname} for ${$ostype} ${data['osversion']}")
       }
     }
   }
