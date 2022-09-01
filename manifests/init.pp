@@ -138,8 +138,7 @@ class pxe_install (
   Optional[Hash] $mirrors                       = $pxe_install::params::mirrors,
   Optional[Hash] $defaults                      = $pxe_install::params::defaults,
 ) inherits pxe_install::params {
-
-  pxe_install::parent_dirs{ 'create script dir':
+  pxe_install::parent_dirs { 'create script dir':
     dir_path => $scriptdir,
   }
 
@@ -154,15 +153,15 @@ class pxe_install (
   file { "${scriptdir}/debian-post.sh":
     ensure  => file,
     content => epp('pxe_install/scripts/debian-post.sh.epp', {
-      installserver      => $installserver,
-      installserverip    => $installserverip,
-      puppetmaster       => $puppetmaster,
-      puppetmasterip     => $puppetmasterip,
-      kickstart_url      => $kickstart_url,
-      repos_url          => $repos_url,
-      scripturl          => $scripturl,
-      challenge_password => $challenge_password,
-      add_hosts_entries  => $add_hosts_entries,
+        installserver      => $installserver,
+        installserverip    => $installserverip,
+        puppetmaster       => $puppetmaster,
+        puppetmasterip     => $puppetmasterip,
+        kickstart_url      => $kickstart_url,
+        repos_url          => $repos_url,
+        scripturl          => $scripturl,
+        challenge_password => $challenge_password,
+        add_hosts_entries  => $add_hosts_entries,
     }),
     owner   => 'root',
     group   => 'root',
@@ -180,15 +179,15 @@ class pxe_install (
   file { "${scriptdir}/ubuntu-post.sh":
     ensure  => file,
     content => epp('pxe_install/scripts/ubuntu-post.sh.epp', {
-      installserver      => $installserver,
-      installserverip    => $installserverip,
-      puppetmaster       => $puppetmaster,
-      puppetmasterip     => $puppetmasterip,
-      kickstart_url      => $kickstart_url,
-      repos_url          => $repos_url,
-      scripturl          => $scripturl,
-      challenge_password => $challenge_password,
-      add_hosts_entries  => $add_hosts_entries,
+        installserver      => $installserver,
+        installserverip    => $installserverip,
+        puppetmaster       => $puppetmaster,
+        puppetmasterip     => $puppetmasterip,
+        kickstart_url      => $kickstart_url,
+        repos_url          => $repos_url,
+        scripturl          => $scripturl,
+        challenge_password => $challenge_password,
+        add_hosts_entries  => $add_hosts_entries,
     }),
     owner   => 'root',
     group   => 'root',
@@ -198,17 +197,17 @@ class pxe_install (
   file { "${scriptdir}/redhat-post.sh":
     ensure  => file,
     content => epp('pxe_install/scripts/redhat-post.sh.epp', {
-      installserver      => $installserver,
-      installserverip    => $installserverip,
-      puppetmaster       => $puppetmaster,
-      puppetmasterip     => $puppetmasterip,
-      kickstart_url      => $kickstart_url,
-      repos_url          => $repos_url,
-      scripturl          => $scripturl,
-      reposerver         => $repo_server,
-      reposerverip       => $repo_server_ip,
-      challenge_password => $challenge_password,
-      add_hosts_entries  => $add_hosts_entries,
+        installserver      => $installserver,
+        installserverip    => $installserverip,
+        puppetmaster       => $puppetmaster,
+        puppetmasterip     => $puppetmasterip,
+        kickstart_url      => $kickstart_url,
+        repos_url          => $repos_url,
+        scripturl          => $scripturl,
+        reposerver         => $repo_server,
+        reposerverip       => $repo_server_ip,
+        challenge_password => $challenge_password,
+        add_hosts_entries  => $add_hosts_entries,
     }),
     owner   => 'root',
     group   => 'root',
@@ -218,17 +217,17 @@ class pxe_install (
   file { "${scriptdir}/fedora-post.sh":
     ensure  => file,
     content => epp('pxe_install/scripts/fedora-post.sh.epp', {
-      installserver      => $installserver,
-      installserverip    => $installserverip,
-      puppetmaster       => $puppetmaster,
-      puppetmasterip     => $puppetmasterip,
-      kickstart_url      => $kickstart_url,
-      repos_url          => $repos_url,
-      scripturl          => $scripturl,
-      reposerver         => $repo_server,
-      reposerverip       => $repo_server_ip,
-      challenge_password => $challenge_password,
-      add_hosts_entries  => $add_hosts_entries,
+        installserver      => $installserver,
+        installserverip    => $installserverip,
+        puppetmaster       => $puppetmaster,
+        puppetmasterip     => $puppetmasterip,
+        kickstart_url      => $kickstart_url,
+        repos_url          => $repos_url,
+        scripturl          => $scripturl,
+        reposerver         => $repo_server,
+        reposerverip       => $repo_server_ip,
+        challenge_password => $challenge_password,
+        add_hosts_entries  => $add_hosts_entries,
     }),
     owner   => 'root',
     group   => 'root',
@@ -251,7 +250,7 @@ class pxe_install (
 
   if has_key($services, 'samba') {
     $samba = $services['samba']
-    class { '::samba':
+    class { 'samba':
       * => $samba,
     }
   }
@@ -314,7 +313,7 @@ class pxe_install (
   file { "${tftpboot_dir}${windows_dir}/scripts/install.ps1":
     ensure  => file,
     content => epp('pxe_install/windows/install.ps1.epp', {
-      domain => $windows_domain,
+        domain => $windows_domain,
     }),
     owner   => 'root',
     group   => 'root',
@@ -324,9 +323,9 @@ class pxe_install (
   file { "${tftpboot_dir}${windows_dir}/unattend/2019_bios.xml":
     ensure  => file,
     content => epp('pxe_install/windows/2019_bios.xml.epp', {
-      domain           => $windows_domain,
-      win_locale       => $win_locale,
-      win_input_locale => $win_input_locale,
+        domain           => $windows_domain,
+        win_locale       => $win_locale,
+        win_input_locale => $win_input_locale,
     }),
     owner   => 'root',
     group   => 'root',
@@ -336,9 +335,9 @@ class pxe_install (
   file { "${tftpboot_dir}${windows_dir}/unattend/2019_uefi.xml":
     ensure  => file,
     content => epp('pxe_install/windows/2019_uefi.xml.epp', {
-      domain           => $windows_domain,
-      win_locale       => $win_locale,
-      win_input_locale => $win_input_locale,
+        domain           => $windows_domain,
+        win_locale       => $win_locale,
+        win_input_locale => $win_input_locale,
     }),
     owner   => 'root',
     group   => 'root',
@@ -346,7 +345,6 @@ class pxe_install (
   }
 
   $machines.each |$hostname, $data| {
-
     pxe_install::kickstart { $hostname:
       data               => $data,
       kickstart_dir      => $kickstart_dir,
@@ -361,7 +359,5 @@ class pxe_install (
       windows_dir        => $windows_dir,
       windows_config_dir => $windows_config_dir,
     }
-
   }
-
 }

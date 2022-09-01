@@ -1179,7 +1179,7 @@ describe 'pxe_install' do
 
         is_expected.to contain_concat__fragment('ct01-start')
           .with(
-            'order'   => 1,
+            'order'   => '01',
             'target'  => '/export/repos/kickstart/ct01',
           )
 
@@ -1227,7 +1227,7 @@ describe 'pxe_install' do
 
         is_expected.to contain_concat__fragment('ct02-start')
           .with(
-            'order'   => 1,
+            'order'   => '01',
             'target'  => '/export/repos/kickstart/ct02',
           )
 
@@ -1275,7 +1275,7 @@ describe 'pxe_install' do
 
         is_expected.to contain_concat__fragment('ct03-start')
           .with(
-            'order'   => 1,
+            'order'   => '01',
             'target'  => '/export/repos/kickstart/ct03',
           )
 

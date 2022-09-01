@@ -32,25 +32,23 @@ class pxe_install::syslinux (
   String $mode                          = '0755',
 ) {
   if $create_tftpboot_dir {
-
     ensure_resource('file', $tftpboot_dir, {
-      ensure => directory,
-      owner  => $owner,
-      group  => $group,
-      mode   => $mode,
+        ensure => directory,
+        owner  => $owner,
+        group  => $group,
+        mode   => $mode,
     })
-
   }
 
   if $pxe_install::install_unzip {
     ensure_packages(['unzip'], {
-      ensure => present,
+        ensure => present,
     })
   }
 
   if $pxe_install::install_curl {
     ensure_packages(['curl'], {
-      ensure => present,
+        ensure => present,
     })
   }
 
@@ -73,19 +71,14 @@ class pxe_install::syslinux (
   }
 
   $pxe_install::params::syslinux_files.keys.each |$dir| {
-
     pxe_install::parent_dirs { "create tftpboot dir ${tftpboot_dir}${dir}":
       dir_path => "${tftpboot_dir}${dir}",
     }
-
   }
 
   $pxe_install::params::syslinux_files.each |$dir, $files| {
-
     $files.each |$dst, $src| {
-
       if $src =~ /^http/ {
-
         file { "${tftpboot_dir}${dir}/${dst}":
           ensure  => file,
           source  => $src,
@@ -94,9 +87,7 @@ class pxe_install::syslinux (
           mode    => $mode,
           require => [Archive["${archive}.tar.gz"], File["${tftpboot_dir}${dir}"]],
         }
-
       } else {
-
         $cmd = "cp /opt/pxe_install/${archive}${src} ${tftpboot_dir}${dir}/${dst}"
         exec { "copying file ${dst}-${dir}":
           command => $cmd,                                        #lint:ignore:security_class_or_define_parameter_in_exec
@@ -104,7 +95,6 @@ class pxe_install::syslinux (
           unless  => "test -f ${tftpboot_dir}${dir}/${dst}",
           require => [Archive["${archive}.tar.gz"], File["${tftpboot_dir}${dir}"]],
         }
-
       }
     }
   }

@@ -21,8 +21,8 @@ define pxe_install::parent_dirs (
 
   $dirs = $_dir_path[1,-1].dirname.split('/').reduce([]) |$memo, $subdir| {
     $_dir =  $memo.empty ? {
-        true    => "/${subdir}",
-        default => "${$memo[-1]}/${subdir}",
+      true    => "/${subdir}",
+      default => "${$memo[-1]}/${subdir}",
     }
     concat($memo, $_dir)
   }
@@ -30,5 +30,4 @@ define pxe_install::parent_dirs (
   ensure_resource('file', $dirs, {
       ensure => directory,
   })
-
 }

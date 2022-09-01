@@ -41,7 +41,7 @@ class pxe_install::winipxe (
   file { "${tftpboot_dir}/winpe.ipxe":
     ensure  => file,
     content => epp('pxe_install/windows/winpe.ipxe.epp', {
-      dir => $winpe_dir,
+        dir => $winpe_dir,
     }),
     owner   => $owner,
     group   => $group,
