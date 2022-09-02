@@ -29,7 +29,7 @@ class pxe_install::tftp (
   }
 
   ensure_packages($tftp_packages, {
-    ensure => $tftp_ensure,
+      ensure => $tftp_ensure,
   })
 
   $srv_ensure = has_key($tftp, 'service_ensure') ? {
@@ -62,12 +62,12 @@ class pxe_install::tftp (
   }
 
   pxe_install::parent_dirs { 'create windows directory':
-    dir_path => "${tftp['directory']}${windows_dir}"
+    dir_path => "${tftp['directory']}${windows_dir}",
   }
 
   ensure_resource('service', [$tftp['service']], {
-    ensure => $srv_ensure,
-    enable => $srv_enable,
+      ensure => $srv_ensure,
+      enable => $srv_enable,
   })
 
   if $mapfile != '' {
@@ -79,7 +79,7 @@ class pxe_install::tftp (
     }
   }
 
-  case $facts['osfamily'].downcase() {
+  case $facts['os']['family'].downcase() {
     'redhat': {
       $tftpfile = '/etc/xinetd.d/tftp'
       $template = 'tftp.epp'
@@ -100,13 +100,13 @@ class pxe_install::tftp (
       group   => 'root',
       mode    => '0644',
       content => epp("pxe_install/xinetd/${template}", {
-        port          => $tftp['port'],
-        user          => $tftp['user'],
-        group         => $tftp['group'],
-        tftpserverbin => $tftp['tftpserverbin'],
-        tftpdirectory => $tftp['directory'],
-        address       => $address,
-        mapfile       => $mapfile,
+          port          => $tftp['port'],
+          user          => $tftp['user'],
+          group         => $tftp['group'],
+          tftpserverbin => $tftp['tftpserverbin'],
+          tftpdirectory => $tftp['directory'],
+          address       => $address,
+          mapfile       => $mapfile,
       }),
       notify  => Service[$tftp['service']],
     }
@@ -118,25 +118,25 @@ class pxe_install::tftp (
   }
 
   $pxedir = has_key( $tftp, 'pxelinux') ? {
-    true =>  $tftp['pxelinux'],
+    true => $tftp['pxelinux'],
     default => 'pxelinux.cfg',
   }
 
   ensure_resource('file', [$basedir], {
-    ensure => directory,
-    owner  => 'root',
-    group  => 'root',
-    mode   => '0755',
+      ensure => directory,
+      owner  => 'root',
+      group  => 'root',
+      mode   => '0755',
   })
 
   ensure_resource('file', ["${basedir}/${pxedir}"], {
-    ensure       => directory,
-    purge        => true,
-    recurselimit => 1,
-    recurse      => true,
-    owner        => 'root',
-    group        => 'root',
-    mode         => '0755',
+      ensure       => directory,
+      purge        => true,
+      recurselimit => 1,
+      recurse      => true,
+      owner        => 'root',
+      group        => 'root',
+      mode         => '0755',
   })
 
   file { "${basedir}/${pxedir}/default":
@@ -158,7 +158,6 @@ class pxe_install::tftp (
   }
 
   if $manage_tftpboot {
-
     class { 'pxe_install::syslinux':
       tftpboot_dir        => $basedir,
       create_tftpboot_dir => true,
@@ -167,8 +166,6 @@ class pxe_install::tftp (
     class { 'pxe_install::winipxe':
       tftpboot_dir => $basedir,
       winpe_dir    => $winpe_dir,
-
     }
   }
-
 }

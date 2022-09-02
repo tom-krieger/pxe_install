@@ -315,6 +315,9 @@ The parameter section nows about 4 parameter. Therse parameter control how the n
 | | role | The role the node will get. This value will be added to the agent certificate as trusted fact `pp_role`. | - |
 | | dc | The datacenter the node runs in. This value goes as trusted fact `pp_datacenter` into the node's certificate. | - |
 | | agent | This option accepts `y` or `n`. If set to `n` no Puppet agent will be installed. Default value is `y`. | - |
+| | orgid | The organization id for Redhat CDN install and subscription manager. | - |
+| | actkey | The acvtivation key for Redhat CDN install and subscription manager. | - |
+| | rhcdn | Set to `y` if Redhat CDN should be used. Otherwiese the URL would be used. | - |
 
 #### `Node partition configuration`
 

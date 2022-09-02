@@ -11,7 +11,7 @@
 # @api private
 class pxe_install::dhcp (
   Hash $dhcp
-){
+) {
   if has_key($dhcp, 'default_filename') {
     $pxefilename = $dhcp['default_filename']
   } elsif $pxe_install::defaults['pxefile'] != '' {

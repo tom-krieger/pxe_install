@@ -29,13 +29,12 @@ define pxe_install::samba::unattend (
   String $win_input_locale,
   Stdlib::Absolutepath $unattend_dir,
 ) {
-
   file { "${unattend_dir}/${title}.xml":
     ensure  => file,
     content => epp("pxe_install/windows/${osversion}_${boot}.xml.epp", {
-      domain           => $win_domain,
-      win_locale       => $win_locale,
-      win_input_locale => $win_input_locale,
+        domain           => $win_domain,
+        win_locale       => $win_locale,
+        win_input_locale => $win_input_locale,
     }),
     owner   => 'root',
     group   => 'root',

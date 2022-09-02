@@ -23,7 +23,6 @@ define pxe_install::partitioning::redhat (
   $template_partitioning = 'pxe_install/redhat/partition_entry.epp'
 
   $partitioning.each |$partition, $partition_data| {
-
     $type = has_key($partition_data, 'type') ? {
       true    => $partition_data['type'],
       default => '',
@@ -74,7 +73,7 @@ define pxe_install::partitioning::redhat (
       default => '',
     }
 
-    $part_disks = has_key($partition_data, 'disks')  ?{
+    $part_disks = has_key($partition_data, 'disks')  ? {
       true    => join($partition_data['disks'], ' '),
       default => '',
     }
@@ -91,23 +90,22 @@ define pxe_install::partitioning::redhat (
 
     concat::fragment { "${hostname}-${partition}":
       content => epp($template_partitioning, {
-        partname    => $partition,
-        type        => $real_type,
-        vgname      => $vgname,
-        fstype      => $fstype,
-        size        => $size,
-        primary     => $primary,
-        grow        => $grow,
-        ondisk      => $ondisk,
-        pvol        => $pvol,
-        diskname    => $diskname,
-        level       => $level,
-        part_disks  => $part_disks,
-        disk_device => $disk_device,
+          partname    => $partition,
+          type        => $real_type,
+          vgname      => $vgname,
+          fstype      => $fstype,
+          size        => $size,
+          primary     => $primary,
+          grow        => $grow,
+          ondisk      => $ondisk,
+          pvol        => $pvol,
+          diskname    => $diskname,
+          level       => $level,
+          part_disks  => $part_disks,
+          disk_device => $disk_device,
       }),
       order   => 500,
       target  => $kickstart_file,
     }
-
   }
 }

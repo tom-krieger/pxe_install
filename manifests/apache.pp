@@ -65,12 +65,11 @@ class pxe_install::apache (
   Optional[String] $ssl_certs_dir     = '',
   Optional[String] $documentroot      = '',
 ) {
-
   ensure_resource('file', ['/etc/pki/httpd', "/etc/pki/httpd/${servername}"], {
-    ensure => directory,
-    owner  => 'root',
-    group  => 'root',
-    mode   => '0755',
+      ensure => directory,
+      owner  => 'root',
+      group  => 'root',
+      mode   => '0755',
   })
 
   class { 'apache':
@@ -81,7 +80,6 @@ class pxe_install::apache (
   }
 
   class { 'apache::mod::ssl':
-
   }
 
   class { 'apache::mod::status':
@@ -105,7 +103,7 @@ class pxe_install::apache (
       {
         alias => $repos_url,
         path  => $repos_dir,
-      }
+      },
     ]
   } else {
     $aliases = []

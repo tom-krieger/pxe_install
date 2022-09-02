@@ -189,6 +189,20 @@ case $os in
         install_centos "${archive}" "${basedir}" "${os}" "${osvers}" "${ossubvers}"
         ;;
 
+    'redhat')
+        if [ "${osvers}" != "7" -a "${osvers}" != "8" ] ; then
+            echo "Redhat supports version 7 and 8 only!"
+            exit 2
+        fi
+
+        if [ -z "${ossubvers}" ] ; then
+            echo "Redhat needs a subversion too!"
+            exit 2
+        fi
+
+        download_installer "${archive}" "${PT_archive_url}"
+        install_centos "${archive}" "${basedir}" "${os}" "${osvers}" "${ossubvers}"
+        ;;
     'alma')
         if [ "${osvers}" != "8" -a "${osvers}" != "9" ] ; then
             echo "AlmaLinux supports version 8 and 9 only!"

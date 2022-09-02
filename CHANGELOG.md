@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.3.8
+
+* Added Rdedhat CDN install (new parameters orgid and actkey)
+
 ## 0.3.7
 
 * Added Fedora to maintain_installer task

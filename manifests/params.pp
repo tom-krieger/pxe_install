@@ -8,7 +8,6 @@
 #
 #@api private
 class pxe_install::params {
-
   $syslinux_url = 'https://www.kernel.org/pub/linux/utils/boot/syslinux'
   $syslinux_name = 'syslinux'
   $syslinux_version = '6.03'
@@ -36,7 +35,7 @@ class pxe_install::params {
       'vesamenu.c32' => '/efi64/com32/menu/vesamenu.c32',
     },
     '/winpe' => {
-      'wimboot' => 'https://github.com/ipxe/wimboot/releases/latest/download/wimboot'
+      'wimboot' => 'https://github.com/ipxe/wimboot/releases/latest/download/wimboot',
     },
   }
 
@@ -82,7 +81,7 @@ class pxe_install::params {
     'windows' => {
       'mirror_host' => 'https://repos.example.com',
       'mirror_uri'  => '/windows/winpe',
-    }
+    },
   }
 
   $defaults = {
@@ -110,7 +109,7 @@ class pxe_install::params {
         'filename' => 'lpxelinux.0',
         'http' => true,
         'path' => 'bios',
-        'windows_support' => true
+        'windows_support' => true,
       },
       'efi64'  => {
         'boot_architecture' => 'uefi',
@@ -352,6 +351,6 @@ class pxe_install::params {
           'size'      => 4096,
         },
       },
-    }
+    },
   }
 }

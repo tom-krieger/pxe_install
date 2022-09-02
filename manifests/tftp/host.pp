@@ -60,6 +60,12 @@
 # @param stage2
 #    Stage 2 parameter for Fedora installations used in TFTP boot configuration.
 #
+# @param orgid
+#    Redhat organization id.
+#
+# @param actkey
+#    Redhat activationkey.
+#
 # @example
 #   pxe_install::tftp::host { 'namevar': }
 #
@@ -83,20 +89,20 @@ define pxe_install::tftp::host (
   Optional[String] $mirror_uri  = '',
   Optional[Hash] $scenario_data = {},
   Optional[String] $stage2      = '',
+  Optional[String] $orgid       = '',
+  Optional[String] $actkey      = '',
 ) {
-
   if  $ostype.downcase() == 'windows' and
-      ($mirror_host == '' or $mirror_uri == '')
-  {
+  ($mirror_host == '' or $mirror_uri == '') {
     fail('A Windows node needs a mirror_host and a mirror_uri to create a TFTP entry!')
   }
 
   $octets = split($title, /\./)
   $hex = sprintf('%<a>02x%<b>02x%<c>02x%<d>02x', {
-    'a' => $octets[0],
-    'b' => $octets[1],
-    'c' => $octets[2],
-    'd' => $octets[3],
+      'a' => $octets[0],
+      'b' => $octets[1],
+      'c' => $octets[2],
+      'd' => $octets[3],
   }).upcase()
 
   $basedir = has_key($pxe_install::tftp::tftp, 'directory') ? {
@@ -105,7 +111,7 @@ define pxe_install::tftp::host (
   }
 
   $pxedir = has_key( $pxe_install::tftp::tftp, 'pxelinux') ? {
-    true =>  $pxe_install::tftp::tftp['pxelinux'],
+    true => $pxe_install::tftp::tftp['pxelinux'],
     default => 'pxelinux.cfg',
   }
 
@@ -118,7 +124,7 @@ define pxe_install::tftp::host (
   }
 
   $_path = $path ? {
-    '' =>  "${prefix}/boot-screens",
+    '' => "${prefix}/boot-screens",
     default => $path,
   }
 
@@ -129,19 +135,19 @@ define pxe_install::tftp::host (
       }
       file { $filename:
         content => epp('pxe_install/debian/tftp-entry.epp', {
-          path        => $_path,
-          prefix      => $prefix,
-          ksurl       => $ksurl,
-          locale      => $locale,
-          keymap      => $keymap,
-          loghost     => $loghost,
-          logport     => $logport,
-          ksdevice    => $ksdevice,
-          puppetenv   => $puppetenv,
-          puppetrole  => $puppetrole,
-          datacenter  => $datacenter,
-          mirror_host => $mirror_host,
-          mirror_uri  => $mirror_uri,
+            path        => $_path,
+            prefix      => $prefix,
+            ksurl       => $ksurl,
+            locale      => $locale,
+            keymap      => $keymap,
+            loghost     => $loghost,
+            logport     => $logport,
+            ksdevice    => $ksdevice,
+            puppetenv   => $puppetenv,
+            puppetrole  => $puppetrole,
+            datacenter  => $datacenter,
+            mirror_host => $mirror_host,
+            mirror_uri  => $mirror_uri,
         }),
         *       => $file_data,
       }
@@ -152,19 +158,19 @@ define pxe_install::tftp::host (
       }
       file { $filename:
         content => epp('pxe_install/ubuntu/tftp-entry.epp', {
-          path        => $_path,
-          prefix      => $prefix,
-          ksurl       => $ksurl,
-          locale      => $locale,
-          keymap      => $keymap,
-          loghost     => $loghost,
-          logport     => $logport,
-          ksdevice    => $ksdevice,
-          puppetenv   => $puppetenv,
-          puppetrole  => $puppetrole,
-          datacenter  => $datacenter,
-          mirror_host => $mirror_host,
-          mirror_uri  => $mirror_uri,
+            path        => $_path,
+            prefix      => $prefix,
+            ksurl       => $ksurl,
+            locale      => $locale,
+            keymap      => $keymap,
+            loghost     => $loghost,
+            logport     => $logport,
+            ksdevice    => $ksdevice,
+            puppetenv   => $puppetenv,
+            puppetrole  => $puppetrole,
+            datacenter  => $datacenter,
+            mirror_host => $mirror_host,
+            mirror_uri  => $mirror_uri,
         }),
         *       => $file_data,
       }
@@ -172,9 +178,9 @@ define pxe_install::tftp::host (
     'windows': {
       file { $filename:
         content => epp('pxe_install/windows/tftp-entry.epp', {
-          path        => $_path,
-          mirror_host => $mirror_host,
-          mirror_uri  => $mirror_uri,
+            path        => $_path,
+            mirror_host => $mirror_host,
+            mirror_uri  => $mirror_uri,
         }),
         *       => $file_data,
       }
@@ -183,16 +189,16 @@ define pxe_install::tftp::host (
       #Fedora
       file { $filename:
         content => epp('pxe_install/fedora/tftp-entry.epp', {
-          prefix      => $prefix,
-          ksurl       => $ksurl,
-          ksdevice    => $ksdevice,
-          puppetenv   => $puppetenv,
-          puppetrole  => $puppetrole,
-          datacenter  => $datacenter,
-          ks          => $ks,
-          mirror_host => $mirror_host,
-          mirror_uri  => $mirror_uri,
-          stage2      => $stage2,
+            prefix      => $prefix,
+            ksurl       => $ksurl,
+            ksdevice    => $ksdevice,
+            puppetenv   => $puppetenv,
+            puppetrole  => $puppetrole,
+            datacenter  => $datacenter,
+            ks          => $ks,
+            mirror_host => $mirror_host,
+            mirror_uri  => $mirror_uri,
+            stage2      => $stage2,
         }),
         *       => $file_data,
       }
@@ -201,19 +207,20 @@ define pxe_install::tftp::host (
       # RedHat/CentOS
       file { $filename:
         content => epp('pxe_install/redhat/tftp-entry.epp', {
-          prefix      => $prefix,
-          ksurl       => $ksurl,
-          ksdevice    => $ksdevice,
-          puppetenv   => $puppetenv,
-          puppetrole  => $puppetrole,
-          datacenter  => $datacenter,
-          ks          => $ks,
-          mirror_host => $mirror_host,
-          mirror_uri  => $mirror_uri,
+            prefix      => $prefix,
+            ksurl       => $ksurl,
+            ksdevice    => $ksdevice,
+            puppetenv   => $puppetenv,
+            puppetrole  => $puppetrole,
+            datacenter  => $datacenter,
+            ks          => $ks,
+            mirror_host => $mirror_host,
+            mirror_uri  => $mirror_uri,
+            orgid       => $orgid,
+            actkey      => $actkey,
         }),
         *       => $file_data,
       }
     }
   }
-
 }
