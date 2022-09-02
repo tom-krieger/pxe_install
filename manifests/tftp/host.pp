@@ -60,6 +60,12 @@
 # @param stage2
 #    Stage 2 parameter for Fedora installations used in TFTP boot configuration.
 #
+# @param orgid
+#    Redhat organization id.
+#
+# @param actkey
+#    Redhat activationkey.
+#
 # @example
 #   pxe_install::tftp::host { 'namevar': }
 #
