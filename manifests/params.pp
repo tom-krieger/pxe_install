@@ -84,6 +84,13 @@ class pxe_install::params {
     },
   }
 
+  $grub_download_urls = {
+    'ubuntu' => {
+      '18.04' => 'http://archive.ubuntu.com/ubuntu/dists/bionic/main/uefi/grub2-amd64/current/grubnetx64.efi.signed',
+      '20.04' => 'http://archive.ubuntu.com/ubuntu/dists/focal/main/uefi/grub2-amd64/current/grubnetx64.efi.signed',
+    },
+  }
+
   $defaults = {
     'rootpw' => '$6$pzoDeF70$KIpccvU4EZhii.Pb88xDawv.MBeNZhICVFnw7RahRl2OlZKbI8rcc0VGVVrsVejoyShgIhSz/Da6z36K6U.CZ/',
     'timezone' => 'Europe/Berlin',
