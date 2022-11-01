@@ -348,7 +348,7 @@ class pxe_install (
     mode    => '0755',
   }
 
-  ensure_resource('file', ["${tftpboot_dir}grub"], {
+  ensure_resource('file', ["${tftpboot_dir}/grub"], {
       ensure       => directory,
       purge        => true,
       recurselimit => 1,
