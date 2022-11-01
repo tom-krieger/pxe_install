@@ -348,6 +348,16 @@ class pxe_install (
     mode    => '0755',
   }
 
+  ensure_resource('file', ["${tftpboot_dir}grub"], {
+      ensure       => directory,
+      purge        => true,
+      recurselimit => 1,
+      recurse      => true,
+      owner        => 'root',
+      group        => 'root',
+      mode         => '0755',
+  })
+
   file { "${tftpboot_dir}grub/grub.cfg":
     ensure => file,
     source => 'puppet:///modules/pxe_install/grub.cfg',
