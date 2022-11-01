@@ -21,7 +21,7 @@
                   use_filesystem{ } filesystem{ <%= $filesystem %> }    \
                   <%- } -%>
                   <%- if $label != '' { -%>
-                  label{ boot }                           \
+                  label{ <%= $label %> }                           \
                   <%- } -%>
                   <%- if $mountpoint != '' and $vgname == '' { -%>
                   mountpoint{ <%= $mountpoint %> }                     \
