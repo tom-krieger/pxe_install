@@ -19,6 +19,11 @@ pxe_install::defaults:
       filename: lpxelinux.0
       http: true
       windows_support: true
+    grub64:
+      boot_architecture: uefi
+      filename: grub64.efi
+      http: true
+      windows_support: false
     efi64:
       boot_architecture: uefi
       filename: iso
