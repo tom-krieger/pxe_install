@@ -1,6 +1,6 @@
 set timeout=0
 
-menuentry "Ubuntu kickstart for \${net_default_ip}" {
+menuentry "Ubuntu kickstart for ${net_default_ip}" {
   set gfxpayload=keep
   linux   <%= $prefix %>/linux --- url=<%= $ksurl %> priority=critical vga=788 interface=<%= $ksdevice %> auto=true log_host=<%= $loghost %> log_port=<%= $logport %> puppetenv=<%= $puppetenv %> role=<%= $puppetrole %> dc=<%= $datacenter %> quiet
   initrd  <%= $prefix %>/initrd.gz
