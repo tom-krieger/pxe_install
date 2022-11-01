@@ -300,6 +300,10 @@ class pxe_install (
     dir_path => "${tftpboot_dir}${windows_dir}/unattend",
   }
 
+  pxe_install::parent_dirs { 'create tftpboot grub dir':
+    dir_path => "${tftpboot_dir}grub",
+  }
+
   $win_locale = has_key($defaults, 'win_locale') ? {
     true  => $defaults['win_locale'],
     false => 'en-US',
@@ -342,6 +346,14 @@ class pxe_install (
     owner   => 'root',
     group   => 'root',
     mode    => '0755',
+  }
+
+  file { "${tftpboot_dir}grub/grub.cfg":
+    ensure => file,
+    source => 'puppet:///modules/pxe_install/grub.cfg',
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0644',
   }
 
   $machines.each |$hostname, $data| {

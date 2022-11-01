@@ -595,7 +595,7 @@ define pxe_install::kickstart (
     false => "${mirror_host}${mirror_uri}"
   }
 
-  if  $ostype.downcase() == 'centos' or
+  if $ostype.downcase() == 'centos' or
   $ostype.downcase() == 'redhat' or
   $ostype.downcase() == 'fedora' or
   $ostype.downcase() == 'windows' {
