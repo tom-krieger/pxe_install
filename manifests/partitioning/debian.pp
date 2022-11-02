@@ -90,10 +90,10 @@ define pxe_install::partitioning::debian (
     }
 
     $filesystem =  $method ? {
-      'swap'  => '',
-      'lvm'   => '',
-      'efi'   => '',
-      'free'  => '',
+      'swap'      => '',
+      'lvm'       => '',
+      'efi'       => '',
+      'biosgrub'  => '',
       default => $fstype,
     }
 
