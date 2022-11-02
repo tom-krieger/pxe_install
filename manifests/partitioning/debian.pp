@@ -79,6 +79,11 @@ define pxe_install::partitioning::debian (
       default => $pxe_install::defaults['bootable'],
     }
 
+    $bios_grub = has_key($partition_data, 'bios_grub') ? {
+      true    => $partition_data['bioos_grub'],
+      default => false,
+    }
+
     $method = has_key($partition_data, 'method') ? {
       true    => $partition_data['method'],
       default => '',
@@ -88,6 +93,7 @@ define pxe_install::partitioning::debian (
       'swap'  => '',
       'lvm'   => '',
       'efi'   => '',
+      'free'  => '',
       default => $fstype,
     }
 
@@ -151,6 +157,7 @@ define pxe_install::partitioning::debian (
           lvname        => $lvname,
           invg          => $invg,
           defaultignore => $defaultignore,
+          bios_grub     => $bios_grub,
       }),
       target  => $kickstart_file,
       order   => $order,

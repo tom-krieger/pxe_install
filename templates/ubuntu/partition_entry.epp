@@ -2,6 +2,9 @@
                   <%- if $defaultignore { -%>
                   $defaultignore{ }                      \
                   <%- } -%>
+                  <%- if $bios_grub { -%>
+                  $bios_boot{ }                          \
+                  <%- } -%>
                   <%- if $primary { -%>
                   $primary{ }                             \
                   <%- } -%>
