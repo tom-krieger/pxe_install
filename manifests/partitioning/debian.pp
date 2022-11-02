@@ -102,7 +102,7 @@ define pxe_install::partitioning::debian (
       default => '',
     }
 
-    if $filesystem == 'free' {
+    if $method == 'biosgrub' {
       $mountpoint = ''
     } else {
       $mountpoint = has_key($partition_data, 'mountpoint') ? {
