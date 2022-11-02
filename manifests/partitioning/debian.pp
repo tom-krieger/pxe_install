@@ -104,6 +104,8 @@ define pxe_install::partitioning::debian (
 
     if $method == 'biosgrub' {
       $mountpoint = ''
+    } elsif $method == 'efi' {
+      $mountpoint = ''
     } else {
       $mountpoint = has_key($partition_data, 'mountpoint') ? {
         true    => $partition_data['mountpoint'],
