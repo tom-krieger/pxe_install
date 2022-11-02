@@ -111,6 +111,16 @@ define pxe_install::partitioning::debian (
       }
     }
 
+    $iflabel = has_key($partition_data, 'iflabel') ? {
+      true    => $partition_data['iflabel'],
+      default => '',
+    }
+
+    $reusemethod = has_key($partition_data, 'reusemethod') ? {
+      true    => $partition_data['reusemethod'],
+      default => false,
+    }
+
     $defaultignore = has_key($partition_data, 'defaultignore') ? {
       true    => $partition_data['defaultignore'],
       default => false,
@@ -162,6 +172,8 @@ define pxe_install::partitioning::debian (
           invg          => $invg,
           defaultignore => $defaultignore,
           bios_boot     => $bios_boot,
+          iflabel       => $iflabel,
+          reusemethod   => $reusemethod,
       }),
       target  => $kickstart_file,
       order   => $order,

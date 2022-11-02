@@ -2,6 +2,9 @@ set timeout=0
 
 menuentry "Ubuntu kickstart for ${net_default_ip}" {
   set gfxpayload=keep
+  echo "Ubuntu kickstart for ${net_default_ip}"
+  echo "Loading kernel ..."
   linux   <%= $prefix %>/linux --- url=<%= $ksurl %> priority=critical vga=788 interface=<%= $ksdevice %> auto=true log_host=<%= $loghost %> log_port=<%= $logport %> puppetenv=<%= $puppetenv %> role=<%= $puppetrole %> dc=<%= $datacenter %> quiet
+  echo "Loading initrd ..."
   initrd  <%= $prefix %>/initrd.gz
 }

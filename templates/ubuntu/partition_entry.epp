@@ -11,6 +11,12 @@
                   <%- if $bootable { -%>
                   $bootable{ }                            \
                   <%- } -%>
+                  <%- if $iflabel != '' { -%>
+                  $iflabel{ <%= $iflabel %> }              \
+                  <%- } -%>
+                  <%- if $reusemethod { -%>
+                  $reusemethod{ }                               \
+                  <%- } -%>
                   <%- if $method == 'format' { -%>
                   method{ format } format{ }     \
                   <%- } -%>
