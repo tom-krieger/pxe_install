@@ -17,6 +17,12 @@
                   <%- if $method == 'lvm' { -%>
                   method{ lvm }                 \
                   <%- } -%>
+                  <%- if $method == 'efi' { -%>
+                  method{ efi } format{ }                \
+                  <%- } -%>
+                  <%- if $method == 'biosgrub' { -%>
+                  method{ biosgrub }                 \
+                  <%- } -%>
                   <%- if $filesystem != '' { -%>
                   use_filesystem{ } filesystem{ <%= $filesystem %> }    \
                   <%- } -%>
