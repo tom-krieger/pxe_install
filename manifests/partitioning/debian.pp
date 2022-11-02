@@ -102,9 +102,13 @@ define pxe_install::partitioning::debian (
       default => '',
     }
 
-    $mountpoint = has_key($partition_data, 'mountpoint') ? {
-      true    => $partition_data['mountpoint'],
-      default => $partition,
+    if $filesystem == 'free' {
+      $mountpoint = ''
+    } else {
+      $mountpoint = has_key($partition_data, 'mountpoint') ? {
+        true    => $partition_data['mountpoint'],
+        default => $partition,
+      }
     }
 
     $defaultignore = has_key($partition_data, 'defaultignore') ? {
