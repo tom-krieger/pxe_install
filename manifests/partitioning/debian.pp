@@ -20,6 +20,9 @@
 # @param template_part_finish
 #    The template to finish the partion information
 #
+# @param boot_architecture
+#    Information about the boot scenario
+#
 # @example
 #   include pxe_install::partitioning::debian
 #
@@ -28,6 +31,7 @@ define pxe_install::partitioning::debian (
   String $hostname,
   Hash $partitioning,
   String $kickstart_file,
+  String $boot_architecture,
   Optional[String] $template_partitioning = 'pxe_install/debian/partition.epp',
   Optional[String] $template_part_entry   = 'pxe_install/debian/partition_entry.epp',
   Optional[String] $template_part_finish  = 'pxe_install/debian/partition_finish.epp',
@@ -37,7 +41,8 @@ define pxe_install::partitioning::debian (
 
   concat::fragment { "${hostname}-partition-start":
     content => epp($template_partitioning, {
-        autopart     => $devices,
+        autopart          => $devices,
+        boot_architecture => $boot_architecture,
     }),
     target  => $kickstart_file,
     order   => $nr,

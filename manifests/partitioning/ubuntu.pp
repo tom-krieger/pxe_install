@@ -11,6 +11,9 @@
 # @param kickstart_file
 #    Concat file to add partition information
 #
+# @param boot_architecture
+#    Information about the boot scenario
+#
 # @example
 #   include pxe_install::partitioning::ubuntu
 #
@@ -19,6 +22,7 @@ define pxe_install::partitioning::ubuntu (
   String $hostname,
   Hash $partitioning,
   String $kickstart_file,
+  String $boot_architecture,
 ) {
   $template_partitioning = 'pxe_install/ubuntu/partition.epp'
   $template_part_entry = 'pxe_install/ubuntu/partition_entry.epp'
@@ -31,5 +35,6 @@ define pxe_install::partitioning::ubuntu (
     template_partitioning => $template_partitioning,
     template_part_entry   => $template_part_entry,
     template_part_finish  => $template_part_finish,
+    boot_architecture     => $boot_architecture,
   }
 }
