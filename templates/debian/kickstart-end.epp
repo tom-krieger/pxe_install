@@ -30,10 +30,10 @@ d-i grub-installer/bootdev string <%= $bootdevice %>
 
 d-i preseed/late_command string \
 	mkdir -p /target/etc/puppetlabs/puppet/ ; \
-	if [ -f /tmp/puppetenv ] ; then cp /tmp/puppetenv /target/etc/puppetlabs/puppet/ ; fi ; \
-	if [ -f /tmp/puppetrole ] ; then cp /tmp/puppetrole /target/etc/puppetlabs/puppet/ ; fi ; \
-	if [ -f /tmp/datacenter ] ; then cp /tmp/datacenter /target/etc/puppetlabs/puppet/ ; fi ; \
-	if [ -f /tmp/install_agent ] ; then cp /tmp/install_agent /target/etc/puppetlabs/puppet/ ; fi ; \
+	if [ -f /tmp/puppetenv ] ; then cp /tmp/puppetenv /target/etc/puppetlabs/puppet/ ; else echo "No puppetenv found!" ; fi ; \
+	if [ -f /tmp/puppetrole ] ; then cp /tmp/puppetrole /target/etc/puppetlabs/puppet/ ; else echo "No puppetrole found!" ; fi ; \
+	if [ -f /tmp/datacenter ] ; then cp /tmp/datacenter /target/etc/puppetlabs/puppet/ ; else echo "No datacenter found!" ; fi ; \
+	if [ -f /tmp/install_agent ] ; then cp /tmp/install_agent /target/etc/puppetlabs/puppet/ ; else echo "No install_agent found!" ; fi ; \
 	in-target apt-get -y install curl bash init-system-helpers ; \
 	in-target rm -f /etc/init.d/debian-post ; \
 	in-target curl -o /root/debian-post http://<%= $reposerver %><%= $scripturl %>/debian-post.sh ; \
