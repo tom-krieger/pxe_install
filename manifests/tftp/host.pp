@@ -136,10 +136,10 @@ define pxe_install::tftp::host (
       }
 
       if $scenario_data['boot_architecture'] == 'uefi' {
-        $template = 'pxe_install/ubuntu/tftp-uefi-entry.epp'
+        $template = 'pxe_install/debian/tftp-uefi-entry.epp'
         $_filename = $uefi_filename
       } else {
-        $template = 'pxe_install/ubuntu/tftp-entry.epp'
+        $template = 'pxe_install/debian/tftp-entry.epp'
         $_filename = $filename
       }
 
