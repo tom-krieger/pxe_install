@@ -117,9 +117,9 @@ define pxe_install::kickstart (
     fail("A server needs a mac address for installation. ${hostname} has none!")
   }
 
-  if
-  ! has_key($data, 'osversion') and $ensure == 'present' and
-  ($ostype.downcase() == 'alma' or$ostype.downcase() == 'rocky' or $ostype.downcase() == 'centos' or $ostype.downcase() == 'windows') {
+  if  ! has_key($data, 'osversion') and $ensure == 'present' and
+  ($ostype.downcase() == 'alma' or$ostype.downcase() == 'rocky' or
+  $ostype.downcase() == 'centos' or $ostype.downcase() == 'windows') {
     fail("Host ${hostname} needs an osversion!")
   }
 
@@ -605,6 +605,8 @@ define pxe_install::kickstart (
 
   if $ostype.downcase() == 'centos' or
   $ostype.downcase() == 'redhat' or
+  $ostype.downcase() == 'alma' or
+  $ostype.downcase() == 'rocky' or
   $ostype.downcase() == 'fedora' or
   $ostype.downcase() == 'windows' {
     $osvers = has_key($data, 'osversion') ? {
