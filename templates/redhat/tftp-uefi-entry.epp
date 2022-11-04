@@ -1,0 +1,10 @@
+set timeout=2
+
+menuentry "Redhat (like) kickstart for ${net_default_ip}" {
+  set gfxpayload=keep
+  echo "Redhat (like) kickstart for ${net_default_ip}"
+  echo "Loading kernel ..."
+  linux   <%= $prefix %>/vmlinuz --- <%= $ks %>=<%= $ksurl %> devfs=nomount ksdevice=<%= $ksdevice %> puppetenv=<%= $puppetenv %> puppetrole=<%= $puppetrole %> dc=<%= $datacenter %> <% if ! empty($orgid) { %>orgid=<%= $orgid %><% } %> <% if ! empty($actkey) { %>actkey=<%= $actkey %><% } %>
+  echo "Loading initrd ..."
+  initrd  <%= $prefix %>/initrd.img
+}

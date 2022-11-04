@@ -1,4 +1,4 @@
-set timeout=5
+set timeout=2
 
 menuentry "Debian kickstart for ${net_default_ip}" {
   set gfxpayload=keep

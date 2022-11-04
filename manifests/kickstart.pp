@@ -321,9 +321,10 @@ define pxe_install::kickstart (
         $installserverurl = "${mirror_host}${mirror_uri}"
 
         pxe_install::partitioning::redhat { $hostname:
-          hostname       => $hostname,
-          partitioning   => $partitioning,
-          kickstart_file => $kickstart_file,
+          hostname          => $hostname,
+          partitioning      => $partitioning,
+          kickstart_file    => $kickstart_file,
+          boot_architecture => $boot_architecture,
         }
       } else {
         fail("No mirror defined for ${hostname} for Alma Linux ${data['osversion']}")
@@ -340,9 +341,10 @@ define pxe_install::kickstart (
         $installserverurl = "${mirror_host}${mirror_uri}"
 
         pxe_install::partitioning::redhat { $hostname:
-          hostname       => $hostname,
-          partitioning   => $partitioning,
-          kickstart_file => $kickstart_file,
+          hostname          => $hostname,
+          partitioning      => $partitioning,
+          kickstart_file    => $kickstart_file,
+          boot_architecture => $boot_architecture,
         }
       } else {
         fail("No mirror defined for ${hostname} for CRocky LinuxentOS ${data['osversion']}")
@@ -359,9 +361,10 @@ define pxe_install::kickstart (
         $installserverurl = "${mirror_host}${mirror_uri}"
 
         pxe_install::partitioning::redhat { $hostname:
-          hostname       => $hostname,
-          partitioning   => $partitioning,
-          kickstart_file => $kickstart_file,
+          hostname          => $hostname,
+          partitioning      => $partitioning,
+          kickstart_file    => $kickstart_file,
+          boot_architecture => $boot_architecture,
         }
       } else {
         fail("No mirror defined for ${hostname} for ${$ostype} ${data['osversion']}")

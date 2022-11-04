@@ -1,4 +1,4 @@
-set timeout=0
+set timeout=2
 
 menuentry "Ubuntu kickstart for ${net_default_ip}" {
   set gfxpayload=keep

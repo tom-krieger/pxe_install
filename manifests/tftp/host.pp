@@ -1,4 +1,5 @@
-# @summary Create a tftp server entry for a host.
+# @summary
+#    Create a tftp server entry for a host.
 #
 # Create a tft server entry from template.
 #
@@ -224,8 +225,17 @@ define pxe_install::tftp::host (
     }
     default: {
       # RedHat/CentOS
-      file { $filename:
-        content => epp('pxe_install/redhat/tftp-entry.epp', {
+
+      if $scenario_data['boot_architecture'] == 'uefi' {
+        $template = 'pxe_install/redhat/tftp-uefi-entry.epp'
+        $_filename = $uefi_filename
+      } else {
+        $template = 'pxe_install/redhat/tftp-entry.epp'
+        $_filename = $filename
+      }
+
+      file { $_filename:
+        content => epp($template, {
             prefix      => $prefix,
             ksurl       => $ksurl,
             ksdevice    => $ksdevice,
