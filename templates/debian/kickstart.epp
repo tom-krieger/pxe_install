@@ -2,10 +2,10 @@
 ### Preinstall work
 ###############################################################################
 d-i preseed/early_command string \
-	echo "<%= $puppetenv %>" > /root/puppetenv ; \
-	echo "<%= $puppetrole %>" > /root/puppetrole ; \
-	echo "<%= $datacenter %>" > /root/datacenter ; \
-	echo "<%= $agent %>" > /root/install_agent
+	echo "<%= $puppetenv %>" > /target/root/puppetenv ; \
+	echo "<%= $puppetrole %>" > /target/root/puppetrole ; \
+	echo "<%= $datacenter %>" > /target/root/datacenter ; \
+	echo "<%= $agent %>" > /target/root/install_agent
 
 ###############################################################################
 ### Language selection
