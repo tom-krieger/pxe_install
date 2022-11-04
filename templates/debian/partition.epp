@@ -20,7 +20,6 @@ d-i partman-efi/non_efi_system boolean true
 ###############################################################################
 ### Partitioning
 ###############################################################################
-d-i preseed/early_command string umount /media || true
 <%- if ! empty($autopart) { -%>
 d-i partman-auto/disk string <%= $autopart %>
 <%- } -%>
