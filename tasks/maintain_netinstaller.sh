@@ -244,7 +244,7 @@ case $os in
         ;;
 
     'ubuntu')
-        if [ "${osvers}" != '18.04' -a "${osvers}" != '20.04' ] ; then
+        if [ "${osvers}" != '18.04' -a "${osvers}" != '20.04' -a "${osvers}" != '22.04' ] ; then
             echo "Only Ubuntu 18.04 and 20.04 are supported!"
             exit 2
         fi
@@ -254,7 +254,7 @@ case $os in
         ;;
 
     'debian')
-        if [ "${osvers}" != '9' -a "${osvers}" != '10' ] ; then
+        if [ "${osvers}" != '9' -a "${osvers}" != '10' -a "${osvers}" != '11' ] ; then
             echo "Only Debian 9 and 10 are supported!"
             exit 2
         fi
