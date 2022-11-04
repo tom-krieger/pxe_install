@@ -32,9 +32,9 @@ define pxe_install::partitioning::debian (
   Hash $partitioning,
   String $kickstart_file,
   String $boot_architecture,
-  Optional[String] $template_partitioning = 'pxe_install/debian/partition.epp',
-  Optional[String] $template_part_entry   = 'pxe_install/debian/partition_entry.epp',
-  Optional[String] $template_part_finish  = 'pxe_install/debian/partition_finish.epp',
+  String $template_partitioning = 'pxe_install/debian/partition.epp',
+  String $template_part_entry   = 'pxe_install/debian/partition_entry.epp',
+  String $template_part_finish  = 'pxe_install/debian/partition_finish.epp',
 ) {
   $nr = 400
   $devices = get_partition_devices($partitioning)

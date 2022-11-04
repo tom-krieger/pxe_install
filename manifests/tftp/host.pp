@@ -134,8 +134,17 @@ define pxe_install::tftp::host (
       if ($loghost == '' or $logport == 0) {
         fail('Debian and Ubuntu kickstart require a log host and a log port!')
       }
+
+      if $scenario_data['boot_architecture'] == 'uefi' {
+        $template = 'pxe_install/ubuntu/tftp-uefi-entry.epp'
+        $_filename = $uefi_filename
+      } else {
+        $template = 'pxe_install/ubuntu/tftp-entry.epp'
+        $_filename = $filename
+      }
+
       file { $filename:
-        content => epp('pxe_install/debian/tftp-entry.epp', {
+        content => epp($template, {
             path        => $_path,
             prefix      => $prefix,
             ksurl       => $ksurl,

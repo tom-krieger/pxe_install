@@ -616,7 +616,7 @@ describe 'pxe_install' do
             'group'  => 'root',
             'mode'   => '0644',
           )
-      
+
         is_expected.to contain_file('/var/lib/tftpboot/pxelinux.cfg')
           .with(
             'ensure'       => 'directory',

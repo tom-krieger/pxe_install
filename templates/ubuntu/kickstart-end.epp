@@ -21,7 +21,7 @@ d-i pkgsel/include string openssh-server gnupg2
 ###############################################################################
 d-i grub-installer/only_debian boolean true
 d-i grub-installer/with_other_os boolean true
-d-i grub-installer/bootdev  string <%= $bootdevice %>
+d-i grub-installer/bootdev string <%= $bootdevice %>
 
 ###############################################################################
 ### Finish
