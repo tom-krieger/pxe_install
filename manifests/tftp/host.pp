@@ -143,7 +143,7 @@ define pxe_install::tftp::host (
         $_filename = $filename
       }
 
-      file { $filename:
+      file { $_filename:
         content => epp($template, {
             path        => $_path,
             prefix      => $prefix,
