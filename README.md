@@ -266,7 +266,7 @@ The node configuration includes general settings for a node like the root passwo
 |                  | rootpw | The sha512 encrypted root password. You can create this password by using a Python one liner. See below the example | yes |
 | | timezone | Timezone setting, e. g. Europe/Berlin | yes |
 | | ostype | The OS type. Valid values are `debian`, `ubuntu`, `Alma`, `Rocky` and `CentOS` | - |
-| | osversion | The `osversion` is necessary for CentOS only and is the major number of the OS to install, e. g. 8.| - |
+| | osversion | The `osversion` is necessary for CentOS like only and is the major number of the OS to install, e. g. 8. For Debian OS the osversion is the suite to install like e. g. 'oldstable'or 'stable'.| - |
 | | keyboard | The keyboard layout to use, e. g. `de(Macintosh, no dead keys)`. Please make sure to use a keyboard layout supported by the OS you install. For Windows you need to set a value consisting of the input locale and the locate e. g. `0409:00000407` which is German keyboard layout and en-US locale. | yes |
 | | keymap | The keymap used for `debian` and `ubuntu` | yes |
 | | language | The language used for the installer. For CentOS it is set to the language and the flavour, e. g. en_US. For Debian and Ubuntu it is a two character language setting, e. g. en. | yes |
