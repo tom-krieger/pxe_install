@@ -6,7 +6,7 @@ d-i mirror/country string <%= $country %>
 d-i mirror/http/hostname string <%= $mirror %>
 d-i mirror/http/directory string <%= $mirror_dir %>
 d-i mirror/http/proxy string
-d-i mirror/suite string oldstable
+d-i mirror/suite string <%= $suite %>
 
 ###############################################################################
 ### Package selection

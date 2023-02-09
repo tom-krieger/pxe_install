@@ -118,9 +118,16 @@ define pxe_install::kickstart (
   }
 
   if  ! has_key($data, 'osversion') and $ensure == 'present' and
-  ($ostype.downcase() == 'alma' or$ostype.downcase() == 'rocky' or
+  ($ostype.downcase() == 'alma' or $ostype.downcase() == 'rocky' or
   $ostype.downcase() == 'centos' or $ostype.downcase() == 'windows') {
     fail("Host ${hostname} needs an osversion!")
+  }
+
+  if ($ostype.downcase() == 'debian') and ($ensure == 'present') {
+    $suite = has_key($data, 'osversion') ? {
+      true  => $data['osversion'],
+      false => 'stable',
+    }
   }
 
   if has_key($data, 'user') {
@@ -524,6 +531,7 @@ define pxe_install::kickstart (
             bootdevice        => $bootdevice,
             packages          => $packages,
             boot_architecture => $boot_architecture,
+            suite             => $suite,
         }),
         target  => $kickstart_file,
       }
