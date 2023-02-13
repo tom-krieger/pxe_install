@@ -59,6 +59,7 @@ class pxe_install::apache (
   String $servername,
   Array $status_allow_from,
   Boolean $create_aliases             = true,
+  Boolean $purge_configs              = false,
   Optional[String] $ssl_cert          = '',
   Optional[String] $ssl_key           = '',
   Optional[String] $ssl_chain         = '',
@@ -77,6 +78,7 @@ class pxe_install::apache (
     server_tokens    => 'Prod',
     server_signature => 'Off',
     trace_enable     => 'Off',
+    purge_configs    => $purge_configs,
   }
 
   class { 'apache::mod::ssl':
