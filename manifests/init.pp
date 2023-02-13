@@ -137,7 +137,7 @@ class pxe_install (
   Optional[Boolean] $install_unzip              = $pxe_install::params::install_unzip,
   Optional[Hash] $mirrors                       = $pxe_install::params::mirrors,
   Optional[Hash] $defaults                      = $pxe_install::params::defaults,
-  Optional[Boolen] $purge_apache_configs        = false,
+  Optional[Boolean] $purge_apache_configs       = false,
 ) inherits pxe_install::params {
   pxe_install::parent_dirs { 'create script dir':
     dir_path => $scriptdir,
