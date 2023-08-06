@@ -127,6 +127,7 @@ define pxe_install::tftp::host (
 
   $_path = $path ? {
     '' => "${prefix}/boot-screens",
+    'none'=> '',
     default => $path,
   }
 
