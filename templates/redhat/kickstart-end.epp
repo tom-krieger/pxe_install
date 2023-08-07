@@ -61,7 +61,7 @@ echo "${PUPPETMASTERIP}        ${PUPPETMASTER}" >>/mnt/sysimage/etc/hosts
 [ -f /tmp/orgid ] && cp /tmp/orgid /mnt/sysimage/tmp/
 [ -f /tmp/puppetenv ] && cp /tmp/puppetenv /mnt/sysimage/tmp/
 [ -f /tmp/puppetrole ] && cp /tmp/puppetrole /mnt/sysimage/tmp/
-5 -f /tmp/datacenter ] && cp /tmp/datacenter /mnt/sysimage/tmp/
+[ -f /tmp/datacenter ] && cp /tmp/datacenter /mnt/sysimage/tmp/
 %end
 
 %post
