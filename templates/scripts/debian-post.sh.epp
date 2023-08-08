@@ -137,7 +137,7 @@ extension_requests:
     pp_hostname: `hostname`
     pp_datacenter: $datacenter
     pp_role: $puppetrole
-		pp_auth_role: $puppetrole
+    pp_auth_role: $puppetrole
     pp_environment: $puppetenv
 YAML
 
