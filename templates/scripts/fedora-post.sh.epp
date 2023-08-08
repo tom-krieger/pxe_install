@@ -130,12 +130,12 @@ function installPuppet () {
 custom_attributes:
 		1.2.840.113549.1.9.7: <%= unwrap($challenge_password) %>
 extension_requests:
-		pp_image_name: CentOS-${release}
-		pp_hostname: `hostname`
-		pp_datacenter: $datacenter
-		pp_role: $puppetrole
+    pp_image_name: CentOS-${release}
+    pp_hostname: `hostname`
+    pp_datacenter: $datacenter
+    pp_role: $puppetrole
     pp_auth_role: $puppetrole
-		pp_environment: $puppetenv
+    pp_environment: $puppetenv
 YAML
 			curl -k https://${PEMASTER}:8140/packages/current/install.bash | sudo bash
 
