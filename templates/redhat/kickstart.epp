@@ -7,7 +7,7 @@ firewall --disabled
 firstboot --disable
 keyboard <%= $keyboard %>
 lang <%= $lang %>
-<%- if $ostype == 'alma' and $usversion >= '9' { -%>
+<%- if $ostype == 'alma' and $osversion >= '9' { -%>
 logging --host=<%= $loghost %>
 <%- } else  { -%>
 logging --level=debug --host=<%= $loghost %>
