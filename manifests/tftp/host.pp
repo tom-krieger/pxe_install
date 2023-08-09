@@ -254,6 +254,7 @@ define pxe_install::tftp::host (
             actkey      => $actkey,
             osversion   => $osversion,
             ostype      => $ostype,
+            stage2      => $stage2,
         }),
         *       => $file_data,
       }
