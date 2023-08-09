@@ -67,6 +67,9 @@
 # @param actkey
 #    Redhat activationkey.
 #
+# @param osversion
+#    Version of the operatimg system
+#
 # @example
 #   pxe_install::tftp::host { 'namevar': }
 #
@@ -92,6 +95,7 @@ define pxe_install::tftp::host (
   Optional[String] $stage2      = '',
   Optional[String] $orgid       = '',
   Optional[String] $actkey      = '',
+  Optional[String] $osversion   = '',
 ) {
   if  $ostype.downcase() == 'windows' and
   ($mirror_host == '' or $mirror_uri == '') {
@@ -248,6 +252,8 @@ define pxe_install::tftp::host (
             mirror_uri  => $mirror_uri,
             orgid       => $orgid,
             actkey      => $actkey,
+            osversion   => $osversion,
+            ostype      => $ostype,
         }),
         *       => $file_data,
       }

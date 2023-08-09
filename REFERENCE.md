@@ -95,6 +95,7 @@ The following parameters are available in the `pxe_install` class:
 * [`ipxefile`](#ipxefile)
 * [`mirrors`](#mirrors)
 * [`defaults`](#defaults)
+* [`purge_apache_configs`](#purge_apache_configs)
 
 ##### <a name="installserverip"></a>`installserverip`
 
@@ -331,6 +332,14 @@ Data type: `Optional[Hash]`
 Default values.
 
 Default value: `$pxe_install::params::defaults`
+
+##### <a name="purge_apache_configs"></a>`purge_apache_configs`
+
+Data type: `Optional[Boolean]`
+
+
+
+Default value: ``false``
 
 ## Defined types
 

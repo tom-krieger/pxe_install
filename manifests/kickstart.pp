@@ -507,6 +507,7 @@ define pxe_install::kickstart (
           orgid             => $orgid,
           actkey            => $actkey,
           boot_architecture => $boot_architecture,
+          ostype            => $ostype,
       }),
       target  => $kickstart_file,
     }
@@ -657,6 +658,7 @@ define pxe_install::kickstart (
       stage2        => $stage2,
       orgid         => $orgid,
       actkey        => $actkey,
+      osversion     => $data['osversion'],
     }
   }
 }
