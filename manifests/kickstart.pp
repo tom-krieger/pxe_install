@@ -467,6 +467,11 @@ define pxe_install::kickstart (
   }
 
   if $ostype.downcase != 'windows' {
+    $_osversion = has_key($data, 'osversion') ? {
+      true   => $data['osversion'],
+      false  => '',
+    }
+
     concat::fragment { "${hostname}-start":
       order   => '01',
       content => epp($template_start, {
@@ -498,7 +503,7 @@ define pxe_install::kickstart (
           repos_url         => $repos_url,
           scripturl         => $scripturl,
           user              => $user,
-          osversion         => $data['osversion'],
+          osversion         => $_osversion,
           xconfig           => $xconfig,
           defaultdesktop    => $defaultdesktop,
           startxonboot      => $startxonboot,
@@ -507,7 +512,7 @@ define pxe_install::kickstart (
           orgid             => $orgid,
           actkey            => $actkey,
           boot_architecture => $boot_architecture,
-          ostype            => $ostype,
+          ostype            => $ostype.downcase(),
       }),
       target  => $kickstart_file,
     }
