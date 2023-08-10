@@ -6,7 +6,7 @@ default ks
 label ks
         kernel <%= $prefix %>/vmlinuz
 <%- if $ostype == 'rocky' and $osversion >= '9' { -%>
-        append <%= $ks %>=<%= $ksurl %> initrd=<%= $prefix %>/initrd.img inst.stage2=<%= $stage2 %> ip=dhcp devfs=nomount ksdevice=<%= $ksdevice %> puppetenv=<%= $puppetenv %> puppetrole=<%= $puppetrole %> dc=<%= $datacenter %> <% if ! empty($orgid) { %>orgid=<%= $orgid %><% } %> <% if ! empty($actkey) { %>actkey=<%= $actkey %><% } %>
+        append <%= $ks %>=<%= $ksurl %> initrd=<%= $prefix %>/initrd.img inst.stage2=<%= $stage2 %> ip=dhcp puppetenv=<%= $puppetenv %> puppetrole=<%= $puppetrole %> dc=<%= $datacenter %> <% if ! empty($orgid) { %>orgid=<%= $orgid %><% } %> <% if ! empty($actkey) { %>actkey=<%= $actkey %><% } %>
 <%- } else { -%>
         append <%= $ks %>=<%= $ksurl %> initrd=<%= $prefix %>/initrd.img devfs=nomount ksdevice=<%= $ksdevice %> puppetenv=<%= $puppetenv %> puppetrole=<%= $puppetrole %> dc=<%= $datacenter %> <% if ! empty($orgid) { %>orgid=<%= $orgid %><% } %> <% if ! empty($actkey) { %>actkey=<%= $actkey %><% } %>
 <%- } -%>
