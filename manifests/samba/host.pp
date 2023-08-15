@@ -76,7 +76,7 @@ define pxe_install::samba::host (
   String $datacenter,
   String $agent,
   Optional[Sensitive[String]] $challenge_password = undef,
-  Optional[String] $iso                           = '',
+  Optional[String] $iso                           = undef,
   String $owner                                   = 'root',
   String $group                                   = 'root',
   String $mode                                    = '0644',
@@ -84,12 +84,17 @@ define pxe_install::samba::host (
   $mac_string = join(split($macaddress, '[:]'), '').upcase
   $dns_servers = "\"${join($dns, '","')}\""
 
+  $_iso = $iso ? {
+    undef   => '',
+    default => $iso,
+  }
+
   file { "${tftpboot_dir}/${mac_string}.cfg":
     ensure  => file,
     content => epp('pxe_install/windows/bootconfig.epp', {
         osversion          => $osversion,
         hostname           => $title,
-        iso                => $iso,
+        iso                => $_iso,
         boot_architecture  => $boot_architecture,
         fixedaddress       => $fixedaddress,
         subnet             => $subnet,

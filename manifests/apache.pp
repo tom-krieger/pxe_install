@@ -60,12 +60,37 @@ class pxe_install::apache (
   Array $status_allow_from,
   Boolean $create_aliases             = true,
   Boolean $purge_configs              = false,
-  Optional[String] $ssl_cert          = '',
-  Optional[String] $ssl_key           = '',
-  Optional[String] $ssl_chain         = '',
-  Optional[String] $ssl_certs_dir     = '',
-  Optional[String] $documentroot      = '',
+  Optional[String] $ssl_cert          = undef,
+  Optional[String] $ssl_key           = undef,
+  Optional[String] $ssl_chain         = undef,
+  Optional[String] $ssl_certs_dir     = undef,
+  Optional[String] $documentroot      = undef,
 ) {
+  $_ssl_cert = $ssl_cert ? {
+    undef   => '',
+    default => $ssl_cert,
+  }
+
+  $_ssl_key = $ssl_key ? {
+    undef   => '',
+    default => $ssl_key,
+  }
+
+  $_ssl_chain = $ssl_chain ? {
+    undef   => '',
+    default => $ssl_chain,
+  }
+
+  $_ssl_certs_dir = $ssl_certs_dir ? {
+    undef   => '',
+    default => $ssl_certs_dir,
+  }
+
+  $_documentroot = $documentroot ? {
+    undef   => '',
+    default => $documentroot,
+  }
+
   ensure_resource('file', ['/etc/pki/httpd', "/etc/pki/httpd/${servername}"], {
       ensure => directory,
       owner  => 'root',
@@ -126,10 +151,10 @@ class pxe_install::apache (
     ssl_protocol         => 'TLSv1.2',
     ssl_honorcipherorder => 'on',
     ssl_options          => ['+StdEnvVars'],
-    ssl_cert             => $ssl_cert,
-    ssl_key              => $ssl_key,
-    ssl_chain            => $ssl_chain,
-    ssl_certs_dir        => $ssl_certs_dir,
+    ssl_cert             => $_ssl_cert,
+    ssl_key              => $_ssl_key,
+    ssl_chain            => $_ssl_chain,
+    ssl_certs_dir        => $_ssl_certs_dir,
     docroot              => $documentroot,
     servername           => $servername,
     access_log_format    => 'combined',

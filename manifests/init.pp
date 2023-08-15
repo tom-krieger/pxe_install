@@ -100,6 +100,9 @@
 # @param defaults
 #    Default values.
 #
+# @param purge_apache_configs 
+#    Boolean to indicate that all Apache configurations not maintained by the Apache Puppet module should be deleted.
+#
 # @author Thomas Krieger
 #
 # @example
@@ -116,29 +119,49 @@ class pxe_install (
   Stdlib::Unixpath $kickstart_dir,
   String $kickstart_url,
   Sensitive[String] $challenge_password,
-  Optional[String] $puppetmaster                = '',
-  Optional[String] $puppetmasterip              = '',
-  Optional[Hash] $services                      = {},
-  Optional[Hash] $machines                      = {},
-  Optional[Array] $status_allow_from            = ['127.0.0.1'],
-  Optional[Boolean] $enabled                    = true,
-  Optional[String] $ssl_cert                    = '/etc/pki/httpd/repos.example.com/repos.example.com.cer',
-  Optional[String] $ssl_key                     = '/etc/pki/httpd/repos.example.com/repos.example.com.key',
-  Optional[String] $ssl_chain                   = '/etc/pki/httpd/repos.example.com/fullchain.cer',
-  Optional[String] $ssl_certs_dir               = '/etc/pki/httpd/repos.example.com/',
-  Optional[String] $documentroot                = '/var/www/html',
-  Optional[Boolean] $create_aliases             = true,
-  Optional[Boolean] $add_hosts_entries          = false,
-  Optional[Stdlib::HTTPSUrl] $syslinux_url      = $pxe_install::params::syslinux_url,
-  Optional[String] $syslinux_name               = $pxe_install::params::syslinux_name,
-  Optional[String] $syslinux_version            = $pxe_install::params::syslinux_version,
-  Optional[Stdlib::HTTPUrl] $ipxefile           = $pxe_install::params::ipxefile,
-  Optional[Boolean] $install_curl               = $pxe_install::params::install_curl,
-  Optional[Boolean] $install_unzip              = $pxe_install::params::install_unzip,
-  Optional[Hash] $mirrors                       = $pxe_install::params::mirrors,
-  Optional[Hash] $defaults                      = $pxe_install::params::defaults,
-  Optional[Boolean] $purge_apache_configs       = false,
+  Optional[String] $puppetmaster          = undef,
+  Optional[String] $puppetmasterip        = undef,
+  Optional[Hash] $services                = undef,
+  Optional[Hash] $machines                = undef,
+  Array $status_allow_from                = ['127.0.0.1'],
+  Boolean $enabled                        = true,
+  String $ssl_cert                        = '/etc/pki/httpd/repos.example.com/repos.example.com.cer',
+  String $ssl_key                         = '/etc/pki/httpd/repos.example.com/repos.example.com.key',
+  String $ssl_chain                       = '/etc/pki/httpd/repos.example.com/fullchain.cer',
+  String $ssl_certs_dir                   = '/etc/pki/httpd/repos.example.com/',
+  String $documentroot                    = '/var/www/html',
+  Boolean $create_aliases                 = true,
+  Boolean $add_hosts_entries              = false,
+  Stdlib::HTTPSUrl $syslinux_url          = $pxe_install::params::syslinux_url,
+  String $syslinux_name                   = $pxe_install::params::syslinux_name,
+  String $syslinux_version                = $pxe_install::params::syslinux_version,
+  Stdlib::HTTPUrl $ipxefile               = $pxe_install::params::ipxefile,
+  Boolean $install_curl                   = $pxe_install::params::install_curl,
+  Boolean $install_unzip                  = $pxe_install::params::install_unzip,
+  Hash $mirrors                           = $pxe_install::params::mirrors,
+  Hash $defaults                          = $pxe_install::params::defaults,
+  Boolean $purge_apache_configs           = false,
 ) inherits pxe_install::params {
+  $_puppetmaster = $puppetmaster ? {
+    undef   => '',
+    default => $puppetmaster,
+  }
+
+  $_puppetmasterip = $puppetmasterip ? {
+    undef   => '',
+    default => $puppetmasterip
+  }
+
+  $_services = $services ? {
+    undef   => {},
+    default => $services,
+  }
+
+  $_machines = $machines ? {
+    undef   => '',
+    default => $machines,
+  }
+
   pxe_install::parent_dirs { 'create script dir':
     dir_path => $scriptdir,
   }
@@ -156,8 +179,8 @@ class pxe_install (
     content => epp('pxe_install/scripts/debian-post.sh.epp', {
         installserver      => $installserver,
         installserverip    => $installserverip,
-        puppetmaster       => $puppetmaster,
-        puppetmasterip     => $puppetmasterip,
+        puppetmaster       => $_puppetmaster,
+        puppetmasterip     => $_puppetmasterip,
         kickstart_url      => $kickstart_url,
         repos_url          => $repos_url,
         scripturl          => $scripturl,
@@ -182,8 +205,8 @@ class pxe_install (
     content => epp('pxe_install/scripts/ubuntu-post.sh.epp', {
         installserver      => $installserver,
         installserverip    => $installserverip,
-        puppetmaster       => $puppetmaster,
-        puppetmasterip     => $puppetmasterip,
+        puppetmaster       => $_puppetmaster,
+        puppetmasterip     => $_puppetmasterip,
         kickstart_url      => $kickstart_url,
         repos_url          => $repos_url,
         scripturl          => $scripturl,
@@ -200,8 +223,8 @@ class pxe_install (
     content => epp('pxe_install/scripts/redhat-post.sh.epp', {
         installserver      => $installserver,
         installserverip    => $installserverip,
-        puppetmaster       => $puppetmaster,
-        puppetmasterip     => $puppetmasterip,
+        puppetmaster       => $_puppetmaster,
+        puppetmasterip     => $_puppetmasterip,
         kickstart_url      => $kickstart_url,
         repos_url          => $repos_url,
         scripturl          => $scripturl,
@@ -220,8 +243,8 @@ class pxe_install (
     content => epp('pxe_install/scripts/fedora-post.sh.epp', {
         installserver      => $installserver,
         installserverip    => $installserverip,
-        puppetmaster       => $puppetmaster,
-        puppetmasterip     => $puppetmasterip,
+        puppetmaster       => $_puppetmaster,
+        puppetmasterip     => $_puppetmasterip,
         kickstart_url      => $kickstart_url,
         repos_url          => $repos_url,
         scripturl          => $scripturl,
@@ -235,22 +258,22 @@ class pxe_install (
     mode    => '0644',
   }
 
-  if has_key($services, 'dhcpd') {
-    $dhcpd = $services['dhcpd']
+  if has_key($_services, 'dhcpd') {
+    $dhcpd = $_services['dhcpd']
     class { 'pxe_install::dhcp':
       dhcp => $dhcpd,
     }
   }
 
-  if has_key($services, 'tftpd') {
-    $tftpd = $services['tftpd']
+  if has_key($_services, 'tftpd') {
+    $tftpd = $_services['tftpd']
     class { 'pxe_install::tftp':
       tftp => $tftpd,
     }
   }
 
-  if has_key($services, 'samba') {
-    $samba = $services['samba']
+  if has_key($_services, 'samba') {
+    $samba = $_services['samba']
     class { 'samba':
       * => $samba,
     }
@@ -368,16 +391,16 @@ class pxe_install (
     mode   => '0644',
   }
 
-  $machines.each |$hostname, $data| {
+  $_machines.each |$hostname, $data| {
     pxe_install::kickstart { $hostname:
       data               => $data,
       kickstart_dir      => $kickstart_dir,
       kickstart_url      => $kickstart_url,
       repos_url          => $repos_url,
       scripturl          => $scripturl,
-      dhcp_entry         => has_key($services, 'dhcpd'),
-      tftp_entry         => has_key($services, 'tftpd'),
-      puppetmaster       => $puppetmaster,
+      dhcp_entry         => has_key($_services, 'dhcpd'),
+      tftp_entry         => has_key($_services, 'tftpd'),
+      puppetmaster       => $_puppetmaster,
       challenge_password => $challenge_password,
       tftpboot_dir       => $tftpboot_dir,
       windows_dir        => $windows_dir,
