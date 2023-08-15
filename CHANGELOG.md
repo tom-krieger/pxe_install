@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 ## 0.3.9
 
 * Added UEFI boot
-* Added support for Rocky Linux 9 and Almal Linux 9
+* Added support for Rocky Linux 9 and Alma Linux 9
 * Minor bug fixes
 
 ## 0.3.8
