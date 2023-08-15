@@ -35,7 +35,7 @@ group :development do
   gem "rubocop-rspec",                             require: false
   gem "rb-readline", '= 0.5.5',                    require: false, platforms: [:mswin, :mingw, :x64_mingw]
   gem "puppet-strings",                            require: false
-  #gem "puppet-lint-security-plugins",              require: false
+  gem "puppet-lint-security-plugins",              require: false
   gem "puppet-lint-legacy_facts-check",            require: false
   gem "github_changelog_generator",                require: false
 end
