@@ -20,6 +20,9 @@
 # @param template_part_finish
 #    The template to finish the partion information
 #
+# @param boot_architecture
+#    Information about the boot scenario
+#
 # @example
 #   include pxe_install::partitioning::debian
 #
@@ -28,16 +31,18 @@ define pxe_install::partitioning::debian (
   String $hostname,
   Hash $partitioning,
   String $kickstart_file,
-  Optional[String] $template_partitioning = 'pxe_install/debian/partition.epp',
-  Optional[String] $template_part_entry   = 'pxe_install/debian/partition_entry.epp',
-  Optional[String] $template_part_finish  = 'pxe_install/debian/partition_finish.epp',
+  String $boot_architecture,
+  String $template_partitioning = 'pxe_install/debian/partition.epp',
+  String $template_part_entry   = 'pxe_install/debian/partition_entry.epp',
+  String $template_part_finish  = 'pxe_install/debian/partition_finish.epp',
 ) {
   $nr = 400
   $devices = get_partition_devices($partitioning)
 
   concat::fragment { "${hostname}-partition-start":
     content => epp($template_partitioning, {
-        autopart     => $devices,
+        autopart          => $devices,
+        boot_architecture => $boot_architecture,
     }),
     target  => $kickstart_file,
     order   => $nr,
@@ -79,14 +84,21 @@ define pxe_install::partitioning::debian (
       default => $pxe_install::defaults['bootable'],
     }
 
+    $bios_boot = has_key($partition_data, 'bios_boot') ? {
+      true    => $partition_data['bios_boot'],
+      default => false,
+    }
+
     $method = has_key($partition_data, 'method') ? {
       true    => $partition_data['method'],
       default => '',
     }
 
     $filesystem =  $method ? {
-      'swap'  => '',
-      'lvm'   => '',
+      'swap'      => '',
+      'lvm'       => '',
+      'efi'       => '',
+      'biosgrub'  => '',
       default => $fstype,
     }
 
@@ -95,9 +107,23 @@ define pxe_install::partitioning::debian (
       default => '',
     }
 
-    $mountpoint = has_key($partition_data, 'mountpoint') ? {
-      true    => $partition_data['mountpoint'],
-      default => $partition,
+    if $method == 'biosgrub' {
+      $mountpoint = ''
+    } else {
+      $mountpoint = has_key($partition_data, 'mountpoint') ? {
+        true    => $partition_data['mountpoint'],
+        default => $partition,
+      }
+    }
+
+    $iflabel = has_key($partition_data, 'iflabel') ? {
+      true    => $partition_data['iflabel'],
+      default => '',
+    }
+
+    $reusemethod = has_key($partition_data, 'reusemethod') ? {
+      true    => $partition_data['reusemethod'],
+      default => false,
     }
 
     $defaultignore = has_key($partition_data, 'defaultignore') ? {
@@ -150,6 +176,9 @@ define pxe_install::partitioning::debian (
           lvname        => $lvname,
           invg          => $invg,
           defaultignore => $defaultignore,
+          bios_boot     => $bios_boot,
+          iflabel       => $iflabel,
+          reusemethod   => $reusemethod,
       }),
       target  => $kickstart_file,
       order   => $order,

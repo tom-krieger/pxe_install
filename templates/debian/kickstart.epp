@@ -5,7 +5,8 @@ d-i preseed/early_command string \
 	echo "<%= $puppetenv %>" > /tmp/puppetenv ; \
 	echo "<%= $puppetrole %>" > /tmp/puppetrole ; \
 	echo "<%= $datacenter %>" > /tmp/datacenter ; \
-	echo "<%= $agent %>" > /tmp/install_agent
+	echo "<%= $agent %>" > /tmp/install_agent ; \
+	umount /media || true
 
 ###############################################################################
 ### Language selection

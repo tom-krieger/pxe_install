@@ -1,4 +1,5 @@
-# @summary Create a tftp server entry for a host.
+# @summary
+#    Create a tftp server entry for a host.
 #
 # Create a tft server entry from template.
 #
@@ -66,6 +67,9 @@
 # @param actkey
 #    Redhat activationkey.
 #
+# @param osversion
+#    Version of the operatimg system
+#
 # @example
 #   pxe_install::tftp::host { 'namevar': }
 #
@@ -73,27 +77,43 @@
 define pxe_install::tftp::host (
   String $ostype,
   Enum['absent', 'present'] $ensure,
-  Optional[String] $prefix      = '',
-  Optional[String] $path        = '',
-  Optional[String] $ksurl       = '',
-  Optional[String] $ksdevice    = '',
-  Optional[String] $puppetenv   = 'none',
-  Optional[String] $puppetrole  = 'none',
-  Optional[String] $datacenter  = 'none',
-  Optional[String] $locale      = 'en_US',
-  Optional[String] $keymap      = '',
-  Optional[String] $loghost     = '',
-  Optional[Integer] $logport    = 0,
-  Optional[String] $ks          = '',
-  Optional[String] $mirror_host = '',
-  Optional[String] $mirror_uri  = '',
-  Optional[Hash] $scenario_data = {},
-  Optional[String] $stage2      = '',
-  Optional[String] $orgid       = '',
-  Optional[String] $actkey      = '',
+  Optional[String] $prefix      = undef,
+  Optional[String] $path        = undef,
+  Optional[String] $ksurl       = undef,
+  Optional[String] $ksdevice    = undef,
+  String $puppetenv             = 'none',
+  String $puppetrole            = 'none',
+  String $datacenter            = 'none',
+  String $locale                = 'en_US',
+  Optional[String] $keymap      = undef,
+  Optional[String] $loghost     = undef,
+  Integer $logport              = 0,
+  Optional[String] $ks          = undef,
+  Optional[String] $mirror_host = undef,
+  Optional[String] $mirror_uri  = undef,
+  Optional[Hash] $scenario_data = undef,
+  Optional[String] $stage2      = undef,
+  Optional[String] $orgid       = undef,
+  Optional[String] $actkey      = undef,
+  Optional[String] $osversion   = undef,
 ) {
+  $_mirror_host = $mirror_host ? {
+    undef   => '',
+    default => $mirror_host,
+  }
+
+  $_mirror_uri = $mirror_uri ? {
+    undef   => '',
+    default => $mirror_uri,
+  }
+
+  $_scenario_data = $scenario_data ? {
+    undef   => {},
+    default => $scenario_data,
+  }
+
   if  $ostype.downcase() == 'windows' and
-  ($mirror_host == '' or $mirror_uri == '') {
+  ($_mirror_host == '' or $_mirror_uri == '') {
     fail('A Windows node needs a mirror_host and a mirror_uri to create a TFTP entry!')
   }
 
@@ -116,6 +136,7 @@ define pxe_install::tftp::host (
   }
 
   $filename = "${basedir}/${pxedir}/${hex}"
+  $uefi_filename = "${basedir}/grub/${title}"
   $file_data = {
     'ensure' => $ensure,
     'owner'  => 'root',
@@ -123,54 +144,123 @@ define pxe_install::tftp::host (
     'mode'   => '0644',
   }
 
+  $_prefix = $prefix ? {
+    undef   => '',
+    default => $prefix,
+  }
+
   $_path = $path ? {
-    '' => "${prefix}/boot-screens",
+    '' => "${_prefix}/boot-screens",
+    'none'=> '',
     default => $path,
+  }
+
+  $_ksurl = $ksurl ? {
+    undef   => '',
+    default => $ksurl,
+  }
+
+  $_ksdevice = $ksdevice ? {
+    undef   => '',
+    default => $ksdevice,
+  }
+
+  $_keymap = $keymap ? {
+    undef   => '',
+    default => $keymap,
+  }
+
+  $_loghost = $loghost ? {
+    undef   => '',
+    default => $loghost,
+  }
+
+  $_ks = $ks ? {
+    undef   => '',
+    default => $ks,
+  }
+
+  $_stage2 = $stage2 ? {
+    undef   => '',
+    default => $stage2,
+  }
+
+  $_orgid = $orgid ? {
+    undef   => '',
+    default => $orgid,
+  }
+
+  $_actkey = $actkey ? {
+    undef   => '',
+    default => $actkey,
+  }
+
+  $_osversion = $osversion ? {
+    undef   => '',
+    default => $osversion,
   }
 
   case $ostype.downcase() {
     'debian': {
-      if ($loghost == '' or $logport == 0) {
+      if ($_loghost == '' or $logport == 0) {
         fail('Debian and Ubuntu kickstart require a log host and a log port!')
       }
-      file { $filename:
-        content => epp('pxe_install/debian/tftp-entry.epp', {
+
+      if $_scenario_data['boot_architecture'] == 'uefi' {
+        $template = 'pxe_install/debian/tftp-uefi-entry.epp'
+        $_filename = $uefi_filename
+      } else {
+        $template = 'pxe_install/debian/tftp-entry.epp'
+        $_filename = $filename
+      }
+
+      file { $_filename:
+        content => epp($template, {
             path        => $_path,
-            prefix      => $prefix,
-            ksurl       => $ksurl,
+            prefix      => $_prefix,
+            ksurl       => $_ksurl,
             locale      => $locale,
-            keymap      => $keymap,
-            loghost     => $loghost,
+            keymap      => $_keymap,
+            loghost     => $_loghost,
             logport     => $logport,
-            ksdevice    => $ksdevice,
+            ksdevice    => $_ksdevice,
             puppetenv   => $puppetenv,
             puppetrole  => $puppetrole,
             datacenter  => $datacenter,
-            mirror_host => $mirror_host,
-            mirror_uri  => $mirror_uri,
+            mirror_host => $_mirror_host,
+            mirror_uri  => $_mirror_uri,
         }),
         *       => $file_data,
       }
     }
     'ubuntu': {
-      if ($loghost == '' or $logport == 0) {
+      if ($_loghost == '' or $logport == 0) {
         fail('Debian and Ubuntu kickstart require a log host and a log port!')
       }
-      file { $filename:
-        content => epp('pxe_install/ubuntu/tftp-entry.epp', {
+
+      if $_scenario_data['boot_architecture'] == 'uefi' {
+        $template = 'pxe_install/ubuntu/tftp-uefi-entry.epp'
+        $_filename = $uefi_filename
+      } else {
+        $template = 'pxe_install/ubuntu/tftp-entry.epp'
+        $_filename = $filename
+      }
+
+      file { $_filename:
+        content => epp($template, {
             path        => $_path,
-            prefix      => $prefix,
-            ksurl       => $ksurl,
+            prefix      => $_prefix,
+            ksurl       => $_ksurl,
             locale      => $locale,
-            keymap      => $keymap,
-            loghost     => $loghost,
+            keymap      => $_keymap,
+            loghost     => $_loghost,
             logport     => $logport,
-            ksdevice    => $ksdevice,
+            ksdevice    => $_ksdevice,
             puppetenv   => $puppetenv,
             puppetrole  => $puppetrole,
             datacenter  => $datacenter,
-            mirror_host => $mirror_host,
-            mirror_uri  => $mirror_uri,
+            mirror_host => $_mirror_host,
+            mirror_uri  => $_mirror_uri,
         }),
         *       => $file_data,
       }
@@ -179,8 +269,8 @@ define pxe_install::tftp::host (
       file { $filename:
         content => epp('pxe_install/windows/tftp-entry.epp', {
             path        => $_path,
-            mirror_host => $mirror_host,
-            mirror_uri  => $mirror_uri,
+            mirror_host => $_mirror_host,
+            mirror_uri  => $_mirror_uri,
         }),
         *       => $file_data,
       }
@@ -189,35 +279,47 @@ define pxe_install::tftp::host (
       #Fedora
       file { $filename:
         content => epp('pxe_install/fedora/tftp-entry.epp', {
-            prefix      => $prefix,
-            ksurl       => $ksurl,
-            ksdevice    => $ksdevice,
+            prefix      => $_prefix,
+            ksurl       => $_ksurl,
+            ksdevice    => $_ksdevice,
             puppetenv   => $puppetenv,
             puppetrole  => $puppetrole,
             datacenter  => $datacenter,
-            ks          => $ks,
-            mirror_host => $mirror_host,
-            mirror_uri  => $mirror_uri,
-            stage2      => $stage2,
+            ks          => $_ks,
+            mirror_host => $_mirror_host,
+            mirror_uri  => $_mirror_uri,
+            stage2      => $_stage2,
         }),
         *       => $file_data,
       }
     }
     default: {
       # RedHat/CentOS
-      file { $filename:
-        content => epp('pxe_install/redhat/tftp-entry.epp', {
-            prefix      => $prefix,
-            ksurl       => $ksurl,
-            ksdevice    => $ksdevice,
+
+      if $_scenario_data['boot_architecture'] == 'uefi' {
+        $template = 'pxe_install/redhat/tftp-uefi-entry.epp'
+        $_filename = $uefi_filename
+      } else {
+        $template = 'pxe_install/redhat/tftp-entry.epp'
+        $_filename = $filename
+      }
+
+      file { $_filename:
+        content => epp($template, {
+            prefix      => $_prefix,
+            ksurl       => $_ksurl,
+            ksdevice    => $_ksdevice,
             puppetenv   => $puppetenv,
             puppetrole  => $puppetrole,
             datacenter  => $datacenter,
-            ks          => $ks,
-            mirror_host => $mirror_host,
-            mirror_uri  => $mirror_uri,
-            orgid       => $orgid,
-            actkey      => $actkey,
+            ks          => $_ks,
+            mirror_host => $_mirror_host,
+            mirror_uri  => $_mirror_uri,
+            orgid       => $_orgid,
+            actkey      => $_actkey,
+            osversion   => $_osversion,
+            ostype      => $ostype,
+            stage2      => $_stage2,
         }),
         *       => $file_data,
       }

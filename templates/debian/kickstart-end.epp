@@ -6,22 +6,22 @@ d-i mirror/country string <%= $country %>
 d-i mirror/http/hostname string <%= $mirror %>
 d-i mirror/http/directory string <%= $mirror_dir %>
 d-i mirror/http/proxy string
-d-i mirror/suite string oldstable
+d-i mirror/suite string <%= $suite %>
 
 ###############################################################################
 ### Package selection
 ###############################################################################
-tasksel tasksel/first multiselect standard, ssh-server
-<%- if ! empty($packages) { -%>
-d-i pkgsel/include string <%= $packages %>
-<% } -%>
-d-i pkgsel/upgrade select full-upgrade
+<%- if $boot_architecture == 'uefi' { -%>
+d-i pkgsel/include string openssh-server gnupg2 efibootmgr grub-efi-amd64 grub-efi-amd64-signed shim-signed
+<%- } else { -%>
+d-i pkgsel/include string openssh-server gnupg2
+<%- } -%>
 
 ###############################################################################
 ### Bootloader
 ###############################################################################
 d-i grub-installer/only_debian boolean true
-d-i grub-installer/with_other_os boolean false
+d-i grub-installer/with_other_os boolean true
 d-i grub-installer/bootdev string <%= $bootdevice %>
 
 ###############################################################################
@@ -30,10 +30,10 @@ d-i grub-installer/bootdev string <%= $bootdevice %>
 
 d-i preseed/late_command string \
 	mkdir -p /target/etc/puppetlabs/puppet/ ; \
-	if [ -f /tmp/puppetenv ] ; then cp /tmp/puppetenv /target/etc/puppetlabs/puppet/ ; fi ; \
-	if [ -f /tmp/puppetrole ] ; then cp /tmp/puppetrole /target/etc/puppetlabs/puppet/ ; fi ; \
-	if [ -f /tmp/datacenter ] ; then cp /tmp/datacenter /target/etc/puppetlabs/puppet/ ; fi ; \
-	if [ -f /tmp/install_agent ] ; then cp /tmp/install_agent /target/etc/puppetlabs/puppet/ ; fi ; \
+	if [ -f /tmp/puppetenv ] ; then cp /tmp/puppetenv /target/etc/puppetlabs/puppet/ ; else echo "No puppetenv found!" ; fi ; \
+	if [ -f /tmp/puppetrole ] ; then cp /tmp/puppetrole /target/etc/puppetlabs/puppet/ ; else echo "No puppetrole found!" ; fi ; \
+	if [ -f /tmp/datacenter ] ; then cp /tmp/datacenter /target/etc/puppetlabs/puppet/ ; else echo "No datacenter found!" ; fi ; \
+	if [ -f /tmp/install_agent ] ; then cp /tmp/install_agent /target/etc/puppetlabs/puppet/ ; else echo "No install_agent found!" ; fi ; \
 	in-target apt-get -y install curl bash init-system-helpers ; \
 	in-target rm -f /etc/init.d/debian-post ; \
 	in-target curl -o /root/debian-post http://<%= $reposerver %><%= $scripturl %>/debian-post.sh ; \

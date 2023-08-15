@@ -11,6 +11,9 @@
 # @param kickstart_file
 #    Concat file to add partition information
 #
+# @param boot_architecture
+#    Information about the boot scenario
+#
 # @example
 #   include pxe_install::partitioning::redhat
 #
@@ -19,6 +22,7 @@ define pxe_install::partitioning::redhat (
   String $hostname,
   Hash $partitioning,
   String $kickstart_file,
+  String $boot_architecture,
 ) {
   $template_partitioning = 'pxe_install/redhat/partition_entry.epp'
 

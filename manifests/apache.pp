@@ -40,10 +40,13 @@
 #    SSL chain file.
 #
 # @param ssl_certs_dir
-# Directory where the SSL certs are located.
+#     Directory where the SSL certs are located.
 #
 # @param documentroot
 #    The document root directory for the Apache vhost.
+#
+# @param purge_configs
+#    Boolean to indicate that all Apache configurations not maintained by the Apache Puppet module should be deleted.
 #
 # @example
 #   include pxe_install::apache
@@ -59,12 +62,38 @@ class pxe_install::apache (
   String $servername,
   Array $status_allow_from,
   Boolean $create_aliases             = true,
-  Optional[String] $ssl_cert          = '',
-  Optional[String] $ssl_key           = '',
-  Optional[String] $ssl_chain         = '',
-  Optional[String] $ssl_certs_dir     = '',
-  Optional[String] $documentroot      = '',
+  Boolean $purge_configs              = false,
+  Optional[String] $ssl_cert          = undef,
+  Optional[String] $ssl_key           = undef,
+  Optional[String] $ssl_chain         = undef,
+  Optional[String] $ssl_certs_dir     = undef,
+  Optional[String] $documentroot      = undef,
 ) {
+  $_ssl_cert = $ssl_cert ? {
+    undef   => '',
+    default => $ssl_cert,
+  }
+
+  $_ssl_key = $ssl_key ? {
+    undef   => '',
+    default => $ssl_key,
+  }
+
+  $_ssl_chain = $ssl_chain ? {
+    undef   => '',
+    default => $ssl_chain,
+  }
+
+  $_ssl_certs_dir = $ssl_certs_dir ? {
+    undef   => '',
+    default => $ssl_certs_dir,
+  }
+
+  $_documentroot = $documentroot ? {
+    undef   => '',
+    default => $documentroot,
+  }
+
   ensure_resource('file', ['/etc/pki/httpd', "/etc/pki/httpd/${servername}"], {
       ensure => directory,
       owner  => 'root',
@@ -77,6 +106,7 @@ class pxe_install::apache (
     server_tokens    => 'Prod',
     server_signature => 'Off',
     trace_enable     => 'Off',
+    purge_configs    => $purge_configs,
   }
 
   class { 'apache::mod::ssl':
@@ -124,10 +154,10 @@ class pxe_install::apache (
     ssl_protocol         => 'TLSv1.2',
     ssl_honorcipherorder => 'on',
     ssl_options          => ['+StdEnvVars'],
-    ssl_cert             => $ssl_cert,
-    ssl_key              => $ssl_key,
-    ssl_chain            => $ssl_chain,
-    ssl_certs_dir        => $ssl_certs_dir,
+    ssl_cert             => $_ssl_cert,
+    ssl_key              => $_ssl_key,
+    ssl_chain            => $_ssl_chain,
+    ssl_certs_dir        => $_ssl_certs_dir,
     docroot              => $documentroot,
     servername           => $servername,
     access_log_format    => 'combined',

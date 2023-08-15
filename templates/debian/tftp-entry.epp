@@ -1,4 +1,6 @@
+<%- unless empty($path) { -%>
 path <%= $path %>
+<%- } -%>
 prompt 0
 timeout 0
 default ks

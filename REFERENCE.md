@@ -23,7 +23,7 @@
 
 #### Public Defined types
 
-* [`pxe_install::parent_dirs`](#pxe_installparent_dirs): Create directories recursivly
+* [`pxe_install::parent_dirs`](#pxe_install--parent_dirs): Create directories recursivly
 
 #### Private Defined types
 
@@ -38,7 +38,7 @@
 ### Functions
 
 * [`get_partition_devices`](#get_partition_devices): get_partition_devices.rb Examin partitioning information of Debian/Ubuntu hosts and get all used disk devices
-* [`pxe_install::hex_ip`](#pxe_installhex_ip): Convert a ip from digits into hex.
+* [`pxe_install::hex_ip`](#pxe_install--hex_ip): Convert a ip from digits into hex.
 
 ### Tasks
 
@@ -63,278 +63,287 @@ include pxe_install
 
 The following parameters are available in the `pxe_install` class:
 
-* [`installserverip`](#installserverip)
-* [`installserver`](#installserver)
-* [`repo_server`](#repo_server)
-* [`repo_server_ip`](#repo_server_ip)
-* [`repos_dir`](#repos_dir)
-* [`repos_url`](#repos_url)
-* [`scriptdir`](#scriptdir)
-* [`scripturl`](#scripturl)
-* [`kickstart_dir`](#kickstart_dir)
-* [`kickstart_url`](#kickstart_url)
-* [`puppetmaster`](#puppetmaster)
-* [`puppetmasterip`](#puppetmasterip)
-* [`services`](#services)
-* [`machines`](#machines)
-* [`status_allow_from`](#status_allow_from)
-* [`enabled`](#enabled)
-* [`ssl_cert`](#ssl_cert)
-* [`ssl_key`](#ssl_key)
-* [`ssl_chain`](#ssl_chain)
-* [`ssl_certs_dir`](#ssl_certs_dir)
-* [`documentroot`](#documentroot)
-* [`create_aliases`](#create_aliases)
-* [`challenge_password`](#challenge_password)
-* [`add_hosts_entries`](#add_hosts_entries)
-* [`install_curl`](#install_curl)
-* [`install_unzip`](#install_unzip)
-* [`syslinux_url`](#syslinux_url)
-* [`syslinux_name`](#syslinux_name)
-* [`syslinux_version`](#syslinux_version)
-* [`ipxefile`](#ipxefile)
-* [`mirrors`](#mirrors)
-* [`defaults`](#defaults)
+* [`installserverip`](#-pxe_install--installserverip)
+* [`installserver`](#-pxe_install--installserver)
+* [`repo_server`](#-pxe_install--repo_server)
+* [`repo_server_ip`](#-pxe_install--repo_server_ip)
+* [`repos_dir`](#-pxe_install--repos_dir)
+* [`repos_url`](#-pxe_install--repos_url)
+* [`scriptdir`](#-pxe_install--scriptdir)
+* [`scripturl`](#-pxe_install--scripturl)
+* [`kickstart_dir`](#-pxe_install--kickstart_dir)
+* [`kickstart_url`](#-pxe_install--kickstart_url)
+* [`puppetmaster`](#-pxe_install--puppetmaster)
+* [`puppetmasterip`](#-pxe_install--puppetmasterip)
+* [`services`](#-pxe_install--services)
+* [`machines`](#-pxe_install--machines)
+* [`status_allow_from`](#-pxe_install--status_allow_from)
+* [`enabled`](#-pxe_install--enabled)
+* [`ssl_cert`](#-pxe_install--ssl_cert)
+* [`ssl_key`](#-pxe_install--ssl_key)
+* [`ssl_chain`](#-pxe_install--ssl_chain)
+* [`ssl_certs_dir`](#-pxe_install--ssl_certs_dir)
+* [`documentroot`](#-pxe_install--documentroot)
+* [`create_aliases`](#-pxe_install--create_aliases)
+* [`challenge_password`](#-pxe_install--challenge_password)
+* [`add_hosts_entries`](#-pxe_install--add_hosts_entries)
+* [`install_curl`](#-pxe_install--install_curl)
+* [`install_unzip`](#-pxe_install--install_unzip)
+* [`syslinux_url`](#-pxe_install--syslinux_url)
+* [`syslinux_name`](#-pxe_install--syslinux_name)
+* [`syslinux_version`](#-pxe_install--syslinux_version)
+* [`ipxefile`](#-pxe_install--ipxefile)
+* [`mirrors`](#-pxe_install--mirrors)
+* [`defaults`](#-pxe_install--defaults)
+* [`purge_apache_configs`](#-pxe_install--purge_apache_configs)
 
-##### <a name="installserverip"></a>`installserverip`
+##### <a name="-pxe_install--installserverip"></a>`installserverip`
 
 Data type: `String`
 
 The ip of the install server
 
-##### <a name="installserver"></a>`installserver`
+##### <a name="-pxe_install--installserver"></a>`installserver`
 
 Data type: `String`
 
 Hostname of the install server
 
-##### <a name="repo_server"></a>`repo_server`
+##### <a name="-pxe_install--repo_server"></a>`repo_server`
 
 Data type: `String`
 
 Hostname of the server hosting the package repositories
 
-##### <a name="repo_server_ip"></a>`repo_server_ip`
+##### <a name="-pxe_install--repo_server_ip"></a>`repo_server_ip`
 
 Data type: `String`
 
 IP of the server hosting the package repositories
 
-##### <a name="repos_dir"></a>`repos_dir`
+##### <a name="-pxe_install--repos_dir"></a>`repos_dir`
 
 Data type: `Stdlib::Unixpath`
 
 Directory location of the package repositories
 
-##### <a name="repos_url"></a>`repos_url`
+##### <a name="-pxe_install--repos_url"></a>`repos_url`
 
 Data type: `String`
 
 URI where the pacjaqges can be found on the repo server
 
-##### <a name="scriptdir"></a>`scriptdir`
+##### <a name="-pxe_install--scriptdir"></a>`scriptdir`
 
 Data type: `Stdlib::Unixpath`
 
 Directory location where to cfreate scripts and prepared files
 
-##### <a name="scripturl"></a>`scripturl`
+##### <a name="-pxe_install--scripturl"></a>`scripturl`
 
 Data type: `String`
 
 URL where to find the scripts
 
-##### <a name="kickstart_dir"></a>`kickstart_dir`
+##### <a name="-pxe_install--kickstart_dir"></a>`kickstart_dir`
 
 Data type: `Stdlib::Unixpath`
 
 Directory location for the kickstart/preseed files
 
-##### <a name="kickstart_url"></a>`kickstart_url`
+##### <a name="-pxe_install--kickstart_url"></a>`kickstart_url`
 
 Data type: `String`
 
 Url where to download the kickstart/preseed files
 
-##### <a name="puppetmaster"></a>`puppetmaster`
+##### <a name="-pxe_install--puppetmaster"></a>`puppetmaster`
 
 Data type: `Optional[String]`
 
 The hostname of the Puppet master server
 
-Default value: `''`
+Default value: `undef`
 
-##### <a name="puppetmasterip"></a>`puppetmasterip`
+##### <a name="-pxe_install--puppetmasterip"></a>`puppetmasterip`
 
 Data type: `Optional[String]`
 
 The ip of the Puppet master server
 
-Default value: `''`
+Default value: `undef`
 
-##### <a name="services"></a>`services`
+##### <a name="-pxe_install--services"></a>`services`
 
 Data type: `Optional[Hash]`
 
 Hash with services to configure. Valid are dhcp and tftp. Each service is a hash of how to configure
 that service.
 
-Default value: `{}`
+Default value: `undef`
 
-##### <a name="machines"></a>`machines`
+##### <a name="-pxe_install--machines"></a>`machines`
 
 Data type: `Optional[Hash]`
 
 Hash with all machines to get installed. Each entry i a whole description of a machine with ips,
 partitions and so on.
 
-Default value: `{}`
+Default value: `undef`
 
-##### <a name="status_allow_from"></a>`status_allow_from`
+##### <a name="-pxe_install--status_allow_from"></a>`status_allow_from`
 
-Data type: `Optional[Array]`
+Data type: `Array`
 
 Allow Apache status URLs from these ips
 
 Default value: `['127.0.0.1']`
 
-##### <a name="enabled"></a>`enabled`
+##### <a name="-pxe_install--enabled"></a>`enabled`
 
-Data type: `Optional[Boolean]`
+Data type: `Boolean`
 
 Installserver is enbaled or not
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="ssl_cert"></a>`ssl_cert`
+##### <a name="-pxe_install--ssl_cert"></a>`ssl_cert`
 
-Data type: `Optional[String]`
+Data type: `String`
 
 Location of the SSL certificate for the webserver to use. he file has to exist on the install server.
 
 Default value: `'/etc/pki/httpd/repos.example.com/repos.example.com.cer'`
 
-##### <a name="ssl_key"></a>`ssl_key`
+##### <a name="-pxe_install--ssl_key"></a>`ssl_key`
 
-Data type: `Optional[String]`
+Data type: `String`
 
 Location of the SSL key for the webserver to use. he file has to exist on the install server.
 
 Default value: `'/etc/pki/httpd/repos.example.com/repos.example.com.key'`
 
-##### <a name="ssl_chain"></a>`ssl_chain`
+##### <a name="-pxe_install--ssl_chain"></a>`ssl_chain`
 
-Data type: `Optional[String]`
+Data type: `String`
 
 Location of the SSL certificate chain for the webserver to use. he file has to exist on the install server.
 
 Default value: `'/etc/pki/httpd/repos.example.com/fullchain.cer'`
 
-##### <a name="ssl_certs_dir"></a>`ssl_certs_dir`
+##### <a name="-pxe_install--ssl_certs_dir"></a>`ssl_certs_dir`
 
-Data type: `Optional[String]`
+Data type: `String`
 
 Directory where all files for the cdertificates reside.
 
 Default value: `'/etc/pki/httpd/repos.example.com/'`
 
-##### <a name="documentroot"></a>`documentroot`
+##### <a name="-pxe_install--documentroot"></a>`documentroot`
 
-Data type: `Optional[String]`
+Data type: `String`
 
 Document root for the webserver.
 
 Default value: `'/var/www/html'`
 
-##### <a name="create_aliases"></a>`create_aliases`
+##### <a name="-pxe_install--create_aliases"></a>`create_aliases`
 
-Data type: `Optional[Boolean]`
+Data type: `Boolean`
 
 Create webserver aliases
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="challenge_password"></a>`challenge_password`
+##### <a name="-pxe_install--challenge_password"></a>`challenge_password`
 
 Data type: `Sensitive[String]`
 
 Sensitive challenge password for auto signing cert requests.
 
-##### <a name="add_hosts_entries"></a>`add_hosts_entries`
+##### <a name="-pxe_install--add_hosts_entries"></a>`add_hosts_entries`
 
-Data type: `Optional[Boolean]`
+Data type: `Boolean`
 
 Add install server and puppet server to /etc/hosts file.
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="install_curl"></a>`install_curl`
+##### <a name="-pxe_install--install_curl"></a>`install_curl`
 
-Data type: `Optional[Boolean]`
+Data type: `Boolean`
 
 Install curl package
 
 Default value: `$pxe_install::params::install_curl`
 
-##### <a name="install_unzip"></a>`install_unzip`
+##### <a name="-pxe_install--install_unzip"></a>`install_unzip`
 
-Data type: `Optional[Boolean]`
+Data type: `Boolean`
 
 Install unzip package
 
 Default value: `$pxe_install::params::install_unzip`
 
-##### <a name="syslinux_url"></a>`syslinux_url`
+##### <a name="-pxe_install--syslinux_url"></a>`syslinux_url`
 
-Data type: `Optional[Stdlib::HTTPSUrl]`
+Data type: `Stdlib::HTTPSUrl`
 
 The url where to download the syslinux archive.
 
 Default value: `$pxe_install::params::syslinux_url`
 
-##### <a name="syslinux_name"></a>`syslinux_name`
+##### <a name="-pxe_install--syslinux_name"></a>`syslinux_name`
 
-Data type: `Optional[String]`
+Data type: `String`
 
 Ther name of the archive.
 
 Default value: `$pxe_install::params::syslinux_name`
 
-##### <a name="syslinux_version"></a>`syslinux_version`
+##### <a name="-pxe_install--syslinux_version"></a>`syslinux_version`
 
-Data type: `Optional[String]`
+Data type: `String`
 
 The version of the archive.
 
 Default value: `$pxe_install::params::syslinux_version`
 
-##### <a name="ipxefile"></a>`ipxefile`
+##### <a name="-pxe_install--ipxefile"></a>`ipxefile`
 
-Data type: `Optional[Stdlib::HTTPUrl]`
+Data type: `Stdlib::HTTPUrl`
 
 The url to download the ipxe file.
 
 Default value: `$pxe_install::params::ipxefile`
 
-##### <a name="mirrors"></a>`mirrors`
+##### <a name="-pxe_install--mirrors"></a>`mirrors`
 
-Data type: `Optional[Hash]`
+Data type: `Hash`
 
 Hash with mirror definitions.
 
 Default value: `$pxe_install::params::mirrors`
 
-##### <a name="defaults"></a>`defaults`
+##### <a name="-pxe_install--defaults"></a>`defaults`
 
-Data type: `Optional[Hash]`
+Data type: `Hash`
 
 Default values.
 
 Default value: `$pxe_install::params::defaults`
 
+##### <a name="-pxe_install--purge_apache_configs"></a>`purge_apache_configs`
+
+Data type: `Boolean`
+
+Boolean to indicate that all Apache configurations not maintained by the Apache Puppet module should be deleted.
+
+Default value: `false`
+
 ## Defined types
 
-### <a name="pxe_installparent_dirs"></a>`pxe_install::parent_dirs`
+### <a name="pxe_install--parent_dirs"></a>`pxe_install::parent_dirs`
 
 Create all missing directories
 
@@ -353,9 +362,9 @@ pxe_installarent_dirs{ 'create script dir':
 
 The following parameters are available in the `pxe_install::parent_dirs` defined type:
 
-* [`dir_path`](#dir_path)
+* [`dir_path`](#-pxe_install--parent_dirs--dir_path)
 
-##### <a name="dir_path"></a>`dir_path`
+##### <a name="-pxe_install--parent_dirs--dir_path"></a>`dir_path`
 
 Data type: `Stdlib::Unixpath`
 
@@ -385,7 +394,7 @@ Data type: `Hash`
 
 
 
-### <a name="pxe_installhex_ip"></a>`pxe_install::hex_ip`
+### <a name="pxe_install--hex_ip"></a>`pxe_install::hex_ip`
 
 Type: Puppet Language
 

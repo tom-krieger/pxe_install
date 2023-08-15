@@ -2,26 +2,45 @@
                   <%- if $defaultignore { -%>
                   $defaultignore{ }                      \
                   <%- } -%>
+                  <%- if $bios_boot { -%>
+                  $bios_boot{ }                          \
+                  <%- } -%>
                   <%- if $primary { -%>
                   $primary{ }                             \
                   <%- } -%>
                   <%- if $bootable { -%>
                   $bootable{ }                            \
                   <%- } -%>
+                  <%- if $iflabel != '' { -%>
+                  $iflabel{ <%= $iflabel %> }              \
+                  <%- } -%>
+                  <%- if $reusemethod { -%>
+                  $reusemethod{ }                               \
+                  <%- } -%>
                   <%- if $method == 'format' { -%>
-                  method{ format } format{ }     \
+                  method{ format }                            \
+                  format{ }                                    \
                   <%- } -%>
                   <%- if $method == 'swap' { -%>
-                  method{ swap } format{ }     \
+                  method{ swap }                               \
+                  format{ }                                    \
                   <%- } -%>
                   <%- if $method == 'lvm' { -%>
                   method{ lvm }                 \
                   <%- } -%>
+                  <%- if $method == 'efi' { -%>
+                  method{ efi }                                \
+                  format{ }                \
+                  <%- } -%>
+                  <%- if $method == 'biosgrub' { -%>
+                  method{ biosgrub }                 \
+                  <%- } -%>
                   <%- if $filesystem != '' { -%>
-                  use_filesystem{ } filesystem{ <%= $filesystem %> }    \
+                  use_filesystem{ }                             \
+                  filesystem{ <%= $filesystem %> }    \
                   <%- } -%>
                   <%- if $label != '' { -%>
-                  label{ boot }                           \
+                  label{ <%= $label %> }                           \
                   <%- } -%>
                   <%- if $mountpoint != '' and $vgname == '' { -%>
                   mountpoint{ <%= $mountpoint %> }                     \
@@ -36,6 +55,7 @@
                   lv_name{ <%= $lvname %> }                         \
                   <%- } -%>
                   <%- if $invg != '' { -%>
-                  $lvmok{ } in_vg{ <%= $invg %> }                  \
+                  $lvmok{ }                                     \
+                  in_vg{ <%= $invg %> }                  \
                   <%- } -%>
           . \

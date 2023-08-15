@@ -8,25 +8,25 @@
 #
 function pxe_install::hex_ip(String $ip) >> String {
   $octs = $ip.split(/\./)
-  $a = sprintf('%<a>X', {'a' => $octs[0]})
+  $a = sprintf('%<a>X', { 'a' => $octs[0] })
   if($a.length < 2) {
     $part1 = "0${a}"
   } else {
     $part1 = $a
   }
-  $b = sprintf('%<a>X', {'a' => $octs[1]})
+  $b = sprintf('%<a>X', { 'a' => $octs[1] })
   if($b.length < 2) {
     $part2 = "0${b}"
   } else {
     $part2 = $b
   }
-  $c = sprintf('%<a>X', {'a' => $octs[2]})
+  $c = sprintf('%<a>X', { 'a' => $octs[2] })
   if($c.length < 2) {
     $part3 = "0${c}"
   } else {
     $part3 = $c
   }
-  $d = sprintf('%<a>X', {'a' => $octs[3]})
+  $d = sprintf('%<a>X', { 'a' => $octs[3] })
   if($d.length < 2) {
     $part4 = "0${d}"
   } else {

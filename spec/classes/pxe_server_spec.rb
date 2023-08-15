@@ -608,6 +608,15 @@ describe 'pxe_install' do
         #     'ensure' => 'directory',
         #   )
 
+        is_expected.to contain_file('/var/lib/tftpboot/grub/grub.cfg')
+          .with(
+            'ensure' => 'file',
+            'source' => 'puppet:///modules/pxe_install/grub.cfg',
+            'owner'  => 'root',
+            'group'  => 'root',
+            'mode'   => '0644',
+          )
+
         is_expected.to contain_file('/var/lib/tftpboot/pxelinux.cfg')
           .with(
             'ensure'       => 'directory',
@@ -715,7 +724,16 @@ describe 'pxe_install' do
             'dir_path' => '/var/lib/tftpboot/winpe',
           )
 
+        is_expected.to contain_pxe_install__parent_dirs('create tftpboot grub dir')
+          .with(
+            'dir_path' => '/var/lib/tftpboot/grub',
+          )
+
         is_expected.to contain_file('/var/lib/tftpboot/bios')
+          .with(
+            'ensure' => 'directory',
+          )
+        is_expected.to contain_file('/var/lib/tftpboot/grub')
           .with(
             'ensure' => 'directory',
           )
