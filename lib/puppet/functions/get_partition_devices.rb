@@ -20,6 +20,6 @@ Puppet::Functions.create_function(:get_partition_devices) do
       end
     end
     return 'failed' if device_list.empty?
-    return device_list.uniq.join(' ') unless device_list.empty?
+    device_list.uniq.join(' ') unless device_list.empty?
   end
 end

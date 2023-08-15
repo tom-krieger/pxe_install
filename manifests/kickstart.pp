@@ -128,6 +128,8 @@ define pxe_install::kickstart (
       true  => $data['osversion'],
       false => 'stable',
     }
+  } else {
+    $suite = ''
   }
 
   if has_key($data, 'user') {
