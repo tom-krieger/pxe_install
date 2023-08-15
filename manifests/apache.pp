@@ -40,10 +40,13 @@
 #    SSL chain file.
 #
 # @param ssl_certs_dir
-# Directory where the SSL certs are located.
+#     Directory where the SSL certs are located.
 #
 # @param documentroot
 #    The document root directory for the Apache vhost.
+#
+# @param purge_configs
+#    Boolean to indicate that all Apache configurations not maintained by the Apache Puppet module should be deleted.
 #
 # @example
 #   include pxe_install::apache

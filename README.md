@@ -271,8 +271,12 @@ The node configuration includes general settings for a node like the root passwo
 | | keymap | The keymap used for `debian` and `ubuntu` | yes |
 | | language | The language used for the installer. For CentOS it is set to the language and the flavour, e. g. en_US. For Debian and Ubuntu it is a two character language setting, e. g. en. | yes |
 | | locale | The locale setting for Linux e. g. en-US.UTF-8 or for Windows e. g. en-US | yes |
-| | path | For Debian until version 10, Ubuntu and Windows nodes, there is a `path` needed which points to the boot screen files within the tftpboot directory. If you do not set this parameter it will be set to `<prefix>/boot-screens` by default. If you do not wat to set a path, set it to the string `none`.| - |
+| | path | For Debian until version 10, Ubuntu and Windows nodes, there is a `path` needed which points to the boot screen files within the tftpboot directory. If you do not set this parameter it will be set to `<prefix>/boot-screens` by default. If you do not want to set a path, set it to the string `none`.| - |
 | | packages | The packages to additionally install. This parameter has only effect on CentOS, Debian and Fedora installations. Otherwise it is ignored. Please make sure to use a string with blank separated packages for Debian and an array for Fedora or CentOS. | yes |
+| | stage2 | Yhe tftpboot stage2 file | - |
+| | defaultdesktop | The default desktop to install. | - |
+| | startxonboot | Boolean to start X during boot. | - |
+| | xconfig | Boolean to control if X is configured. | - |
 
 #### `Node network configuration`
 
