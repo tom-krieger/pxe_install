@@ -272,6 +272,7 @@ define pxe_install::tftp::host (
             datacenter  => $datacenter,
             mirror_host => $_mirror_host,
             mirror_uri  => $_mirror_uri,
+            bootiso     => $bootiso,
         }),
         *       => $file_data,
       }
