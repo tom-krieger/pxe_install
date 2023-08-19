@@ -2,8 +2,8 @@
 autoinstall:
   early-commands:
   - echo "<%= $puppetenv %>" > /tmp/puppetenv
-	- echo "<%= $puppetrole %>" > /tmp/puppetrole
-	- echo "<%= $datacenter %>" > /tmp/datacenter
+  - echo "<%= $puppetrole %>" > /tmp/puppetrole
+  - echo "<%= $datacenter %>" > /tmp/datacenter
   refresh-installer:
     update: true
     channel: "stable/ubuntu-$REL"
