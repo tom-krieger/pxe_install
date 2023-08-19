@@ -23,7 +23,7 @@
 # @api private
 define pxe_install::partitioning::ubuntu (
   String $hostname,
-  Hash $partitioning,
+  Variant[Hash, Array] $partitioning,
   String $kickstart_file,
   String $boot_architecture,
   String $major = '20',

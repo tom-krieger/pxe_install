@@ -14,16 +14,16 @@ class pxe_install::tftp (
 ) {
   $mapfile = '/etc/tftpd.map'
 
-  unless has_key($tftp, 'service') {
+  unless pxe_install::hash_key($tftp, 'service') {
     fail('A tftp service is needed!')
   }
 
-  $tftp_packages = has_key($tftp, 'packages') ? {
+  $tftp_packages = pxe_install::hash_key($tftp, 'packages') ? {
     true => $tftp['packages'],
     default => 'tftpd'
   }
 
-  $tftp_ensure = has_key($tftp, 'packages_ensure') ? {
+  $tftp_ensure = pxe_install::hash_key($tftp, 'packages_ensure') ? {
     true => $tftp['packages_ensure'],
     default => 'present'
   }
@@ -32,17 +32,17 @@ class pxe_install::tftp (
       ensure => $tftp_ensure,
   })
 
-  $srv_ensure = has_key($tftp, 'service_ensure') ? {
+  $srv_ensure = pxe_install::hash_key($tftp, 'service_ensure') ? {
     true    => $tftp['service_ensure'],
     default => 'stopped',
   }
 
-  $srv_enable = has_key($tftp, 'service_enable') ? {
+  $srv_enable = pxe_install::hash_key($tftp, 'service_enable') ? {
     true    => $tftp['service_enable'],
     default => 'disable',
   }
 
-  if has_key($tftp, 'address') {
+  if pxe_install::hash_key($tftp, 'address') {
     $address = $tftp['address']
   } elsif fact('network4') != undef {
     $address = fact('network4')
@@ -52,11 +52,11 @@ class pxe_install::tftp (
     fail('No ip for tftp server given and no ip can be determined!')
   }
 
-  unless has_key($tftp, 'directory') {
+  unless pxe_install::hash_key($tftp, 'directory') {
     fail('No tftpboot directory given!')
   }
 
-  $windows_dir = has_key($tftp, 'windows_directory') ? {
+  $windows_dir = pxe_install::hash_key($tftp, 'windows_directory') ? {
     true    => $tftp['windows_directory'],
     default => '/windows',
   }
@@ -112,12 +112,12 @@ class pxe_install::tftp (
     }
   }
 
-  $basedir = has_key($tftp, 'directory') ? {
+  $basedir = pxe_install::hash_key($tftp, 'directory') ? {
     true => $tftp['directory'],
     default => '/var/lib/tftpboot',
   }
 
-  $pxedir = has_key( $tftp, 'pxelinux') ? {
+  $pxedir = pxe_install::hash_key( $tftp, 'pxelinux') ? {
     true => $tftp['pxelinux'],
     default => 'pxelinux.cfg',
   }
@@ -147,12 +147,12 @@ class pxe_install::tftp (
     source => 'puppet:///modules/pxe_install/tftp-default',
   }
 
-  $manage_tftpboot = has_key($tftp, 'manage_tftpboot') ? {
+  $manage_tftpboot = pxe_install::hash_key($tftp, 'manage_tftpboot') ? {
     true    => $tftp['manage_tftpboot'],
     default => false,
   }
 
-  $winpe_dir = has_key($tftp, 'winpe_dir') ? {
+  $winpe_dir = pxe_install::hash_key($tftp, 'winpe_dir') ? {
     true    => $tftp['winpe_dir'],
     default => 'winpe',
   }

@@ -125,12 +125,12 @@ define pxe_install::tftp::host (
       'd' => $octets[3],
   }).upcase()
 
-  $basedir = has_key($pxe_install::tftp::tftp, 'directory') ? {
+  $basedir = pxe_install::hash_key($pxe_install::tftp::tftp, 'directory') ? {
     true => $pxe_install::tftp::tftp['directory'],
     default => '/var/lib/tftpboot',
   }
 
-  $pxedir = has_key( $pxe_install::tftp::tftp, 'pxelinux') ? {
+  $pxedir = pxe_install::hash_key( $pxe_install::tftp::tftp, 'pxelinux') ? {
     true => $pxe_install::tftp::tftp['pxelinux'],
     default => 'pxelinux.cfg',
   }
