@@ -96,6 +96,7 @@ define pxe_install::tftp::host (
   Optional[String] $orgid       = undef,
   Optional[String] $actkey      = undef,
   Optional[String] $osversion   = undef,
+  Optional[String] $bootiso     = undef,
 ) {
   $_mirror_host = $mirror_host ? {
     undef   => '',

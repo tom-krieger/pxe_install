@@ -461,6 +461,11 @@ define pxe_install::kickstart (
     false => 'dhcp',
   }
 
+  $bootiso = pxe_install::hash_key($data, 'bootiso') ? {
+    true  => $data['bootido'],
+    false => '',
+  }
+
   if pxe_install::hash_key($data, 'packages') {
     $_packages = $data['packages']
   } else {
@@ -678,6 +683,7 @@ define pxe_install::kickstart (
       orgid         => $orgid,
       actkey        => $actkey,
       osversion     => $data['osversion'],
+      bootiso       => $bootiso,
     }
   }
 }
