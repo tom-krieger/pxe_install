@@ -3,8 +3,8 @@
 # get_partition_devices_autoinstall.rb
 # Examin partitioning information of Debian/Ubuntu hosts and get all
 # used disk devices
-Puppet::Functions.create_function(:get_partition_devices) do
-    dispatch :get_partition_devices do
+Puppet::Functions.create_function(:get_partition_devices_autoinstall) do
+    dispatch :get_partition_devices_autoinstall do
       required_param 'Array', :partitioning
       return_type 'Array'
     end
