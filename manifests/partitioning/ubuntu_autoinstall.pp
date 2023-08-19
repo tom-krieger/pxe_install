@@ -26,7 +26,7 @@
 # @api private
 # @example
 #   include pxe_install::partitioning::ubuntu_autoinstall
-class pxe_install::partitioning::ubuntu_autoinstall (
+define pxe_install::partitioning::ubuntu_autoinstall (
   String $hostname,
   Hash $partitioning,
   String $kickstart_file,
