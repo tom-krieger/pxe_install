@@ -1,0 +1,11 @@
+<%- $autopart.each |$device| { 
+  $dev = split($device, '[/]')[0] -%>
+    - ptable: gpt
+      path: <%= $device %>
+      wipe: superblock-recursive
+      preserve: false
+      name: ''
+      grub_device: true
+      type: disk
+      id: disk-<%= $dev %>
+<%- } -%>

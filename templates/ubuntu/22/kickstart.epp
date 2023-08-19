@@ -1,0 +1,148 @@
+#cloud-config
+autoinstall:
+  early-commands:
+  - echo "<%= $puppetenv %>" > /tmp/puppetenv
+	- echo "<%= $puppetrole %>" > /tmp/puppetrole
+	- echo "<%= $datacenter %>" > /tmp/datacenter
+  refresh-installer:
+    update: true
+    channel: "stable/ubuntu-$REL"
+  apt:
+    disable_components: []
+    geoip: true
+    preserve_sources_list: false
+    primary:
+    - arches:
+      - amd64
+      - i386
+      uri: <%= $mirror %>/<%= $mirror_dir %>
+    - arches:
+      - default
+      uri: <%= $mirror %>/ubuntu-ports
+  drivers:
+    install: false
+  identity:
+    hostname: <%= $hostname %>
+    password: <%= $user['password'] %>
+    realname: <%= $user['fullname'] %>
+    username: <%= $user['username'] %>
+  kernel:
+    package: linux-generic
+  keyboard:
+    layout: <%= $keyboard %>
+    toggle: null
+    variant: ''
+  locale: <%= $locale %>
+  timezone: <%= $timezone %>
+  network:
+    ethernets:
+      <%= $ksdevice %>:
+        addresses:
+        - <%= $ip %>/<%= $netmask %>
+        gateway4: <%= $gateway %>
+        nameservers:
+          addresses:
+          - <%= $dnsservers %>
+          search:
+          - home.tom-krieger.de
+    version: 2
+    ethernets:
+      ens160:
+        critical: true
+        dhcp-identifier: mac
+        dhcp4: true
+        nameservers:
+          addresses:
+          - 10.10.54.62
+          - 10.10.54.63
+          search:
+          - home.tom-krieger.de
+    version: 2
+  source:
+    id: ubuntu-server
+    search_drivers: false
+  ssh:
+    allow-pw: true
+    authorized-keys: []
+    install-server: true
+  packages:
+  <%- if $boot_architecture == 'uefi' { -%>
+  - openssh-server 
+  - gnupg2 
+  - efibootmgr 
+  - grub-efi-amd64 
+  - grub-efi-amd64-signed 
+  - shim-signed
+  <%- } else { -%>
+  - openssh-server 
+  - gnupg2
+  <%- } -%>
+  storage:
+    config:
+    - ptable: gpt
+      path: /dev/sda
+      wipe: superblock-recursive
+      preserve: false
+      name: ''
+      grub_device: true
+      type: disk
+      id: disk-sda
+    - device: disk-sda
+      size: 1048576
+      flag: bios_grub
+      number: 1
+      preserve: false
+      grub_device: false
+      offset: 1048576
+      type: partition
+      id: partition-0
+    - device: disk-sda
+      size: 2147483648
+      wipe: superblock
+      number: 2
+      preserve: false
+      grub_device: false
+      offset: 2097152
+      type: partition
+      id: partition-1
+    - fstype: ext4
+      volume: partition-1
+      preserve: false
+      type: format
+      id: format-0
+    - device: disk-sda
+      size: 83748716544
+      wipe: superblock
+      number: 3
+      preserve: false
+      grub_device: false
+      offset: 2149580800
+      type: partition
+      id: partition-2
+    - name: ubuntu-vg
+      devices:
+      - partition-2
+      preserve: false
+      type: lvm_volgroup
+      id: lvm_volgroup-0
+    - name: ubuntu-lv
+      volgroup: lvm_volgroup-0
+      size: 41871736832B
+      wipe: superblock
+      preserve: false
+      type: lvm_partition
+      id: lvm_partition-0
+    - fstype: ext4
+      volume: lvm_partition-0
+      preserve: false
+      type: format
+      id: format-1
+    - path: /
+      device: format-1
+      type: mount
+      id: mount-1
+    - path: /boot
+      device: format-0
+      type: mount
+      id: mount-0
+

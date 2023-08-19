@@ -1,6 +1,6 @@
 {
   "name": "tomkrieger-pxe_install",
-  "version": "0.3.9",
+  "version": "0.4.0",
   "author": "Thomas Krieger",
   "summary": "Setup CentOS/Debian PXE installation server to serve CentOS/AlmaLinux/Rocky/Debian/Ubuntu/Fedora/Windows installations.",
   "license": "Apache-2.0",

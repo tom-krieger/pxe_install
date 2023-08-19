@@ -1,0 +1,10 @@
+path <%= $path %>
+prompt 0
+timeout 0
+default ks
+
+label ks
+        menu label ^ks
+        menu default
+        kernel <%= $prefix %>/vmlinuz
+        append autoinstall root=/dev/ram0 ramdisk_size=1500000 ip=dhcp url=<%= $bootiso %> initrd=<%= $prefix %>/initrd ds=nocloud-net;s=<%= $ksurl %> log_host=<%= $loghost %> log_port=<%= $logport %> puppetenv=<%= $puppetenv %> role=<%= $puppetrole %> dc=<%= $datacenter %> ---
