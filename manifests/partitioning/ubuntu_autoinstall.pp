@@ -28,7 +28,7 @@
 #   include pxe_install::partitioning::ubuntu_autoinstall
 define pxe_install::partitioning::ubuntu_autoinstall (
   String $hostname,
-  Hash $partitioning,
+  Array $partitioning,
   String $kickstart_file,
   String $boot_architecture,
   String $template_partitioning = 'pxe_install/debian/partition.epp',
