@@ -462,7 +462,7 @@ define pxe_install::kickstart (
   }
 
   $bootiso = pxe_install::hash_key($data, 'bootiso') ? {
-    true  => $data['bootido'],
+    true  => $data['bootiso'],
     false => '',
   }
 
