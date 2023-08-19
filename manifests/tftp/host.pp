@@ -243,7 +243,7 @@ define pxe_install::tftp::host (
         default => split($osversion, '[.]')[0]
       }
 
-      $_part = versioncmp($osversion, '22') >= 0 ? {
+      $_part = $major >= '22' ? {
         true  => 'pxe_install/ubuntu/22',
         false => 'pxe_install/ubuntu',
       }
