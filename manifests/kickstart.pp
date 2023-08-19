@@ -256,7 +256,7 @@ define pxe_install::kickstart (
       $ksurl = "http://${pxe_install::repo_server}/kickstart/${hostname}"
       $installserverurl = ''
 
-      pxe_install::partitioning::ubuntu_autoinstall { $hostname:
+      pxe_install::partitioning::ubuntu { $hostname:
         hostname          => $hostname,
         partitioning      => $partitioning,
         kickstart_file    => $kickstart_file,
