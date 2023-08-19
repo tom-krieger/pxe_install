@@ -238,11 +238,21 @@ define pxe_install::tftp::host (
         fail('Debian and Ubuntu kickstart require a log host and a log port!')
       }
 
+      $major = $osversion ? {
+        undef   => '20',
+        default => split($osversion, '[.]')[0]
+      }
+
+      $_part = versioncmp($osversion, '22') >= 0 ? {
+        true  => 'pxe_install/ubuntu/22',
+        false => 'pxe_install/ubuntu',
+      }
+
       if $_scenario_data['boot_architecture'] == 'uefi' {
-        $template = 'pxe_install/ubuntu/tftp-uefi-entry.epp'
+        $template = "${_part}/tftp-uefi-entry.epp"
         $_filename = $uefi_filename
       } else {
-        $template = 'pxe_install/ubuntu/tftp-entry.epp'
+        $template = "${_part}/tftp-entry.epp"
         $_filename = $filename
       }
 
