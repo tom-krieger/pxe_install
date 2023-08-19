@@ -36,7 +36,7 @@ define pxe_install::partitioning::ubuntu_autoinstall (
   String $template_part_finish  = 'pxe_install/debian/partition_finish.epp',
 ) {
   $nr = 400
-  $devices = get_partition_devices($partitioning)
+  $devices = get_partition_devices_autoinstall($partitioning)
 
   concat::fragment { "${hostname}-partition-start":
     content => epp($template_partitioning, {
