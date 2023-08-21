@@ -65,14 +65,14 @@ define pxe_install::partitioning::ubuntu_autoinstall (
         true  => $partition['order'],
       }
 
-      echo { "${hostname}-${order}-${id}":
+      echo { "${hostname}-${order}-${id}-${key}":
         message  => "${hostname}-${id}-${nr}-${order}-${start}",
         loglevel => 'warning',
         withpath => false,
       }
 
       if $key.downcase() != 'order' {
-        concat::fragment { "${hostname}-${order}-${key}":
+        concat::fragment { "${hostname}-${order}-${id}-${key}":
           content => epp($template_part_entry, {
               start => $start,
               key   => $key,
