@@ -48,7 +48,7 @@ define pxe_install::partitioning::ubuntu_autoinstall (
   }
 
   $partitioning.each |$partition| {
-    $start = false
+    $start = true
 
     $partition.each |$key, $value| {
       $nr = $nr + 1
@@ -82,7 +82,7 @@ define pxe_install::partitioning::ubuntu_autoinstall (
           order   => $order,
         }
 
-        $start = true
+        $start = false
       }
     }
   }
