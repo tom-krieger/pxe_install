@@ -57,7 +57,7 @@ define pxe_install::partitioning::ubuntu_autoinstall (
       }
 
       if $key.downcase() != 'order' {
-        concat::fragment { "${hostname}-${nr}":
+        concat::fragment { "${hostname}-${order}":
           content => epp($template_part_entry, {
               start => $start,
               key   => $key,
