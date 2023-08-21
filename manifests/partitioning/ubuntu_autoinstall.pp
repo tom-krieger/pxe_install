@@ -44,11 +44,12 @@ define pxe_install::partitioning::ubuntu_autoinstall (
         boot_architecture => $boot_architecture,
     }),
     target  => $kickstart_file,
-    order   => $nr,
+    order   => 400,
   }
 
   $partitioning.each |$partition| {
     $start = false
+
     $partition.each |$key, $value| {
       $nr = $nr + 1
       if pxe_install::hash_key($partition, 'id') {
@@ -69,9 +70,9 @@ define pxe_install::partitioning::ubuntu_autoinstall (
           target  => $kickstart_file,
           order   => $order,
         }
-      }
 
-      $start = true
+        $start = true
+      }
     }
   }
 }

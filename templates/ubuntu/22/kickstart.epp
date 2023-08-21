@@ -42,7 +42,7 @@ autoinstall:
         gateway4: <%= $gateway %>
         nameservers:
           addresses:
-          <%- $dnsservers.each |$dns| { -%>
+          <%- $dnslist.each |$dns| { -%>
           - <%= $dns %>
           <%- } -%>
           search:

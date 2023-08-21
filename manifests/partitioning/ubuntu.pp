@@ -32,6 +32,7 @@ define pxe_install::partitioning::ubuntu (
     $template_partitioning = 'pxe_install/ubuntu/partition.epp'
     $template_part_entry = 'pxe_install/ubuntu/partition_entry.epp'
     $template_part_finish = 'pxe_install/ubuntu/partition_finish.epp'
+    $class =
 
     pxe_install::partitioning::debian { $hostname:
       hostname              => $hostname,

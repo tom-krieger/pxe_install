@@ -202,6 +202,11 @@ define pxe_install::kickstart (
     default => join($defaults['dns'], ','),
   }
 
+  $dnslist = pxe_install::hash_key($network_data, 'dns') ? {
+    true  => $network_data['dns'],
+    false => $defaults['dns'],
+  }
+
   if pxe_install::hash_key($network_data, 'domain') {
     $domain = $network_data['domain']
   } elsif $defaults['domain'] != '' {
@@ -506,6 +511,7 @@ define pxe_install::kickstart (
           gateway           => $network_data['gateway'],
           bootproto         => $network_data['bootproto'],
           dnsservers        => $dns_data,
+          dnslist           => $dnslist,
           hostname          => $hostname,
           rootpw            => $rootpw,
           timezone          => $timezone,
