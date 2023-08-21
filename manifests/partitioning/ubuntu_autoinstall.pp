@@ -60,6 +60,12 @@ define pxe_install::partitioning::ubuntu_autoinstall (
         $order = $nr
       }
 
+      echo { "${hostname}-${order}-${key}":
+        message  => "${hostname}-${order}-${key}-${order}",
+        loglevel => 'warning',
+        withpath => false,
+      }
+
       if $key.downcase() != 'order' {
         concat::fragment { "${hostname}-${order}-${key}":
           content => epp($template_part_entry, {
