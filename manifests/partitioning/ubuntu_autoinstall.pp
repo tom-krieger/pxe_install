@@ -48,23 +48,27 @@ define pxe_install::partitioning::ubuntu_autoinstall (
   }
 
   $partitioning.each |$partition| {
-    $nr = $nr + 1
-    $order = pxe_install::hash_key($partition, 'order') ? {
-      true    => $partition['order'],
-      default => $nr,
-    }
-
     $start = false
     $partition.each |$key, $value| {
-      concat::fragment { "${hostname}-${nr}":
-        content => epp($template_part_entry, {
-            start => $start,
-            key   => $key,
-            value => $value,
-        }),
-        target  => $kickstart_file,
-        order   => $order,
+      $nr = $nr + 1
+      $order = pxe_install::hash_key($partition, 'order') ? {
+        true    => $partition['order'],
+        default => $nr,
       }
+
+      if $key.downcase() != 'order' {
+        concat::fragment { "${hostname}-${nr}":
+          content => epp($template_part_entry, {
+              start => $start,
+              key   => $key,
+              value => $value,
+          }),
+          target  => $kickstart_file,
+          order   => $order,
+        }
+      }
+
+      $start = true
     }
   }
 }
