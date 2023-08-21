@@ -36,16 +36,16 @@ define pxe_install::partitioning::ubuntu_autoinstall (
   String $template_part_finish  = 'pxe_install/debian/partition_finish.epp',
 ) {
   $nr = 400
-  # $devices = get_partition_devices_autoinstall($partitioning)
+  $devices = get_partition_devices_autoinstall($partitioning)
 
-  # concat::fragment { "${hostname}-partition-start":
-  #   content => epp($template_partitioning, {
-  #       autopart          => $devices,
-  #       boot_architecture => $boot_architecture,
-  #   }),
-  #   target  => $kickstart_file,
-  #   order   => 400,
-  # }
+  concat::fragment { "${hostname}-partition-start":
+    content => epp($template_partitioning, {
+        autopart          => $devices,
+        boot_architecture => $boot_architecture,
+    }),
+    target  => $kickstart_file,
+    order   => 400,
+  }
 
   $partitioning.each |$partition| {
     $nr = $nr + 1
