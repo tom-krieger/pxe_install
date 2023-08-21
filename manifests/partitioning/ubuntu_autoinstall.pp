@@ -53,15 +53,20 @@ define pxe_install::partitioning::ubuntu_autoinstall (
     $partition.each |$key, $value| {
       $nr = $nr + 1
       if pxe_install::hash_key($partition, 'id') {
-        $order = $partition['id']
+        $id = $partition['id']
       } elsif pxe_install::hash_key($partition, 'order') {
-        $order = $partition['order']
+        $id = $partition['order']
       } else {
-        $order = $nr
+        $id = $nr
+      }
+
+      $order = pxe_install::hash_key($partition, 'order') ? {
+        false => $nr,
+        true  => $partition['order'],
       }
 
       echo { "${hostname}-${order}-${key}":
-        message  => "${hostname}-${order}-${key}-${order}",
+        message  => "${hostname}-${id}-${key}-${order}",
         loglevel => 'warning',
         withpath => false,
       }
