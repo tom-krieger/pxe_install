@@ -54,12 +54,17 @@ define pxe_install::partitioning::ubuntu_autoinstall (
       default => $nr,
     }
 
-    concat::fragment { "${hostname}-${partition}":
-      content => epp($template_part_entry, {
-          data => $partition,
-      }),
-      target  => $kickstart_file,
-      order   => $order,
+    $start = false
+    $partition.each |$key, $value| {
+      concat::fragment { "${hostname}-${nr}":
+        content => epp($template_part_entry, {
+            start => $start,
+            key   => $key,
+            value => $value,
+        }),
+        target  => $kickstart_file,
+        order   => $order,
+      }
     }
   }
 }

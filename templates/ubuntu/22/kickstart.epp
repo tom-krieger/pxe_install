@@ -42,19 +42,9 @@ autoinstall:
         gateway4: <%= $gateway %>
         nameservers:
           addresses:
-          - <%= $dnsservers %>
-          search:
-          - home.tom-krieger.de
-    version: 2
-    ethernets:
-      ens160:
-        critical: true
-        dhcp-identifier: mac
-        dhcp4: true
-        nameservers:
-          addresses:
-          - 10.10.54.62
-          - 10.10.54.63
+          <%- $dnsservers.each |$dns| { -%>
+          - <%= $dns %>
+          <%- } -%>
           search:
           - home.tom-krieger.de
     version: 2

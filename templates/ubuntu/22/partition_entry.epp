@@ -1,12 +1,5 @@
-<%- $start = false -%>
-<%- $data.each |$key, $value| { -%>
-<%- if $key != 'order' { -%>
-<%- if $start == false { -%>
-    - <%= $key %>: <%= $value %>
-<%- } -%>
 <%- if $start { -%>
+    - <%= $key %>: <%= $value %>
+<%- } else { -%>
       <%= $key %>: <%= $value %>
-<%- } -%>
-<%- $start = true -%>
-<%- } -%>
 <%- } -%>
