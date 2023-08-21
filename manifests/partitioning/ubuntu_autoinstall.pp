@@ -48,42 +48,22 @@ define pxe_install::partitioning::ubuntu_autoinstall (
   }
 
   $partitioning.each |$partition| {
-    $start = true
+    $nr = $nr + 1
+    $order = pxe_install.hash_key($partition, 'order') ? {
+      false => $nr,
+      true  => $partition['order'],
+    }
 
-    $partition.each |$key, $value| {
-      $nr = $nr + 1
-      if pxe_install::hash_key($partition, 'id') {
-        $id = $partition['id']
-      } elsif pxe_install::hash_key($partition, 'order') {
-        $id = $partition['order']
-      } else {
-        $id = $nr
-      }
+    $_partition = $partition - ['order']
+    $transformed = $_partition.map |$k, $v| { "${k}: ${v}" }
+    $line = join($transformed, ', ')
 
-      $order = pxe_install::hash_key($partition, 'order') ? {
-        false => $nr,
-        true  => $partition['order'],
-      }
-
-      echo { "${hostname}-${order}-${id}-${key}":
-        message  => "${hostname}-${id}-${nr}-${order}-${start}",
-        loglevel => 'warning',
-        withpath => false,
-      }
-
-      if $key.downcase() != 'order' {
-        concat::fragment { "${hostname}-${order}-${id}-${key}":
-          content => epp($template_part_entry, {
-              start => $start,
-              key   => $key,
-              value => $value,
-          }),
-          target  => $kickstart_file,
-          order   => $order,
-        }
-
-        $start = false
-      }
+    concat::fragment { "${hostname}-partitioning=${order}":
+      content => epp($template_part_entry, {
+          line => $line,
+      }),
+      target  => $kickstart_file,
+      order   => $order,
     }
   }
 }
