@@ -1,5 +1,5 @@
-<%- $autopart.each |$device| { 
-  $dev = split($device, '[/]')[0] -%>
+<%- $autopart.each |$device| { -%>
+<% $dev = split($device, '[/]')[2] %>
     - ptable: gpt
       path: <%= $device %>
       wipe: superblock-recursive
