@@ -65,8 +65,8 @@ define pxe_install::partitioning::ubuntu_autoinstall (
         true  => $partition['order'],
       }
 
-      echo { "${hostname}-${order}-${key}":
-        message  => "${hostname}-${id}-${key}-${order}",
+      echo { "${hostname}-${order}-${id}":
+        message  => "${hostname}-${id}-${nr}-${order}-${start}",
         loglevel => 'warning',
         withpath => false,
       }
