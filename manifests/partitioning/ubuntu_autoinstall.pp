@@ -51,9 +51,12 @@ define pxe_install::partitioning::ubuntu_autoinstall (
     $start = false
     $partition.each |$key, $value| {
       $nr = $nr + 1
-      $order = pxe_install::hash_key($partition, 'order') ? {
-        true    => $partition['order'],
-        default => $nr,
+      if pxe_install::hash_key($partition, 'id') {
+        $order = $partition['id']
+      } elsif pxe_install::hash_key($partition, 'order') {
+        $order = $partition['order']
+      } else {
+        $order = $nr
       }
 
       if $key.downcase() != 'order' {
