@@ -1,0 +1,116 @@
+#cloud-config
+autoinstall:
+  early-commands:
+  - echo "production" > /tmp/puppetenv
+  - echo "ubuntu" > /tmp/puppetrole
+  - echo "home" > /tmp/datacenter
+  refresh-installer:
+    update: true
+    channel: "stable/ubuntu-$REL"
+  apt:
+    disable_components: []
+    geoip: true
+    preserve_sources_list: false
+    primary:
+    - arches:
+      - amd64
+      - i386
+      uri: archive.ubuntu.com//ubuntu
+    - arches:
+      - default
+      uri: archive.ubuntu.com/ubuntu-ports
+  drivers:
+    install: false
+  identity:
+    hostname: tk21
+    password: $5$hEdaHTTg$Txw0iJqo1yDLuY6AryedpMM4XlN1k94b1a8U4WwBvyD
+    realname: Thomas Krieger
+    username: kriegeth
+  kernel:
+    package: linux-generic
+  keyboard:
+    layout: de
+    toggle: null
+    variant: ''
+  locale: en_US.UTF-8
+  timezone: Europe/Berlin
+  network:
+    ethernets:
+      eth0:
+        addresses:
+        - 10.10.54.57/255.255.255.0
+        gateway4: 10.10.54.4
+        nameservers:
+          addresses:
+          - 10.10.54.62
+          - 10.10.54.63
+          - 10.10.54.25
+          search:
+          - home.tom-krieger.de
+    version: 2
+  source:
+    id: ubuntu-server
+    search_drivers: false
+  ssh:
+    allow-pw: true
+    authorized-keys: []
+    install-server: true
+  packages:
+  - openssh-server 
+  - gnupg2
+  storage:
+    config:
+    - ptable: gpt
+      path: /dev/sda
+      wipe: superblock-recursive
+      preserve: false
+      name: ''
+      grub_device: true
+      type: disk
+      id: disk-sda
+    - { name: vgos, devices: [partition-2], preserve: false, type: lvm_volgroup, id: lvm_volgroup-vgos }
+    - { ptable: gpt, path: /dev/sda, wipe: superblock-recursive, preserve: false, name: , grub_device: true, type: disk, id: disk-sda }
+    - { device: disk-sda, size: 2G, flag: bios_grub, number: 1, preserve: false, grub_device: false, offset: 1048576, type: partition, id: partition-0 }
+    - { device: disk-sda, size: 2G, wipe: superblock, number: 2, preserve: false, grub_device: false, offset: 2097152, type: partition, id: partition-1 }
+    - { fstype: ext4, volume: partition-1, preserve: false, type: format, id: format-0 }
+    - { device: disk-sda, size: -1, wipe: superblock, number: 3, preserve: false, grub_device: false, type: partition, id: partition-2 }
+    - { name: lvol_root, volgroup: vgos, size: 4G, wipe: superblock, preserve: false, type: lvm_partition, id: lvm_partition-0 }
+    - { fstype: ext4, volume: lvm_partition-0, preserve: false, type: format, id: format-1 }
+    - { path: /, device: format-1, type: mount, id: mount-1 }
+    - { path: /boot, device: format-0, type: mount, id: mount-0 }
+    - { name: lvol_swap, volgroup: vgos, size: 4G, wipe: superblock, preserve: false, type: lvm_partition, id: lvm_partition-1 }
+    - { fstype: swap, volume: lvm_partition-1, preserve: false, type: format, id: format-2 }
+    - { path: swap, device: format-2, type: mount, id: mount-2 }
+    - { name: lvol_home, volgroup: vgos, size: 2G, wipe: superblock, preserve: false, type: lvm_partition, id: lvm_partition-2 }
+    - { fstype: ext4, volume: lvm_partition-2, preserve: false, id: format-3 }
+    - { path: /home, device: format-3, type: mount, id: mount-3 }
+    - { name: lvol_var, volgroup: vgos, size: 10G, wipe: superblock, preserve: false, type: lvm_partition, id: lvm_partition-3 }
+    - { fstype: ext4, volume: lvm_partition-3, preserve: false, id: format-4 }
+    - { path: /var, device: format-4, type: mount, id: mount-4 }
+    - { name: lvol_var_log, volgroup: vgos, size: 10G, wipe: superblock, preserve: false, type: lvm_partition, id: lvm_partition-4 }
+    - { fstype: ext4, volume: lvm_partition-4, preserve: false, id: format-5 }
+    - { path: /var/log, device: format-5, type: mount, id: mount-5 }
+    - { name: lvol_var_log_audit, volgroup: vgos, size: 10G, wipe: superblock, preserve: false, type: lvm_partition, id: lvm_partition-5 }
+    - { fstype: ext4, volume: lvm_partition-5, preserve: false, id: format-6 }
+    - { path: /var/log/audit, device: format-6, type: mount, id: mount-6 }
+    - { name: lvol_usr, volgroup: vgos, size: 8G, wipe: superblock, preserve: false, type: lvm_partition, id: lvm_partition-6 }
+    - { fstype: ext4, volume: lvm_partition-6, preserve: false, id: format-7 }
+    - { path: /usr, device: format-7, type: mount, id: mount-7 }
+    - { name: lvol_tmp, volgroup: vgos, size: 2G, wipe: superblock, preserve: false, type: lvm_partition, id: lvm_partition-7 }
+    - { fstype: ext4, volume: lvm_partition-7, preserve: false, id: format-8 }
+    - { path: /tmp, device: format-8, type: mount, id: mount-8 }
+    - { name: lvol_var_tmp, volgroup: vgos, size: 2G, wipe: superblock, preserve: false, type: lvm_partition, id: lvm_partition-8 }
+    - { fstype: ext4, volume: lvm_partition-8, preserve: false, id: format-9 }
+    - { path: /var/tmp, device: format-9, type: mount, id: mount-9 }
+  late-commands:
+  - if [ -f /tmp/puppetenv ] ; then cp /tmp/puppetenv /target/tmp/ ; fi
+  - if [ -f /tmp/puppetrole ] ; then cp /tmp/puppetrole /target/tmp/ ; fi
+  - if [ -f /tmp/datacenter ] ; then cp /tmp/datacenter /target/tmp/ ; fi
+  - ls -la /tmp
+  - apt-get -y install curl bash
+  - rm -f /tmp/ubuntu-post.sh
+  - wget -O /tmp/ubuntu-post.sh http://repos.home.tom-krieger.de/pub/ubuntu-post.sh
+  - chmod 755 /tmp/ubuntu-post.sh
+  - /tmp/ubuntu-post.sh n 
+  updates: all
+  version: 1

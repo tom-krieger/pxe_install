@@ -1,3 +1,4 @@
+    config:
 <%- $autopart.each |$device| { -%>
 <% $dev = split($device, '[/]')[2] -%>
     - ptable: gpt

@@ -7,4 +7,4 @@ label ks
         menu label ^ks
         menu default
         kernel <%= $prefix %>/vmlinuz
-        append ip=dhcp url=<%= $bootiso %> autoinstall initrd=<%= $prefix %>/initrd ds="nocloud-net;s=<%= $ksurl %>" cloud-config-url=<%= $ksurl %> root=/dev/ram0 ramdisk_size=1500000 log_host=<%= $loghost %> log_port=<%= $logport %> puppetenv=<%= $puppetenv %> role=<%= $puppetrole %> dc=<%= $datacenter %> ---
+        append ip=dhcp url=<%= $bootiso %> autoinstall initrd=<%= $prefix %>/initrd cloud-config-url=<%= $ksurl %> root=/dev/ram0 ramdisk_size=1500000 log_host=<%= $loghost %> log_port=<%= $logport %> puppetenv=<%= $puppetenv %> role=<%= $puppetrole %> dc=<%= $datacenter %> ---

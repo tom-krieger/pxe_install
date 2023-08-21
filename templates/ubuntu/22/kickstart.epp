@@ -67,5 +67,10 @@ autoinstall:
   - openssh-server 
   - gnupg2
   <%- } -%>
+  <%- if ! empty($loghost) { -%>
+  reporting:
+    central:
+      type: rsyslog
+      destination: @<%= $loghost %>
+  <%- } -%>
   storage:
-    config:
