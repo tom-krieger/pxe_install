@@ -15,10 +15,10 @@ autoinstall:
     - arches:
       - amd64
       - i386
-      uri: <%= $mirror %>/<%= $mirror_dir %>
+      uri: <%= $mirror %><%= $mirror_dir %>
     - arches:
       - default
-      uri: <%= $mirror %>/ubuntu-ports
+      uri: <%= $mirror_ports %><%= $mirror_ports_dir %>
   drivers:
     install: false
   identity:
@@ -67,5 +67,7 @@ autoinstall:
   - openssh-server 
   - gnupg2
   <%- } -%>
+  - curl
+  - bash
   storage:
     version: 1

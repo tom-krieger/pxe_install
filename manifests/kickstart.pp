@@ -251,13 +251,19 @@ define pxe_install::kickstart (
         $template_start = 'pxe_install/ubuntu/22/kickstart.epp'
         $template_partitioning = 'pxe_install/22/ubuntu/kickstart-partitioning.epp'
         $template_finish = 'pxe_install/ubuntu/22/kickstart-end.epp'
+        $mirror_host = $pxe_install::mirrors['ubuntu22']['mirror_host']
+        $mirror_uri = $pxe_install::mirrors['ubuntu22']['mirror_uri']
+        $mirror_ports_host = $pxe_install::mirrors['ubuntu22']['mirror_ports_host']
+        $mirror_ports_uri = $pxe_install::mirrors['ubuntu22']['mirror_ports_uri']
       } else {
         $template_start = 'pxe_install/ubuntu/kickstart.epp'
         $template_partitioning = 'pxe_install/ubuntu/kickstart-partitioning.epp'
         $template_finish = 'pxe_install/ubuntu/kickstart-end.epp'
+        $mirror_host = $pxe_install::mirrors['ubuntu']['mirror_host']
+        $mirror_uri = $pxe_install::mirrors['ubuntu']['mirror_uri']
+        $mirror_ports_host = ''
+        $mirror_ports_uri = ''
       }
-      $mirror_host = $pxe_install::mirrors['ubuntu']['mirror_host']
-      $mirror_uri = $pxe_install::mirrors['ubuntu']['mirror_uri']
       $ksurl = "http://${pxe_install::repo_server}/kickstart/${hostname}"
       $installserverurl = ''
 
@@ -517,6 +523,8 @@ define pxe_install::kickstart (
           timezone          => $timezone,
           mirror            => $mirror_host,
           mirror_dir        => $mirror_uri,
+          mirror_ports      => $mirror_ports_host,
+          mirror_ports_dir  -> $mirror_ports_uri,
           loghost           => $loghost,
           ksdevice          => $network_data['ksdevice'],
           fqdn              => $ks_fqdn,
