@@ -68,3 +68,4 @@ autoinstall:
   - gnupg2
   <%- } -%>
   storage:
+    version: 1
