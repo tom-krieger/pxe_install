@@ -69,5 +69,6 @@ autoinstall:
   <%- } -%>
   - curl
   - bash
+  - wget
   storage:
     version: 1
