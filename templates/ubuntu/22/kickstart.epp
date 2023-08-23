@@ -70,4 +70,6 @@ autoinstall:
   - curl
   - bash
   - wget
+  - tar
+  - net-tools
   storage:
