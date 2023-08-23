@@ -74,11 +74,11 @@ define pxe_install::kickstart (
     'ubuntu': {
       $_vers = pxe_install::hash_key($data, 'osversion') ? {
         false => '',
-        true  => split(pxe_install::hash_key($data, 'osversion'), '[.]')[0]
+        true  => split($data['osversion'], '[.]')[0]
       }
       $lookupkey = empty($_vers) ? {
-        false => "ubuntu${_vers})",
         true  => 'debian',
+        false => "ubuntu${_vers})",
       }
     }
     'redhat', 'centos', 'alma', 'rocky': {
