@@ -3,6 +3,7 @@
   - if [ -f /tmp/puppetrole ] ; then cp /tmp/puppetrole /target/tmp/ ; fi
   - if [ -f /tmp/datacenter ] ; then cp /tmp/datacenter /target/tmp/ ; fi
   - ls -la /tmp
+  - ls -la /target/tmp
   - rm -f /tmp/ubuntu-post.sh
   - wget -O /tmp/ubuntu-post.sh http://<%= $reposerver %><%= $scripturl %>/ubuntu-post.sh
   - chmod 755 /tmp/ubuntu-post.sh

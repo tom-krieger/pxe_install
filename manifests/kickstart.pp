@@ -68,8 +68,18 @@ define pxe_install::kickstart (
   }
 
   case $ostype.downcase() {
-    'debian', 'ubuntu': {
+    'debian': {
       $lookupkey = 'debian'
+    }
+    'ubuntu': {
+      $_vers = pxe_install::hash_key($data, 'osversion') ? {
+        false => '',
+        true  => split(pxe_install::hash_key($data, 'osversion'), '[.]')[0]
+      }
+      $lookupkey = empty($_vers) ? {
+        false => "ubuntu${_vers})",
+        true  => 'debian',
+      }
     }
     'redhat', 'centos', 'alma', 'rocky': {
       $lookupkey = 'redhat'
