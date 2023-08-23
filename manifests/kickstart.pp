@@ -524,7 +524,7 @@ define pxe_install::kickstart (
           mirror            => $mirror_host,
           mirror_dir        => $mirror_uri,
           mirror_ports      => $mirror_ports_host,
-          mirror_ports_dir  -> $mirror_ports_uri,
+          mirror_ports_dir  => $mirror_ports_uri,
           loghost           => $loghost,
           ksdevice          => $network_data['ksdevice'],
           fqdn              => $ks_fqdn,
