@@ -72,28 +72,28 @@ function printReturn () {
 # print a starting message
 #------------------------------------------------------------------------#
 
-tput clear >/dev/tty5
-tput cup 3 0 >/dev/tty5
-curpos=3
-echo "* starting postinstall bootstrap script" >/dev/tty5
+# tput clear >/dev/tty5
+# tput cup 3 0 >/dev/tty5
+# curpos=3
+# echo "* starting postinstall bootstrap script" >/dev/tty5
 log "* starting postinstall bootstrap script"
 
-curpos=`expr $curpos + 1`
-tput cup $curpos 0 >/dev/tty5
+# curpos=`expr $curpos + 1`
+# tput cup $curpos 0 >/dev/tty5
 osname=`cat /etc/os-release | grep NAME= | cut -f 2 -d = | sed -e 's/"//g'`
 release=`cat /etc/os-release | grep VERSION_ID | cut -f 2 -d = | sed -e 's/"//g'`
 ostype="Ubuntu"
 release=${release:0:2}
-echo "* $ostype release is $release" >/dev/tty5
+# echo "* $ostype release is $release" >/dev/tty5
 echo "$ostype release is $release"
 log "$ostype release is $release"
 hostname
 hostname >/dev/tty5
 
 
-curpos=`expr $curpos + 1`
-tput cup $curpos 0 >/dev/tty5
-echo "* using logger $LOGGER" >/dev/tty5
+# curpos=`expr $curpos + 1`
+# tput cup $curpos 0 >/dev/tty5
+# echo "* using logger $LOGGER" >/dev/tty5
 
 <%- if $add_hosts_entries { -%>
 echo "${PEMASTERIP}    ${PEMASTER}" >> /etc/hosts
@@ -107,9 +107,9 @@ echo "${INSTALLSERVERIP}"    ${INSTALLSERVER}" >> /etc/hosts"
 echo "+----------------------------------------------------+"
 echo "+ updating to actual distri level with yum           +"
 echo "+----------------------------------------------------+"
-curpos=`expr $curpos + 1`
-tput cup $curpos 0 >/dev/tty5
-echo -n "* getting and installing all updates ... " >/dev/tty5
+# curpos=`expr $curpos + 1`
+# tput cup $curpos 0 >/dev/tty5
+# echo -n "* getting and installing all updates ... " >/dev/tty5
 echo "getting and installing all updates" 
 log "getting and installing all updates"
 
@@ -141,15 +141,17 @@ printReturn $ret $curpos
 echo "+----------------------------------------------------+"
 echo "+ installing puppet                                  +"
 echo "+----------------------------------------------------+"
-curpos=`expr $curpos + 1`
-tput cup $curpos 0 >/dev/tty5
-echo -n "* installing puppet ... " >/dev/tty5
+# curpos=`expr $curpos + 1`
+# tput cup $curpos 0 >/dev/tty5
+# echo -n "* installing puppet ... " >/dev/tty5
 echo "installing puppet" 
 log "installing puppet"
 
-/usr/bin/apt-get -y install tar curl net-tools
-ret=$?
 if [ "$install_puppet" = "y" ] ; then
+
+	/usr/bin/apt-get -y install tar curl net-tools
+	ret=$?
+
 	if [ "$ret" = "0" ] ; then
 		if [ -f /tmp/puppetrole ] ; then
 			puppetrole=`cat /tmp/puppetrole`
@@ -213,9 +215,9 @@ printReturn $ret $curpos
 # here we are, end of a hard work ;-)
 #------------------------------------------------------------------------#
 
-curpos=`expr $curpos + 1`
-tput cup $curpos 0 >/dev/tty5
-echo "* finished postinstall bootstrap script" >/dev/tty5
+# curpos=`expr $curpos + 1`
+# tput cup $curpos 0 >/dev/tty5
+# echo "* finished postinstall bootstrap script" >/dev/tty5
 log "* finished postinstall bootstrap script"
 
 exit 0
