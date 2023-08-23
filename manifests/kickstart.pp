@@ -581,6 +581,9 @@ define pxe_install::kickstart (
             packages          => $packages,
             boot_architecture => $boot_architecture,
             suite             => $suite,
+            puppetenv         => $parameter['env'],
+            puppetrole        => $parameter['role'],
+            datacenter        => $parameter['dc'],
         }),
         target  => $kickstart_file,
       }
