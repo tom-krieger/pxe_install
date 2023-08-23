@@ -70,5 +70,4 @@ autoinstall:
   - curl
   - bash
   - wget
-  - ash
   storage:
