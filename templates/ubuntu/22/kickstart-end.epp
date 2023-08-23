@@ -9,7 +9,9 @@
   - ls -la /target/tmp
   - rm -f /target/root/ubuntu-post.sh
   - wget -O /target/root/ubuntu-post.sh http://<%= $reposerver %><%= $scripturl %>/ubuntu-post.sh
-  - wget -O /target/root/debian-rc.local http://<%= $reposerver %><%= $scripturl %>/debian-rc.local
+  - echo "#!/bin/sh" >> /target/root/debain.rc.local
+  - echo "/root/ununtu-post.sh <%= $agent %> y <%= $puppetenv %> <%= $puppetrole %> <%= $datacenter %>" >> /target/root/debain.rc.local
+  - echo "exit 0" >> /target/root/debain.rc.local
   - chmod 755 /target/root/ubuntu-post.sh
   updates: all
   version: 1
