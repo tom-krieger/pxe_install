@@ -27,6 +27,9 @@ INSTALLSERVER="<%= $installserver %>"
 LOGGER="undef"
 INSTALLPUPPET=${1:-y}
 AUTOINSTALL=${2:-n}
+PUPPETENV=${3:-production}
+PUPPETROLE=${4:-default}
+DATACENTER=${5:-none}
 
 echo "running ubuntu postinstall with puppet = ${INSTALLPUPPET} and autoinstall = ${AUTOINSTALL}"
 
@@ -167,23 +170,17 @@ then
 	then
 		if [ -f /tmp/puppetrole ]
 		then
-			puppetrole=`cat /tmp/puppetrole`
-		else
-			puppetrole="default"
+			PUPPETROLE=`cat /tmp/puppetrole`
 		fi
 
 		if [ -f /tmp/puppetenv ]
 		then
-			puppetenv=`cat /tmp/puppetenv`
-		else
-			puppetenv="production"
+			PUPPETENV=`cat /tmp/puppetenv`
 		fi
 
 		if [ -f /tmp/datacenter ]
 		then
-			datacenter=`cat /tmp/datacenter`
-		else
-			datacenter="none"
+			DATACENTER=`cat /tmp/datacenter`
 		fi
 
 		if [ ! -d /etc/puppetlabs/puppet ]
@@ -192,7 +189,7 @@ then
 			mkdir -p /etc/puppetlabs/puppet
 		fi
 
-		log "puppet environment ${puppetenv}, role ${puppetrole}"
+		log "puppet environment ${PUPPETENV}, role ${PUPPETROLE}"
 
 		cat > /etc/puppetlabs/puppet/csr_attributes.yaml << YAML
 custom_attributes:
@@ -200,10 +197,10 @@ custom_attributes:
 extension_requests:
     pp_image_name:  Ubuntu-${release}
     pp_hostname: `hostname`
-    pp_datacenter: $datacenter
-    pp_role: $puppetrole
-    pp_auth_role: $puppetrole
-    pp_environment: $puppetenv
+    pp_datacenter: ${DATACENTER}
+    pp_role: ${PUPPETROLE}
+    pp_auth_role: ${PUPPETROLE}
+    pp_environment: ${PUPPETENV}
 YAML
 		curl -k https://${PEMASTER}:8140/packages/current/install.bash | sudo bash
 		/usr/local/bin/puppet config set environment $puppetenv --section agent

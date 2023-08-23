@@ -7,6 +7,6 @@
   - rm -f /tmp/ubuntu-post.sh
   - wget -O /tmp/ubuntu-post.sh http://<%= $reposerver %><%= $scripturl %>/ubuntu-post.sh
   - chmod 755 /tmp/ubuntu-post.sh
-  - /tmp/ubuntu-post.sh <%= $agent %> y
+  - /tmp/ubuntu-post.sh <%= $agent %> y <%= $puppetenv %> <%= $puppetrole %> <%= $datacenter %>
   updates: all
   version: 1
