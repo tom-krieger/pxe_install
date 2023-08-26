@@ -146,7 +146,7 @@ extension_requests:
 YAML
 
 	curl -k https://${PEMASTER}:8140/packages/current/install.bash | sudo bash
-	/usr/local/bin/puppet config set environment $puppetenv --section agent
+	/usr/local/bin/puppet config set environment ${PUPPETENV} --section agent
 
 	sleep 2
 
