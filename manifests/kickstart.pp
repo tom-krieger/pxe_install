@@ -243,6 +243,8 @@ define pxe_install::kickstart (
       $mirror_uri = $pxe_install::mirrors['debian']['mirror_uri']
       $ksurl = "http://${pxe_install::repo_server}/kickstart/${hostname}"
       $installserverurl = ''
+      $mirror_ports_host = ''
+      $mirror_ports_uri = ''
 
       pxe_install::partitioning::debian { $hostname:
         hostname          => $hostname,
@@ -294,6 +296,8 @@ define pxe_install::kickstart (
         $mirror_uri = $pxe_install::mirrors['fedora'][$data['osversion']]['mirror_uri']
         $ksurl = "http://${pxe_install::repo_server}/kickstart/${hostname}"
         $installserverurl = "${mirror_host}${mirror_uri}"
+        $mirror_ports_host = ''
+        $mirror_ports_uri = ''
 
         pxe_install::partitioning::redhat { $hostname:
           hostname          => $hostname,
@@ -362,6 +366,8 @@ define pxe_install::kickstart (
         $mirror_uri = $pxe_install::mirrors['alma'][$data['osversion']]['mirror_uri']
         $ksurl = "http://${pxe_install::repo_server}/kickstart/${hostname}"
         $installserverurl = "${mirror_host}${mirror_uri}"
+        $mirror_ports_host = ''
+        $mirror_ports_uri = ''
 
         pxe_install::partitioning::redhat { $hostname:
           hostname          => $hostname,
@@ -382,6 +388,8 @@ define pxe_install::kickstart (
         $mirror_uri = $pxe_install::mirrors['rocky'][$data['osversion']]['mirror_uri']
         $ksurl = "http://${pxe_install::repo_server}/kickstart/${hostname}"
         $installserverurl = "${mirror_host}${mirror_uri}"
+        $mirror_ports_host = ''
+        $mirror_ports_uri = ''
 
         pxe_install::partitioning::redhat { $hostname:
           hostname          => $hostname,
@@ -402,6 +410,8 @@ define pxe_install::kickstart (
         $mirror_uri = $pxe_install::mirrors[$ostype.downcase()][$data['osversion']]['mirror_uri']
         $ksurl = "http://${pxe_install::repo_server}/kickstart/${hostname}"
         $installserverurl = "${mirror_host}${mirror_uri}"
+        $mirror_ports_host = ''
+        $mirror_ports_uri = ''
 
         pxe_install::partitioning::redhat { $hostname:
           hostname          => $hostname,
