@@ -1,4 +1,4 @@
-#!/bin/ash
+#!/bin/bash
 
 # set -x -v
 
@@ -25,12 +25,13 @@ PEMASTERIP="<%= $puppetmasterip %>"
 INSTALLSERVERIP="<%= $installserverip %>"
 INSTALLSERVER="<%= $installserver %>"
 LOGGER="undef"
+INSTALLPUPPET=${1:-y}
+AUTOINSTALL=${2:-n}
+PUPPETENV=${3:-production}
+PUPPETROLE=${4:-default}
+DATACENTER=${5:-none}
 
-if [ "$#" = "1" ] ; then
-	install_puppet=$1
-else
-	install_puppet="y"
-fi
+echo "running ubuntu postinstall with puppet = ${INSTALLPUPPET} and autoinstall = ${AUTOINSTALL}"
 
 if [ -x "/usr/bin/logger" ] ; then
 	LOGGER="/usr/bin/logger"
@@ -44,9 +45,11 @@ fi
 
 function log () {
 
-	if [ ! -z "$1" ] ; then
+	if [ ! -z "$1" ]
+	then
 
-		if [ "$LOGGER" != "undef" ] ; then
+		if [ "$LOGGER" != "undef" ]
+		then
 			$LOGGER -p daemon.info -t postinstall "$1"
 		fi
 
@@ -61,7 +64,8 @@ function printReturn () {
 	ret=$1
 	pos=$2
 	tput cup $pos 65 >/dev/tty5
-	if [ "$ret" = "0" ] ; then
+	if [ "$ret" = "0" ]
+	then
 		echo "[ success ]" >/dev/tty5
 	else
 		echo "[ failure ]" >/dev/tty5
@@ -69,153 +73,136 @@ function printReturn () {
 }
 
 #------------------------------------------------------------------------#
+# update all installed packages to their latest version
+#------------------------------------------------------------------------#
+
+function installUpdates () {
+
+	log "getting and installing all updates"
+
+	ret=0
+	/usr/bin/apt-get -y update
+	if [ "$?" != "0" ]
+	then
+		echo "apt-get update failed"
+		ret=1
+	else
+		/usr/bin/apt-get -y upgrade
+		if [ "$?" != "0" ] ; then
+			echo "apt-get upgrade failed"
+			ret=1
+		fi
+	fi
+
+	if [ "$ret" != "0" ]
+	then
+		log "error installing updates"
+	else
+		log "updates installed successfully"
+	fi
+
+}
+
+#------------------------------------------------------------------------#
+# install puppet
+#------------------------------------------------------------------------#
+
+function installPuppet () {
+	log "installing puppet"
+
+	if [ -f /tmp/puppetrole ]
+	then
+		PUPPETROLE=`cat /tmp/puppetrole`
+	fi
+
+	if [ -f /tmp/puppetenv ]
+	then
+		PUPPETENV=`cat /tmp/puppetenv`
+	fi
+
+	if [ -f /tmp/datacenter ]
+	then
+		DATACENTER=`cat /tmp/datacenter`
+	fi
+
+	if [ ! -d /etc/puppetlabs/puppet ]
+	then
+		echo "creating directory /etc/puppetlabs/puppet"
+		mkdir -p /etc/puppetlabs/puppet
+	fi
+
+	log "puppet environment ${PUPPETENV}, role ${PUPPETROLE}"
+
+	cat > /etc/puppetlabs/puppet/csr_attributes.yaml << YAML
+custom_attributes:
+    1.2.840.113549.1.9.7: <%= unwrap($challenge_password) %>
+extension_requests:
+    pp_image_name:  Ubuntu-${release}
+    pp_hostname: `hostname`
+    pp_datacenter: ${DATACENTER}
+    pp_role: ${PUPPETROLE}
+    pp_auth_role: ${PUPPETROLE}
+    pp_environment: ${PUPPETENV}
+YAML
+
+	curl -k https://${PEMASTER}:8140/packages/current/install.bash | sudo bash
+	/usr/local/bin/puppet config set environment ${PUPPETENV} --section agent
+
+	sleep 2
+
+	systemctl enable puppet
+
+	while [ -f "/opt/puppetlabs/puppet/cache/state/agent_catalog_run.lock" ]
+	do
+			echo "puppet run currently on the way ..."
+			log "puppet run currently on the way ..."
+			sleep 20
+	done
+
+	/usr/local/bin/puppet agent -t
+}
+
+#------------------------------------------------------------------------#
 # print a starting message
 #------------------------------------------------------------------------#
 
-tput clear >/dev/tty5
-tput cup 3 0 >/dev/tty5
-curpos=3
-echo "* starting postinstall bootstrap script" >/dev/tty5
 log "* starting postinstall bootstrap script"
+log "* running ubuntu postinstall with puppet = ${INSTALLPUPPET} and autoinstall = ${AUTOINSTALL}"
 
-curpos=`expr $curpos + 1`
-tput cup $curpos 0 >/dev/tty5
 osname=`cat /etc/os-release | grep NAME= | cut -f 2 -d = | sed -e 's/"//g'`
 release=`cat /etc/os-release | grep VERSION_ID | cut -f 2 -d = | sed -e 's/"//g'`
 ostype="Ubuntu"
 release=${release:0:2}
-echo "* $ostype release is $release" >/dev/tty5
+
 echo "$ostype release is $release"
 log "$ostype release is $release"
 hostname
-hostname >/dev/tty5
-
-
-curpos=`expr $curpos + 1`
-tput cup $curpos 0 >/dev/tty5
-echo "* using logger $LOGGER" >/dev/tty5
 
 <%- if $add_hosts_entries { -%>
 echo "${PEMASTERIP}    ${PEMASTER}" >> /etc/hosts
 echo "${INSTALLSERVERIP}"    ${INSTALLSERVER}" >> /etc/hosts"
 <%- } -%>
 
-#------------------------------------------------------------------------#
-# update all installed packages to their latest version
-#------------------------------------------------------------------------#
-
-echo "+----------------------------------------------------+"
-echo "+ updating to actual distri level with yum           +"
-echo "+----------------------------------------------------+"
-curpos=`expr $curpos + 1`
-tput cup $curpos 0 >/dev/tty5
-echo -n "* getting and installing all updates ... " >/dev/tty5
-echo "getting and installing all updates" 
-log "getting and installing all updates"
-
-ret=0
-/usr/bin/apt-get -y update
-if [ "$?" != "0" ] ; then
-	echo "apt-get update failed"
-	ret=1
+if [ "${AUTOINSTALL}" = "n" ]
+then
+	installUpdates
 else
-	/usr/bin/apt-get -y upgrade
-	if [ "$?" != "0" ] ; then
-		echo "apt-get upgrade failed"
-		ret=1
-	fi
+	log "* skipping update installation" 
 fi
 
-if [ "$ret" != "0" ] ; then
-	log "error installing updates"
+if [ "${INSTALLPUPPET}" = "y" ]
+then
+	installPuppet
+fi
+
+if [ "${AUTOINSTALL}" = "y" ]
+then
+	sed -i '/ubuntu-post/d' /etc/rc.local
+
+	log "* finished postinstall bootstrap script, rebooting ..."
+	reboot
 else
-	log "updates installed successfully"
+	log "* finished postinstall bootstrap script"
 fi
-
-printReturn $ret $curpos
-
-#------------------------------------------------------------------------#
-# install puppet
-#------------------------------------------------------------------------#
-
-echo "+----------------------------------------------------+"
-echo "+ installing puppet                                  +"
-echo "+----------------------------------------------------+"
-curpos=`expr $curpos + 1`
-tput cup $curpos 0 >/dev/tty5
-echo -n "* installing puppet ... " >/dev/tty5
-echo "installing puppet" 
-log "installing puppet"
-
-/usr/bin/apt-get -y install tar curl net-tools
-ret=$?
-if [ "$install_puppet" = "y" ] ; then
-	if [ "$ret" = "0" ] ; then
-		if [ -f /tmp/puppetrole ] ; then
-			puppetrole=`cat /tmp/puppetrole`
-		else
-			puppetrole="default"
-		fi
-
-		if [ -f /tmp/puppetenv ] ; then
-			puppetenv=`cat /tmp/puppetenv`
-		else
-			puppetenv="production"
-		fi
-
-		if [ -f /tmp/datacenter ] ; then
-			datacenter=`cat /tmp/datacenter`
-		else
-			datacenter="none"
-		fi
-
-		if [ ! -d /etc/puppetlabs/puppet ]; then
-					echo "creating directory /etc/puppetlabs/puppet"
-					mkdir -p /etc/puppetlabs/puppet
-		fi
-
-		log "puppet environment ${puppetenv}, role ${puppetrole}"
-
-		cat > /etc/puppetlabs/puppet/csr_attributes.yaml << YAML
-custom_attributes:
-    1.2.840.113549.1.9.7: <%= unwrap($challenge_password) %>
-extension_requests:
-    pp_image_name:  Ubuntu-${release}
-    pp_hostname: `hostname`
-    pp_datacenter: $datacenter
-    pp_role: $puppetrole
-    pp_auth_role: $puppetrole
-    pp_environment: $puppetenv
-YAML
-		curl -k https://${PEMASTER}:8140/packages/current/install.bash | sudo bash
-		/usr/local/bin/puppet config set environment $puppetenv --section agent
-
-		sleep 2
-
-		systemctl enable puppet
-
-		while [ -f "/opt/puppetlabs/puppet/cache/state/agent_catalog_run.lock" ] ; do
-				echo "puppet run currently on the way ..."
-				log "puppet run currently on the way ..."
-				sleep 20
-		done
-
-		/usr/local/bin/puppet agent -t
-	else
-		log "installation of curl pkg failed"
-		echo "installation of curl pkg failed"
-	fi
-fi
-	
-printReturn $ret $curpos
-
-#------------------------------------------------------------------------#
-# here we are, end of a hard work ;-)
-#------------------------------------------------------------------------#
-
-curpos=`expr $curpos + 1`
-tput cup $curpos 0 >/dev/tty5
-echo "* finished postinstall bootstrap script" >/dev/tty5
-log "* finished postinstall bootstrap script"
 
 exit 0

@@ -12,7 +12,7 @@
 class pxe_install::dhcp (
   Hash $dhcp
 ) {
-  if has_key($dhcp, 'default_filename') {
+  if pxe_install::hash_key($dhcp, 'default_filename') {
     $pxefilename = $dhcp['default_filename']
   } elsif $pxe_install::defaults['pxefile'] != '' {
     $pxefilename = $pxe_install::defaults['pxefile']
@@ -21,7 +21,7 @@ class pxe_install::dhcp (
     $pxefilename = 'pxelinux.0'
   }
 
-  if has_key($dhcp, 'ipxe_bootstrap') and has_key($dhcp, 'ipxe_filename') {
+  if pxe_install::hash_key($dhcp, 'ipxe_bootstrap') and pxe_install::hash_key($dhcp, 'ipxe_filename') {
     $ipxe_config = {
       ipxe_bootstrap => $dhcp['ipxe_bootstrap'],
       ipxe_filename => $dhcp['ipxe_filename'],
@@ -30,7 +30,7 @@ class pxe_install::dhcp (
     $ipxe_config = {}
   }
 
-  if has_key($dhcp, 'globaloptions') {
+  if pxe_install::hash_key($dhcp, 'globaloptions') {
     $_globaloptions = $dhcp['globaloptions']
   } else {
     $_globaloptions = []
@@ -61,7 +61,7 @@ class pxe_install::dhcp (
   }
 
   # loop over subnets
-  if has_key($dhcp, 'pools') {
+  if pxe_install::hash_key($dhcp, 'pools') {
     $dhcp['pools'].each |$pool_name, $pool_data| {
       dhcp::pool { $pool_name:
         * => $pool_data,
@@ -70,7 +70,7 @@ class pxe_install::dhcp (
   }
 
   # loop over dhcp entried for dynamic ips
-  if has_key($dhcp, 'hosts') {
+  if pxe_install::hash_key($dhcp, 'hosts') {
     $dhcp['hosts'].each |$host_name, $host_data| {
       dhcp::host { $host_name:
         *       => $host_data,

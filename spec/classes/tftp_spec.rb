@@ -28,12 +28,12 @@ describe 'pxe_install::tftp' do
 
         is_expected.to contain_package('tftp-server')
           .with(
-            'ensure' => 'present',
+            'ensure' => 'installed',
           )
 
         is_expected.to contain_package('xinetd')
           .with(
-            'ensure' => 'present',
+            'ensure' => 'installed',
           )
 
         is_expected.to contain_service('xinetd')
@@ -72,12 +72,12 @@ describe 'pxe_install::tftp' do
 
           is_expected.to contain_package('tftp-server')
             .with(
-              'ensure' => 'present',
+              'ensure' => 'installed',
             )
 
           is_expected.to contain_package('xinetd')
             .with(
-              'ensure' => 'present',
+              'ensure' => 'installed',
             )
 
           is_expected.to contain_service('xinetd')

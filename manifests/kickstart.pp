@@ -61,15 +61,25 @@ define pxe_install::kickstart (
   $parameter    = $data['parameter']
   $ensure       = $data['ensure']
 
-  if has_key($data, 'ostype') {
+  if pxe_install::hash_key($data, 'ostype') {
     $ostype       = $data['ostype']
   } else {
     fail("Host ${hostname} has no ostype given!")
   }
 
   case $ostype.downcase() {
-    'debian', 'ubuntu': {
+    'debian': {
       $lookupkey = 'debian'
+    }
+    'ubuntu': {
+      $_vers = pxe_install::hash_key($data, 'osversion') ? {
+        false => '',
+        true  => split($data['osversion'], '[.]')[0]
+      }
+      $lookupkey = empty($_vers) ? {
+        true  => 'debian',
+        false => "ubuntu${_vers})",
+      }
     }
     'redhat', 'centos', 'alma', 'rocky': {
       $lookupkey = 'redhat'
@@ -87,9 +97,9 @@ define pxe_install::kickstart (
 
   $defaults = $pxe_install::defaults
 
-  if has_key($data, 'partitioning') {
+  if pxe_install::hash_key($data, 'partitioning') {
     $partitioning = $data['partitioning']
-  } elsif has_key($data, 'partitiontable') and has_key($defaults['partitioning'], $data['partitiontable']) {
+  } elsif pxe_install::hash_key($data, 'partitiontable') and pxe_install::hash_key($defaults['partitioning'], $data['partitiontable']) {
     $partitioning = $defaults['partitioning'][$data['partitiontable']]
   } else {
     $partitioning = $defaults['partitioning'][$lookupkey]
@@ -99,7 +109,7 @@ define pxe_install::kickstart (
     fail("Host ${hostname} contains an invalid value for ensure: ${ensure}")
   }
 
-  if has_key($data, 'network') {
+  if pxe_install::hash_key($data, 'network') {
     $network_data = $data['network']
   } else {
     fail("Host ${hostname} has no network configuration!")
@@ -109,22 +119,22 @@ define pxe_install::kickstart (
     fail("Host ${hostname} has no or no valid partitioning information.")
   }
 
-  unless has_key($network_data, 'fixedaddress') {
+  unless pxe_install::hash_key($network_data, 'fixedaddress') {
     fail("A server needs an ip address. Parameter fixedaddress missing for ${hostname}")
   }
 
-  unless has_key($network_data, 'mac') {
+  unless pxe_install::hash_key($network_data, 'mac') {
     fail("A server needs a mac address for installation. ${hostname} has none!")
   }
 
-  if  ! has_key($data, 'osversion') and $ensure == 'present' and
+  if  ! pxe_install::hash_key($data, 'osversion') and $ensure == 'present' and
   ($ostype.downcase() == 'alma' or $ostype.downcase() == 'rocky' or
   $ostype.downcase() == 'centos' or $ostype.downcase() == 'windows') {
     fail("Host ${hostname} needs an osversion!")
   }
 
   if ($ostype.downcase() == 'debian') and ($ensure == 'present') {
-    $suite = has_key($data, 'osversion') ? {
+    $suite = pxe_install::hash_key($data, 'osversion') ? {
       true  => $data['osversion'],
       false => 'stable',
     }
@@ -132,9 +142,9 @@ define pxe_install::kickstart (
     $suite = ''
   }
 
-  if has_key($data, 'user') {
+  if pxe_install::hash_key($data, 'user') {
     $user = $data['user']
-  } elsif has_key($defaults, 'user') {
+  } elsif pxe_install::hash_key($defaults, 'user') {
     $user = $defaults['user']
   } else {
     $user = {}
@@ -151,29 +161,29 @@ define pxe_install::kickstart (
     }
   }
 
-  if has_key($data, 'loghost') {
+  if pxe_install::hash_key($data, 'loghost') {
     $loghost = $data['loghost']
   } else {
     $loghost = $defaults['loghost']
   }
 
-  if has_key($data, 'logport') {
+  if pxe_install::hash_key($data, 'logport') {
     $logport = $data['logport']
   } else {
     $logport = $defaults['logport']
   }
 
-  $bootdevice = has_key($data, 'bootdevice') ? {
+  $bootdevice = pxe_install::hash_key($data, 'bootdevice') ? {
     true    => $data['bootdevice'],
     default => 'default',
   }
 
-  $boot_architecture = has_key($network_data, 'boot_architecture') ? {
+  $boot_architecture = pxe_install::hash_key($network_data, 'boot_architecture') ? {
     true    => $network_data['boot_architecture'],
     default => '',
   }
 
-  unless has_key($defaults, 'boot_scenarios') {
+  unless pxe_install::hash_key($defaults, 'boot_scenarios') {
     fail('Boot scenario configuration is missing in defaults configuration.')
   }
 
@@ -197,12 +207,17 @@ define pxe_install::kickstart (
     }
   }
 
-  $dns_data = has_key($network_data, 'dns') ? {
+  $dns_data = pxe_install::hash_key($network_data, 'dns') ? {
     true    => join($network_data['dns'], ','),
     default => join($defaults['dns'], ','),
   }
 
-  if has_key($network_data, 'domain') {
+  $dnslist = pxe_install::hash_key($network_data, 'dns') ? {
+    true  => $network_data['dns'],
+    false => $defaults['dns'],
+  }
+
+  if pxe_install::hash_key($network_data, 'domain') {
     $domain = $network_data['domain']
   } elsif $defaults['domain'] != '' {
     $domain = $defaults['domain']
@@ -210,12 +225,12 @@ define pxe_install::kickstart (
     fail("No domain for ${hostname} given and no default domain available!")
   }
 
-  $locale = has_key($data, 'locale') ? {
+  $locale = pxe_install::hash_key($data, 'locale') ? {
     true    => $data['locale'],
     default => $defaults['locale'],
   }
 
-  $keyboard = has_key($data, 'keyboard') ? {
+  $keyboard = pxe_install::hash_key($data, 'keyboard') ? {
     true    => $data['keyboard'],
     default => $defaults['keyboard'],
   }
@@ -228,6 +243,8 @@ define pxe_install::kickstart (
       $mirror_uri = $pxe_install::mirrors['debian']['mirror_uri']
       $ksurl = "http://${pxe_install::repo_server}/kickstart/${hostname}"
       $installserverurl = ''
+      $mirror_ports_host = ''
+      $mirror_ports_uri = ''
 
       pxe_install::partitioning::debian { $hostname:
         hostname          => $hostname,
@@ -237,11 +254,28 @@ define pxe_install::kickstart (
       }
     }
     'ubuntu': {
-      $template_start = 'pxe_install/ubuntu/kickstart.epp'
-      $template_partitioning = 'pxe_install/ubuntu/kickstart-partitioning.epp'
-      $template_finish = 'pxe_install/ubuntu/kickstart-end.epp'
-      $mirror_host = $pxe_install::mirrors['ubuntu']['mirror_host']
-      $mirror_uri = $pxe_install::mirrors['ubuntu']['mirror_uri']
+      $major = $data['osversion'] ? {
+        undef   => '',
+        default => split($data['osversion'], '[.]')[0],
+      }
+
+      if $major >= '22' {
+        $template_start = 'pxe_install/ubuntu/22/kickstart.epp'
+        $template_partitioning = 'pxe_install/22/ubuntu/kickstart-partitioning.epp'
+        $template_finish = 'pxe_install/ubuntu/22/kickstart-end.epp'
+        $mirror_host = $pxe_install::mirrors['ubuntu22']['mirror_host']
+        $mirror_uri = $pxe_install::mirrors['ubuntu22']['mirror_uri']
+        $mirror_ports_host = $pxe_install::mirrors['ubuntu22']['mirror_ports_host']
+        $mirror_ports_uri = $pxe_install::mirrors['ubuntu22']['mirror_ports_uri']
+      } else {
+        $template_start = 'pxe_install/ubuntu/kickstart.epp'
+        $template_partitioning = 'pxe_install/ubuntu/kickstart-partitioning.epp'
+        $template_finish = 'pxe_install/ubuntu/kickstart-end.epp'
+        $mirror_host = $pxe_install::mirrors['ubuntu']['mirror_host']
+        $mirror_uri = $pxe_install::mirrors['ubuntu']['mirror_uri']
+        $mirror_ports_host = ''
+        $mirror_ports_uri = ''
+      }
       $ksurl = "http://${pxe_install::repo_server}/kickstart/${hostname}"
       $installserverurl = ''
 
@@ -250,17 +284,20 @@ define pxe_install::kickstart (
         partitioning      => $partitioning,
         kickstart_file    => $kickstart_file,
         boot_architecture => $boot_architecture,
+        major             => $major,
       }
     }
     'fedora': {
       $template_start = 'pxe_install/fedora/kickstart.epp'
       $template_finish = 'pxe_install/fedora/kickstart-end.epp'
 
-      if has_key($pxe_install::mirrors['fedora'], $data['osversion']) {
+      if pxe_install::hash_key($pxe_install::mirrors['fedora'], $data['osversion']) {
         $mirror_host = $pxe_install::mirrors['fedora'][$data['osversion']]['mirror_host']
         $mirror_uri = $pxe_install::mirrors['fedora'][$data['osversion']]['mirror_uri']
         $ksurl = "http://${pxe_install::repo_server}/kickstart/${hostname}"
         $installserverurl = "${mirror_host}${mirror_uri}"
+        $mirror_ports_host = ''
+        $mirror_ports_uri = ''
 
         pxe_install::partitioning::redhat { $hostname:
           hostname          => $hostname,
@@ -277,14 +314,14 @@ define pxe_install::kickstart (
       $mirror_uri = $pxe_install::mirrors['windows']['mirror_uri']
       $ksurl = ''
 
-      if has_key($network_data, 'iso') {
+      if pxe_install::hash_key($network_data, 'iso') {
         $iso = $network_data['iso']
-      } elsif has_key($defaults, 'isos') {
+      } elsif pxe_install::hash_key($defaults, 'isos') {
         $isos = $defaults['isos']
 
         if
-        has_key($isos, $ostype.downcase()) and
-        has_key($isos[$ostype.downcase()], $data['osversion']) {
+        pxe_install::hash_key($isos, $ostype.downcase()) and
+        pxe_install::hash_key($isos[$ostype.downcase()], $data['osversion']) {
           $iso = $isos[$ostype.downcase()][$data['osversion']]
         } else {
           $iso = ''
@@ -324,11 +361,13 @@ define pxe_install::kickstart (
       $template_start = 'pxe_install/redhat/kickstart.epp'
       $template_finish = 'pxe_install/redhat/kickstart-end.epp'
 
-      if has_key($pxe_install::mirrors['alma'], $data['osversion']) {
+      if pxe_install::hash_key($pxe_install::mirrors['alma'], $data['osversion']) {
         $mirror_host = $pxe_install::mirrors['alma'][$data['osversion']]['mirror_host']
         $mirror_uri = $pxe_install::mirrors['alma'][$data['osversion']]['mirror_uri']
         $ksurl = "http://${pxe_install::repo_server}/kickstart/${hostname}"
         $installserverurl = "${mirror_host}${mirror_uri}"
+        $mirror_ports_host = ''
+        $mirror_ports_uri = ''
 
         pxe_install::partitioning::redhat { $hostname:
           hostname          => $hostname,
@@ -344,11 +383,13 @@ define pxe_install::kickstart (
       $template_start = 'pxe_install/redhat/kickstart.epp'
       $template_finish = 'pxe_install/redhat/kickstart-end.epp'
 
-      if has_key($pxe_install::mirrors['rocky'], $data['osversion']) {
+      if pxe_install::hash_key($pxe_install::mirrors['rocky'], $data['osversion']) {
         $mirror_host = $pxe_install::mirrors['rocky'][$data['osversion']]['mirror_host']
         $mirror_uri = $pxe_install::mirrors['rocky'][$data['osversion']]['mirror_uri']
         $ksurl = "http://${pxe_install::repo_server}/kickstart/${hostname}"
         $installserverurl = "${mirror_host}${mirror_uri}"
+        $mirror_ports_host = ''
+        $mirror_ports_uri = ''
 
         pxe_install::partitioning::redhat { $hostname:
           hostname          => $hostname,
@@ -364,11 +405,13 @@ define pxe_install::kickstart (
       $template_start = 'pxe_install/redhat/kickstart.epp'
       $template_finish = 'pxe_install/redhat/kickstart-end.epp'
 
-      if has_key($pxe_install::mirrors[$ostype.downcase()], $data['osversion']) {
+      if pxe_install::hash_key($pxe_install::mirrors[$ostype.downcase()], $data['osversion']) {
         $mirror_host = $pxe_install::mirrors[$ostype.downcase()][$data['osversion']]['mirror_host']
         $mirror_uri = $pxe_install::mirrors[$ostype.downcase()][$data['osversion']]['mirror_uri']
         $ksurl = "http://${pxe_install::repo_server}/kickstart/${hostname}"
         $installserverurl = "${mirror_host}${mirror_uri}"
+        $mirror_ports_host = ''
+        $mirror_ports_uri = ''
 
         pxe_install::partitioning::redhat { $hostname:
           hostname          => $hostname,
@@ -382,82 +425,87 @@ define pxe_install::kickstart (
     }
   }
 
-  $agent = has_key($parameter, 'agent') ? {
+  $agent = pxe_install::hash_key($parameter, 'agent') ? {
     true    => $parameter['agent'],
     default => 'y',
   }
 
-  $rootpw = has_key($data, 'rootpw') ? {
+  $rootpw = pxe_install::hash_key($data, 'rootpw') ? {
     true    => $data['rootpw'],
     default => $defaults['rootpw']
   }
 
-  $language = has_key($data, 'language') ? {
+  $language = pxe_install::hash_key($data, 'language') ? {
     true    => $data['language'],
     default => $defaults['language'],
   }
 
-  $country = has_key($data, 'country') ? {
+  $country = pxe_install::hash_key($data, 'country') ? {
     true    => $data['country'],
     default => $defaults['country'],
   }
 
-  $timezone = has_key($data, 'timezone') ? {
+  $timezone = pxe_install::hash_key($data, 'timezone') ? {
     true    => $data['timezone'],
     default => $defaults['timezone'],
   }
 
-  $keymap = has_key($data, 'keymap') ? {
+  $keymap = pxe_install::hash_key($data, 'keymap') ? {
     true    => $data['keymap'],
     default => $defaults['keymap'],
   }
 
-  $xconfig = has_key($data, 'xconfig') ? {
+  $xconfig = pxe_install::hash_key($data, 'xconfig') ? {
     true  => 'xconfig',
     false => 'skipx',
   }
 
-  $defaultdesktop = has_key($data, 'defaultdesktop') ? {
+  $defaultdesktop = pxe_install::hash_key($data, 'defaultdesktop') ? {
     true  => $data['defaultdesktop'],
     false => 'GNOME',
   }
 
-  $startxonboot = has_key($data, 'startxonboot') ? {
+  $startxonboot = pxe_install::hash_key($data, 'startxonboot') ? {
     true  => true,
     false => false,
   }
 
-  $rhcdn = has_key($parameter, 'rhcdn') ? {
+  $rhcdn = pxe_install::hash_key($parameter, 'rhcdn') ? {
     true    => $parameter['rhcdn'],
     default => 'n',
   }
 
-  $actkey = has_key($parameter, 'actkey') ? {
+  $actkey = pxe_install::hash_key($parameter, 'actkey') ? {
     true  => $parameter['actkey'],
     false => '',
   }
 
-  $orgid = has_key($parameter, 'orgid') ? {
+  $orgid = pxe_install::hash_key($parameter, 'orgid') ? {
     true  => $parameter['orgid'],
     false => '',
   }
 
   $ks_fqdn = "${hostname}.${domain}"
 
-  $bootproto = has_key($network_data, 'bootproto') ? {
+  $bootproto = pxe_install::hash_key($network_data, 'bootproto') ? {
     true  => $network_data['bootproto'],
     false => 'dhcp',
   }
 
-  if has_key($data, 'packages') {
+  $bootiso = pxe_install::hash_key($data, 'bootiso') ? {
+    true  => $data['bootiso'],
+    false => '',
+  }
+
+  if pxe_install::hash_key($data, 'packages') {
     $_packages = $data['packages']
   } else {
-    $default_packages = has_key($defaults, 'packages') ? {
+    $default_packages = pxe_install::hash_key($defaults, 'packages') ? {
       false => {},
       true  => $defaults['packages'],
     }
 
-    $_packages = has_key($default_packages, $ostype.downcase) ? {
+    $_packages = pxe_install::hash_key($default_packages, $ostype.downcase) ? {
       false => [],
       true  => $default_packages[$ostype.downcase],
     }
@@ -469,7 +517,7 @@ define pxe_install::kickstart (
   }
 
   if $ostype.downcase != 'windows' {
-    $_osversion = has_key($data, 'osversion') ? {
+    $_osversion = pxe_install::hash_key($data, 'osversion') ? {
       true   => $data['osversion'],
       false  => '',
     }
@@ -489,11 +537,14 @@ define pxe_install::kickstart (
           gateway           => $network_data['gateway'],
           bootproto         => $network_data['bootproto'],
           dnsservers        => $dns_data,
+          dnslist           => $dnslist,
           hostname          => $hostname,
           rootpw            => $rootpw,
           timezone          => $timezone,
           mirror            => $mirror_host,
           mirror_dir        => $mirror_uri,
+          mirror_ports      => $mirror_ports_host,
+          mirror_ports_dir  => $mirror_ports_uri,
           loghost           => $loghost,
           ksdevice          => $network_data['ksdevice'],
           fqdn              => $ks_fqdn,
@@ -540,6 +591,9 @@ define pxe_install::kickstart (
             packages          => $packages,
             boot_architecture => $boot_architecture,
             suite             => $suite,
+            puppetenv         => $parameter['env'],
+            puppetrole        => $parameter['role'],
+            datacenter        => $parameter['dc'],
         }),
         target  => $kickstart_file,
       }
@@ -557,28 +611,28 @@ define pxe_install::kickstart (
       },
     }
 
-    $dhcp_ipxe_filename_data = has_key($network_data, 'ipxe_filename') ? {
+    $dhcp_ipxe_filename_data = pxe_install::hash_key($network_data, 'ipxe_filename') ? {
       true    => {
         ipxe_filename => $network_data['ipxe_filename'],
       },
       default => {},
     }
 
-    $dhcp_ipxe_bootstrap_data = has_key($network_data, 'ipxe_bootstrap') ? {
+    $dhcp_ipxe_bootstrap_data = pxe_install::hash_key($network_data, 'ipxe_bootstrap') ? {
       true    => {
         ipxe_bootstrap => $network_data['ipxe_bootstrap'],
       },
       default => {},
     }
 
-    if has_key($network_data, 'ipxe_bootstrap') and has_key($network_data, 'ipxe_bootstrap') {
+    if pxe_install::hash_key($network_data, 'ipxe_bootstrap') and pxe_install::hash_key($network_data, 'ipxe_bootstrap') {
       $dhcp_file_data = {}
     } else {
-      if has_key($network_data, 'filename') {
+      if pxe_install::hash_key($network_data, 'filename') {
         $dhcp_file_data = {
           filename  => $network_data['filename'],
         }
-      } elsif has_key($scenario_data, 'filename') {
+      } elsif pxe_install::hash_key($scenario_data, 'filename') {
         $dhcp_file_data = {
           filename => $scenario_data['filename'],
         }
@@ -594,27 +648,27 @@ define pxe_install::kickstart (
     }
   }
 
-  $path = has_key($data, 'path') ? {
+  $path = pxe_install::hash_key($data, 'path') ? {
     true    => $data['path'],
     default => '',
   }
 
-  $env = has_key($parameter, 'env') ? {
+  $env = pxe_install::hash_key($parameter, 'env') ? {
     true    => $parameter['env'],
     default => '',
   }
 
-  $role = has_key($parameter, 'role') ? {
+  $role = pxe_install::hash_key($parameter, 'role') ? {
     true    => $parameter['role'],
     default => '',
   }
 
-  $datacenter = has_key($parameter, 'dc') ? {
+  $datacenter = pxe_install::hash_key($parameter, 'dc') ? {
     true    => $parameter['dc'],
     default => '',
   }
 
-  $stage2 = has_key($data, 'stage2') ? {
+  $stage2 = pxe_install::hash_key($data, 'stage2') ? {
     true  => $data['stage2'],
     false => "${mirror_host}${mirror_uri}"
   }
@@ -625,7 +679,7 @@ define pxe_install::kickstart (
   $ostype.downcase() == 'rocky' or
   $ostype.downcase() == 'fedora' or
   $ostype.downcase() == 'windows' {
-    $osvers = has_key($data, 'osversion') ? {
+    $osvers = pxe_install::hash_key($data, 'osversion') ? {
       true  => $data['osversion'],
       false => '',
     }
@@ -639,7 +693,7 @@ define pxe_install::kickstart (
   }
 
   if $tftp_entry {
-    $prefix = has_key($network_data, 'prefix') ? {
+    $prefix = pxe_install::hash_key($network_data, 'prefix') ? {
       true    => $network_data['prefix'],
       default => '',
     }
@@ -666,6 +720,7 @@ define pxe_install::kickstart (
       orgid         => $orgid,
       actkey        => $actkey,
       osversion     => $data['osversion'],
+      bootiso       => $bootiso,
     }
   }
 }

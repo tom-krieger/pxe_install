@@ -96,6 +96,7 @@ define pxe_install::tftp::host (
   Optional[String] $orgid       = undef,
   Optional[String] $actkey      = undef,
   Optional[String] $osversion   = undef,
+  Optional[String] $bootiso     = undef,
 ) {
   $_mirror_host = $mirror_host ? {
     undef   => '',
@@ -125,12 +126,12 @@ define pxe_install::tftp::host (
       'd' => $octets[3],
   }).upcase()
 
-  $basedir = has_key($pxe_install::tftp::tftp, 'directory') ? {
+  $basedir = pxe_install::hash_key($pxe_install::tftp::tftp, 'directory') ? {
     true => $pxe_install::tftp::tftp['directory'],
     default => '/var/lib/tftpboot',
   }
 
-  $pxedir = has_key( $pxe_install::tftp::tftp, 'pxelinux') ? {
+  $pxedir = pxe_install::hash_key( $pxe_install::tftp::tftp, 'pxelinux') ? {
     true => $pxe_install::tftp::tftp['pxelinux'],
     default => 'pxelinux.cfg',
   }
@@ -238,11 +239,21 @@ define pxe_install::tftp::host (
         fail('Debian and Ubuntu kickstart require a log host and a log port!')
       }
 
+      $major = $osversion ? {
+        undef   => '20',
+        default => split($osversion, '[.]')[0]
+      }
+
+      $_part = $major >= '22' ? {
+        true  => 'pxe_install/ubuntu/22',
+        false => 'pxe_install/ubuntu',
+      }
+
       if $_scenario_data['boot_architecture'] == 'uefi' {
-        $template = 'pxe_install/ubuntu/tftp-uefi-entry.epp'
+        $template = "${_part}/tftp-uefi-entry.epp"
         $_filename = $uefi_filename
       } else {
-        $template = 'pxe_install/ubuntu/tftp-entry.epp'
+        $template = "${_part}/tftp-entry.epp"
         $_filename = $filename
       }
 
@@ -261,6 +272,7 @@ define pxe_install::tftp::host (
             datacenter  => $datacenter,
             mirror_host => $_mirror_host,
             mirror_uri  => $_mirror_uri,
+            bootiso     => $bootiso,
         }),
         *       => $file_data,
       }

@@ -258,21 +258,21 @@ class pxe_install (
     mode    => '0644',
   }
 
-  if has_key($_services, 'dhcpd') {
+  if pxe_install::hash_key($_services, 'dhcpd') {
     $dhcpd = $_services['dhcpd']
     class { 'pxe_install::dhcp':
       dhcp => $dhcpd,
     }
   }
 
-  if has_key($_services, 'tftpd') {
+  if pxe_install::hash_key($_services, 'tftpd') {
     $tftpd = $_services['tftpd']
     class { 'pxe_install::tftp':
       tftp => $tftpd,
     }
   }
 
-  if has_key($_services, 'samba') {
+  if pxe_install::hash_key($_services, 'samba') {
     $samba = $_services['samba']
     class { 'samba':
       * => $samba,
@@ -297,22 +297,22 @@ class pxe_install (
     purge_configs     => $purge_apache_configs,
   }
 
-  $tftpboot_dir = has_key($tftpd, 'directory') ? {
+  $tftpboot_dir = pxe_install::hash_key($tftpd, 'directory') ? {
     true => $tftpd['directory'],
     default => '/var/lib/tftpboot',
   }
 
-  $windows_dir = has_key($tftpd, 'windows_directory') ? {
+  $windows_dir = pxe_install::hash_key($tftpd, 'windows_directory') ? {
     true    => $tftpd['windows_directory'],
     default => '/windows',
   }
 
-  $windows_config_dir = has_key($tftpd, 'windows_config_directory') ? {
+  $windows_config_dir = pxe_install::hash_key($tftpd, 'windows_config_directory') ? {
     true    => $tftpd['windows_config_directory'],
     default => '',
   }
 
-  $windows_domain = has_key($tftpd, 'windows_domain') ? {
+  $windows_domain = pxe_install::hash_key($tftpd, 'windows_domain') ? {
     true    => $tftpd['windows_domain'],
     default => '',
   }
@@ -329,12 +329,12 @@ class pxe_install (
     dir_path => "${tftpboot_dir}/grub",
   }
 
-  $win_locale = has_key($defaults, 'win_locale') ? {
+  $win_locale = pxe_install::hash_key($defaults, 'win_locale') ? {
     true  => $defaults['win_locale'],
     false => 'en-US',
   }
 
-  $win_input_locale = has_key($defaults, 'win_input_locale') ? {
+  $win_input_locale = pxe_install::hash_key($defaults, 'win_input_locale') ? {
     true  => $defaults['win_input_locale'],
     false => 'en-US',
   }
@@ -398,8 +398,8 @@ class pxe_install (
       kickstart_url      => $kickstart_url,
       repos_url          => $repos_url,
       scripturl          => $scripturl,
-      dhcp_entry         => has_key($_services, 'dhcpd'),
-      tftp_entry         => has_key($_services, 'tftpd'),
+      dhcp_entry         => pxe_install::hash_key($_services, 'dhcpd'),
+      tftp_entry         => pxe_install::hash_key($_services, 'tftpd'),
       puppetmaster       => $_puppetmaster,
       challenge_password => $challenge_password,
       tftpboot_dir       => $tftpboot_dir,

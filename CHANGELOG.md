@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.3.10
+
+* Added support for Ubuntu 22.04 autoinstall
+
 ## 0.3.9
 
 * Added UEFI boot

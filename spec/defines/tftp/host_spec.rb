@@ -100,7 +100,7 @@ describe 'pxe_install::tftp::host' do
 
         is_expected.to contain_package('tftp')
           .with(
-            'ensure' => 'present',
+            'ensure' => 'installed',
           )
 
         is_expected.to contain_service('tftpd')

@@ -49,47 +49,47 @@ define pxe_install::partitioning::debian (
   }
 
   $partitioning.each |$partition, $partition_data| {
-    $min = has_key($partition_data, 'min') ? {
+    $min = pxe_install::hash_key($partition_data, 'min') ? {
       true    => $partition_data['min'],
       default => 0,
     }
 
-    $prio = has_key($partition_data, 'prio') ? {
+    $prio = pxe_install::hash_key($partition_data, 'prio') ? {
       true    => $partition_data['prio'],
       default => 0,
     }
 
-    $max = has_key($partition_data, 'max') ? {
+    $max = pxe_install::hash_key($partition_data, 'max') ? {
       true    => $partition_data['max'],
       default => 0,
     }
 
-    $fstype = has_key($partition_data, 'fstype') ? {
+    $fstype = pxe_install::hash_key($partition_data, 'fstype') ? {
       true     => $partition_data['fstype'],
       default  => '',
     }
 
-    $primary = has_key($partition_data, 'primary') ? {
+    $primary = pxe_install::hash_key($partition_data, 'primary') ? {
       true    => $partition_data['primary'],
       default => $pxe_install::defaults['primary'],
     }
 
-    $format = has_key($partition_data, 'format') ? {
+    $format = pxe_install::hash_key($partition_data, 'format') ? {
       true    => $partition_data['format'],
       default => '',
     }
 
-    $bootable = has_key($partition_data, 'bootable') ? {
+    $bootable = pxe_install::hash_key($partition_data, 'bootable') ? {
       true    => $partition_data['bootable'],
       default => $pxe_install::defaults['bootable'],
     }
 
-    $bios_boot = has_key($partition_data, 'bios_boot') ? {
+    $bios_boot = pxe_install::hash_key($partition_data, 'bios_boot') ? {
       true    => $partition_data['bios_boot'],
       default => false,
     }
 
-    $method = has_key($partition_data, 'method') ? {
+    $method = pxe_install::hash_key($partition_data, 'method') ? {
       true    => $partition_data['method'],
       default => '',
     }
@@ -102,7 +102,7 @@ define pxe_install::partitioning::debian (
       default => $fstype,
     }
 
-    $label = has_key($partition_data, 'label') ? {
+    $label = pxe_install::hash_key($partition_data, 'label') ? {
       true    => $partition_data['label'],
       default => '',
     }
@@ -110,50 +110,50 @@ define pxe_install::partitioning::debian (
     if $method == 'biosgrub' {
       $mountpoint = ''
     } else {
-      $mountpoint = has_key($partition_data, 'mountpoint') ? {
+      $mountpoint = pxe_install::hash_key($partition_data, 'mountpoint') ? {
         true    => $partition_data['mountpoint'],
         default => $partition,
       }
     }
 
-    $iflabel = has_key($partition_data, 'iflabel') ? {
+    $iflabel = pxe_install::hash_key($partition_data, 'iflabel') ? {
       true    => $partition_data['iflabel'],
       default => '',
     }
 
-    $reusemethod = has_key($partition_data, 'reusemethod') ? {
+    $reusemethod = pxe_install::hash_key($partition_data, 'reusemethod') ? {
       true    => $partition_data['reusemethod'],
       default => false,
     }
 
-    $defaultignore = has_key($partition_data, 'defaultignore') ? {
+    $defaultignore = pxe_install::hash_key($partition_data, 'defaultignore') ? {
       true    => $partition_data['defaultignore'],
       default => false,
     }
 
-    $device = has_key($partition_data, 'device') ? {
+    $device = pxe_install::hash_key($partition_data, 'device') ? {
       true    => $partition_data['device'],
       default => '',
     }
 
-    $vgname = has_key($partition_data, 'vgname') ? {
+    $vgname = pxe_install::hash_key($partition_data, 'vgname') ? {
       true    => $partition_data['vgname'],
       default => '',
     }
 
-    $lvname = has_key($partition_data, 'lvname') ? {
+    $lvname = pxe_install::hash_key($partition_data, 'lvname') ? {
       true    => $partition_data['lvname'],
       default => '',
     }
 
-    $invg = has_key($partition_data, 'invg') ? {
+    $invg = pxe_install::hash_key($partition_data, 'invg') ? {
       true    => $partition_data['invg'],
       default => '',
     }
 
     $nr = $nr + 1
 
-    $order = has_key($partition_data, 'order') ? {
+    $order = pxe_install::hash_key($partition_data, 'order') ? {
       true => $partition_data['order'],
       default => $nr,
     }

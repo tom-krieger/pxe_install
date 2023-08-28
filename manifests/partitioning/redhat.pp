@@ -27,62 +27,62 @@ define pxe_install::partitioning::redhat (
   $template_partitioning = 'pxe_install/redhat/partition_entry.epp'
 
   $partitioning.each |$partition, $partition_data| {
-    $type = has_key($partition_data, 'type') ? {
+    $type = pxe_install::hash_key($partition_data, 'type') ? {
       true    => $partition_data['type'],
       default => '',
     }
 
-    $vgname = has_key($partition_data, 'vgname') ? {
+    $vgname = pxe_install::hash_key($partition_data, 'vgname') ? {
       true    => $partition_data['vgname'],
       default => ''
     }
 
-    $fstype = has_key($partition_data, 'fstype') ? {
+    $fstype = pxe_install::hash_key($partition_data, 'fstype') ? {
       true    => $partition_data['fstype'],
       default => '',
     }
 
-    $size = has_key($partition_data, 'size') ? {
+    $size = pxe_install::hash_key($partition_data, 'size') ? {
       true    => $partition_data['size'],
       default => 0,
     }
 
-    $primary = has_key($partition_data, 'primary') ? {
+    $primary = pxe_install::hash_key($partition_data, 'primary') ? {
       true    => $partition_data['primary'],
       default => $pxe_install::defaults['primary'],
     }
 
-    $grow = has_key($partition_data, 'grow') ? {
+    $grow = pxe_install::hash_key($partition_data, 'grow') ? {
       true    => $partition_data['grow'],
       default => '',
     }
 
-    $ondisk = has_key($partition_data, 'ondisk') ? {
+    $ondisk = pxe_install::hash_key($partition_data, 'ondisk') ? {
       true    => $partition_data['ondisk'],
       default => '',
     }
 
-    $pvol = has_key($partition_data, 'pvol') ? {
+    $pvol = pxe_install::hash_key($partition_data, 'pvol') ? {
       true    => $partition_data['pvol'],
       default => '',
     }
 
-    $diskname = has_key($partition_data, 'diskname') ? {
+    $diskname = pxe_install::hash_key($partition_data, 'diskname') ? {
       true    => $partition_data['diskname'],
       default => '',
     }
 
-    $level = has_key($partition_data, 'level') ? {
+    $level = pxe_install::hash_key($partition_data, 'level') ? {
       true    => $partition_data['level'],
       default => '',
     }
 
-    $part_disks = has_key($partition_data, 'disks')  ? {
+    $part_disks = pxe_install::hash_key($partition_data, 'disks')  ? {
       true    => join($partition_data['disks'], ' '),
       default => '',
     }
 
-    $disk_device = has_key($partition_data, 'disk_device') ? {
+    $disk_device = pxe_install::hash_key($partition_data, 'disk_device') ? {
       true    => $partition_data['disk_device'],
       default => '',
     }
