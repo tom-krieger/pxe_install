@@ -450,6 +450,58 @@ The special value "-1" is used to indicate unlimited partition size.
 * `lvname`: the name of the logival volume e. g. `lvol_boot`.
 * `order`: the order in the concatenated preseed file. Should be ascending and contain no duplicates. Starting value for the first entry should be `405`.
 
+###### Ubuntu 22
+
+Startig with Ubuntu 22 autoinstall is used for installing Ubuntu servers. This brings a huge change to paritioning. You can use all the settings available from the Ubuntu autoinstall. All key/value pairs are passed directly from the yaml file to the autoinstall file. The `order` field will be removed and is used for content::fragment ordering. So please make sure to habe no duplicates in your partitioning.
+
+Below there's a shor example how partitioning can look like.
+
+```yaml
+partitioning:
+  - path: /dev/sda
+    id: sda
+    ptable: msdos
+    wipe: superblock-recursive
+    preserve: false
+    name: main_disk
+    type: disk
+    grub_device: true
+    order: 405
+  - device: sda
+    size: 2G
+    flag: bios_grub
+    preserve: false
+    id: sda1
+    grub_device: false
+    type: partition
+    number: 1
+    order: 406
+  - device: sda
+    size: -1
+    wipe: superblock
+    preserve: false
+    grub_device: false
+    number: 2
+    type: partition
+    id: sda2
+    order: 408
+  - name: vgos
+    devices:
+    - sda2
+    preserve: false
+    type: lvm_volgroup
+    id: lvm_volgroup-vgos
+    order: 409
+  - name: lvol_root
+    volgroup: lvm_volgroup-vgos
+    size: 4G
+    wipe: superblock
+    preserve: false
+    type: lvm_partition
+    id: lvm_partition-0
+    order: 410
+```
+
 ### Default values
 
 To simplify configuration of nodes, there are several default values that are avaiable in the `params.pp` class. You can overwrite these defaults in your Hiera configuration.
