@@ -452,9 +452,9 @@ The special value "-1" is used to indicate unlimited partition size.
 
 ###### Ubuntu 22
 
-Startig with Ubuntu 22 autoinstall is used for installing Ubuntu servers. This brings a huge change to paritioning. You can use all the settings available from the Ubuntu autoinstall. All key/value pairs are passed directly from the yaml file to the autoinstall file. The `order` field will be removed and is used for content::fragment ordering. So please make sure to habe no duplicates in your partitioning.
+Starting with Ubuntu 22 `autoinstall` is used for installing Ubuntu servers. You need the server iso file. Ubuntu 22 autoinstall brings a huge change to paritioning. You can use all the settings available from the Ubuntu autoinstall. All key/value pairs are passed directly from the yaml file to the autoinstall file. The `order` field will be removed and is used for content::fragment ordering. So please make sure to have no duplicates in your partitioning.
 
-Below there's a shor example how partitioning can look like.
+Below there's a short example how partitioning can look like.
 
 ```yaml
 partitioning:
