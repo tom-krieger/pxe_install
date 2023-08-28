@@ -312,7 +312,7 @@ describe 'pxe_install' do
 
         is_expected.to contain_class('apache::mod::status')
           .with(
-            'allow_from' => ['10.0.0.108/32', '10.0.0.109/32', '10.0.0.63/32', '10.0.0.62/32', '10.0.8.0/24', '127.0.0.1'],
+            'requires'=> 'ip 10.0.0.108/32 10.0.0.109/32 10.0.0.63/32 10.0.0.62/32 10.0.8.0/24 127.0.0.1'
           )
 
         is_expected.to contain_class('apache::mod::info')
@@ -1324,12 +1324,12 @@ describe 'pxe_install' do
           )
         is_expected.to contain_package('tftp-server')
           .with(
-            'ensure' => 'present',
+            'ensure' => 'installed',
           )
 
         is_expected.to contain_package('xinetd')
           .with(
-            'ensure' => 'present',
+            'ensure' => 'installed',
           )
 
         is_expected.to contain_file('/etc/tftpd.map')

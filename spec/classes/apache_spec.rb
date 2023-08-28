@@ -39,7 +39,7 @@ describe 'pxe_install::apache' do
 
         is_expected.to contain_class('apache::mod::status')
           .with(
-            'allow_from' => ['127.0.0.1/32', '10.0.0.1/32'],
+            'requires' => 'ip 127.0.0.1/32 10.0.0.1/32',
           )
 
         is_expected.to contain_class('apache::mod::info')

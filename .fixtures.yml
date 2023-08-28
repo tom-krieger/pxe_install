@@ -4,38 +4,14 @@
 fixtures:
   symlinks:
     pxe_install: "#{source_dir}"
-  repositories:
-    dhcp: 
-      repo: "https://github.com/tom-krieger/puppet-dhcp.git"
-      ref: "master"
   forge_modules:
-    stdlib:
-      repo: "puppetlabs/stdlib"
-      ref: "6.0.0"
-    concat:
-      repo: "puppetlabs/concat"
-      ref: "6.0.0"
-    echo:
-      repo: "ipcrm/echo"
-      ref: "0.1.6"
-    puppet_agent:
-      repo: "puppetlabs/puppet_agent"
-      ref: "3.0.2"
-    facts:
-      repo: "puppetlabs/facts"
-      ref: "1.0.0"
-    apache:
-      repo: "puppetlabs/apache"
-      ref: "5.5.0"
-    samba:
-      repo: "rehan-samba"
-      ref: "1.4.1"
-    augeas:
-      repo: "puppetlabs-augeas_core"
-      ref: "1.2.0"
-    archive:
-      repo: "puppet-archive"
-      ref: "6.0.1"
-    #dhcp:
-    #  repo: "puppet/dhcp"
-    #  ref: "4.0.1"
+    stdlib:           "puppetlabs/stdlib"
+    concat:           "puppetlabs/concat"
+    echo:             "ipcrm/echo"
+    puppet_agent:     "puppetlabs/puppet_agent"
+    facts:            "puppetlabs/facts"
+    apache:           "puppetlabs/apache"
+    samba:            "rehan/samba"
+    augeas:           "puppetlabs/augeas_core"
+    archive:          "puppet/archive"
+    dhcp:             "puppet/dhcp"

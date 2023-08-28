@@ -112,8 +112,9 @@ class pxe_install::apache (
   class { 'apache::mod::ssl':
   }
 
+  $_status_allow_from = join($status_allow_from, ' ')
   class { 'apache::mod::status':
-    allow_from => $status_allow_from,
+    requires => "ip ${_status_allow_from}",
   }
 
   class { 'apache::mod::info':
