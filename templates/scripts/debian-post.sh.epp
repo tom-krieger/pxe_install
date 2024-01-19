@@ -100,7 +100,7 @@ function installUpdates () {
 function installPuppet () {
 	log "installing puppet"
 
-	/usr/bin/apt-get -y install tar curl net-tools
+	/usr/bin/apt-get -y install tar curl net-tools sudo
 	ret=$?
 	if [ "$install_puppet" = "y" ] ; then
 		if [ "$ret" = "0" ] ; then
