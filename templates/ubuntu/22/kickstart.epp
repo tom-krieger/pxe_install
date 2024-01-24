@@ -9,16 +9,15 @@ autoinstall:
     channel: "stable/ubuntu-$REL"
   apt:
     disable_components: []
-    geoip: true
     preserve_sources_list: false
-    primary:
-    - arches:
-      - amd64
-      - i386
-      uri: <%= $mirror %><%= $mirror_dir %>
-    - arches:
-      - default
-      uri: <%= $mirror_ports %><%= $mirror_ports_dir %>
+    mirror-selection:
+      primary:
+      - country-mirror
+      - arches: [amd64, i386]
+        uri: <%= $mirror %><%= $mirror_dir %>
+      - arches: [default]
+        uri: <%= $mirror_ports %><%= $mirror_ports_dir %>
+    geoip: true
   drivers:
     install: false
   identity:
