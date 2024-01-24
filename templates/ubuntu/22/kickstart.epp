@@ -10,12 +10,11 @@ autoinstall:
   apt:
     disable_components: []
     preserve_sources_list: false
-    mirror-selection:
-      primary:
+    primary:
       - country-mirror
       - arches: [amd64, i386]
         uri: <%= $mirror %><%= $mirror_dir %>
-      - arches: [default]
+      - arches: [s390x, arm64, armhf, powerpc, ppc64el, riscv64]
         uri: <%= $mirror_ports %><%= $mirror_ports_dir %>
     geoip: true
   drivers:
