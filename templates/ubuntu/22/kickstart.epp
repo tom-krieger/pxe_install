@@ -1,5 +1,10 @@
 #cloud-config
 autoinstall:
+  reporting:
+    hook:
+      type: webhook
+      endpoint: https://curtain.home.tom-krieger.de/
+      level: DEBUG
   early-commands:
   - echo "<%= $puppetenv %>" > /tmp/puppetenv
   - echo "<%= $puppetrole %>" > /tmp/puppetrole
@@ -10,13 +15,14 @@ autoinstall:
   apt:
     disable_components: []
     preserve_sources_list: false
-    primary:
-      - country-mirror
-      - arches: [amd64, i386]
-        uri: <%= $mirror %><%= $mirror_dir %>
-      - arches: [s390x, arm64, armhf, powerpc, ppc64el, riscv64]
-        uri: <%= $mirror_ports %><%= $mirror_ports_dir %>
-    geoip: true
+    mirror-selection:
+      primary:
+        - country-mirror
+        - arches: [amd64, i386]
+          uri: <%= $mirror %><%= $mirror_dir %>
+        - arches: [s390x, arm64, armhf, powerpc, ppc64el, riscv64]
+          uri: <%= $mirror_ports %><%= $mirror_ports_dir %>
+      geoip: true
   drivers:
     install: false
   identity:
