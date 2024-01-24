@@ -2,8 +2,6 @@
   - echo "<%= $puppetenv %>" > /target/tmp/puppetenv
   - echo "<%= $puppetrole %>" > /target/tmp/puppetrole
   - echo "<%= $datacenter %>" > /target/tmp/datacenter
-  - echo "<%= $reposerverip %> <%= $reposerver %>" >> /etc/hosts 
-  - echo "<%= $reposerverip %> <%= $reposerver %>" >> /target/etc/hosts 
   - rm -f /target/root/ubuntu-post
   - wget -O /target/root/ubuntu-post http://<%= $reposerver %><%= $scripturl %>/ubuntu-post.sh
   - echo "#!/bin/sh" >> /target/etc/rc.local
