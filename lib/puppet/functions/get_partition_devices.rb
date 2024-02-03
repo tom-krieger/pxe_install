@@ -14,7 +14,7 @@ Puppet::Functions.create_function(:get_partition_devices) do
     return 'nil' if partitioning.nil?
 
     device_list = []
-    partitioning.each do |_part, part_data|
+    partitioning.each_value do |part_data|
       if part_data.key?('device')
         device_list.push(part_data['device'])
       end
