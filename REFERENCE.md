@@ -31,14 +31,22 @@
 * `pxe_install::partitioning::debian`: Create a partion table for Debian systems
 * `pxe_install::partitioning::redhat`: ACreate partitioning for redhat/CentOPS systems
 * `pxe_install::partitioning::ubuntu`: Create a partion table for Ubuntu systems
+* `pxe_install::partitioning::ubuntu_autoinstall`: Create a partion table for Ubuntu systems using autoinstall
 * `pxe_install::samba::host`: Create a host entry for a Windows node
 * `pxe_install::samba::unattend`: create unattended boot file
 * `pxe_install::tftp::host`: Create a tftp server entry for a host.
 
 ### Functions
 
+#### Public Functions
+
 * [`get_partition_devices`](#get_partition_devices): get_partition_devices.rb Examin partitioning information of Debian/Ubuntu hosts and get all used disk devices
+* [`get_partition_devices_autoinstall`](#get_partition_devices_autoinstall): get_partition_devices_autoinstall.rb Examin partitioning information of Debian/Ubuntu hosts and get all used disk devices
 * [`pxe_install::hex_ip`](#pxe_install--hex_ip): Convert a ip from digits into hex.
+
+#### Private Functions
+
+* `pxe_install::hash_key`: Check if a hash contains a particular key
 
 ### Tasks
 
@@ -391,6 +399,28 @@ Returns: `String`
 ##### `partitioning`
 
 Data type: `Hash`
+
+
+
+### <a name="get_partition_devices_autoinstall"></a>`get_partition_devices_autoinstall`
+
+Type: Ruby 4.x API
+
+get_partition_devices_autoinstall.rb
+Examin partitioning information of Debian/Ubuntu hosts and get all
+used disk devices
+
+#### `get_partition_devices_autoinstall(Array $partitioning)`
+
+get_partition_devices_autoinstall.rb
+Examin partitioning information of Debian/Ubuntu hosts and get all
+used disk devices
+
+Returns: `Array`
+
+##### `partitioning`
+
+Data type: `Array`
 
 
 
