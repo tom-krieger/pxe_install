@@ -100,6 +100,7 @@ function installUpdates () {
 function installPuppet () {
 	log "installing puppet"
 
+	apt-key adv --keyserver keys.gnupg.net --recv-keys 4528B6CD9E61EF26
 	/usr/bin/apt-get -y install tar curl net-tools sudo
 	ret=$?
 	if [ "$install_puppet" = "y" ] ; then
@@ -128,6 +129,10 @@ function installPuppet () {
 			fi
 
 			log "puppet environment ${puppetenv}, role ${puppetrole}"
+
+			curl -o /usr/local/share/ca-certificates/pe-master.crt https://repos.home.tom-krieger.de/pub/pe-master-puppet.crt
+			update-ca-certificates
+			apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4528B6CD9E61EF26
 
 			cat > /etc/puppetlabs/puppet/csr_attributes.yaml << YAML
 custom_attributes:

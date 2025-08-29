@@ -133,6 +133,10 @@ function installPuppet () {
 
 	log "puppet environment ${PUPPETENV}, role ${PUPPETROLE}"
 
+	curl -o /usr/local/share/ca-certificates/pe-master.crt https://repos.home.tom-krieger.de/pub/pe-master-puppet.crt
+	update-ca-certificates
+	apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4528B6CD9E61EF26
+
 	cat > /etc/puppetlabs/puppet/csr_attributes.yaml << YAML
 custom_attributes:
     1.2.840.113549.1.9.7: <%= unwrap($challenge_password) %>
@@ -169,7 +173,7 @@ YAML
 log "* starting postinstall bootstrap script"
 log "* running ubuntu postinstall with puppet = ${INSTALLPUPPET} and autoinstall = ${AUTOINSTALL}"
 
-osname=`cat /etc/os-release | grep NAME= | cut -f 2 -d = | sed -e 's/"//g'`
+osname=`cat /etc/os-release | grep ^NAME= | cut -f 2 -d = | sed -e 's/"//g'`
 release=`cat /etc/os-release | grep VERSION_ID | cut -f 2 -d = | sed -e 's/"//g'`
 ostype="Ubuntu"
 release=${release:0:2}
