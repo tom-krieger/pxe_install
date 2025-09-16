@@ -42,6 +42,9 @@
 # @param agent
 #    Accepts 'y' or 'n' and controls if the puppet agant is installed.
 #
+# @param [String] foreman
+#    Accepts 'y' or 'n' and controls if Foreman is used as master.
+#
 # @param challenge_password
 #    The challenge password (eyaml encrypted) for auto signing the CSR.
 #
@@ -75,6 +78,7 @@ define pxe_install::samba::host (
   String $puppetrole,
   String $datacenter,
   String $agent,
+  String $foreman,
   Optional[Sensitive[String]] $challenge_password = undef,
   Optional[String] $iso                           = undef,
   String $owner                                   = 'root',
@@ -102,6 +106,7 @@ define pxe_install::samba::host (
         dns_servers        => $dns_servers,
         puppetmaster       => $puppetmaster,
         agent              => $agent,
+        foreman            => $foreman,
         puppetenv          => $puppetenv,
         datacenter         => $datacenter,
         puppetrole         => $puppetrole,
