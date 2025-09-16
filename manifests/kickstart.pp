@@ -345,6 +345,7 @@ define pxe_install::kickstart (
         puppetrole         => $parameter['role'],
         datacenter         => $parameter['dc'],
         agent              => $parameter['agent'],
+        foreman            => $parameter['foreman'],
         challenge_password => $challenge_password,
       }
 
@@ -428,6 +429,11 @@ define pxe_install::kickstart (
   $agent = pxe_install::hash_key($parameter, 'agent') ? {
     true    => $parameter['agent'],
     default => 'y',
+  }
+
+  $foreman = pxe_install::hash_key($parameter, 'foreman') ? {
+    true    => parameter['foreman'],
+    default => 'n',
   }
 
   $rootpw = pxe_install::hash_key($data, 'rootpw') ? {
@@ -552,6 +558,7 @@ define pxe_install::kickstart (
           installserverurl  => $installserverurl,
           reposerver        => $pxe_install::repo_server,
           agent             => $agent,
+          foreman           => $foreman,
           kickstart_url     => $kickstart_url,
           repos_url         => $repos_url,
           scripturl         => $scripturl,
@@ -580,6 +587,7 @@ define pxe_install::kickstart (
             reposerver        => $pxe_install::repo_server,
             reposerverip      => $pxe_install::repo_server_ip,
             agent             => $agent,
+            foreman           => $foreman,
             kickstart_url     => $kickstart_url,
             repos_url         => $repos_url,
             scripturl         => $scripturl,

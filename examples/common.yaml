@@ -113,6 +113,7 @@ pxe_install::machines:
       role: test
       dc: test
       agent: n
+      foreman: n
     partitioning:
       sda:
         '/boot':
