@@ -432,7 +432,7 @@ define pxe_install::kickstart (
   }
 
   $foreman = pxe_install::hash_key($parameter, 'foreman') ? {
-    true    => parameter['foreman'],
+    true    => $parameter['foreman'],
     default => 'n',
   }
 
