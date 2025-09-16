@@ -33,7 +33,7 @@ PUPPETROLE=${4:-default}
 DATACENTER=${5:-none}
 FOREMAN=${6:-n}
 
-if [ "${FORMAN}" = "n" ]
+if [ "${FOREMAN}" = "n" ]
 then
 	PEMASTER="pemaster.home.tom-krieger.de"
 else
@@ -41,6 +41,7 @@ else
 fi
 
 echo "running ubuntu postinstall with puppet = ${INSTALLPUPPET} and autoinstall = ${AUTOINSTALL}"
+echo "using Puppet Master server ${PEMASTER}"
 
 if [ -x "/usr/bin/logger" ] ; then
 	LOGGER="/usr/bin/logger"
@@ -248,7 +249,7 @@ fi
 if [ "${INSTALLPUPPET}" = "y" ]
 then
 
-	if [ "${FORMAN}" = "n" ]
+	if [ "${FOREMAN}" = "n" ]
 	then
 		installPePuppet
 	else
