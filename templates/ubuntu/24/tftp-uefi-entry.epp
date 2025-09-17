@@ -4,7 +4,7 @@ menuentry "Ubuntu kickstart for ${net_default_ip}" {
   set gfxpayload=keep
   echo "Ubuntu kickstart for ${net_default_ip}"
   echo "Loading kernel ..."
-  linux   <%= $prefix %>/linux --- iso-url=<%= $ksurl %> priority=critical vga=788 interface=<%= $ksdevice %> auto=true log_host=<%= $loghost %> log_port=<%= $logport %> puppetenv=<%= $puppetenv %> role=<%= $puppetrole %> dc=<%= $datacenter %> <%= $foreman %> quiet
+  linux <%= $prefix %>/linux ip=dhcp iso-url=<%= $bootiso %> boot=casper autoinstall cloud-config-url=<%= $ksurl %> auto=true log_host=<%= $loghost %> log_port=<%= $logport %> quiet --- puppetenv=<%= $puppetenv %> role=<%= $puppetrole %> dc=<%= $datacenter %> <%= $foreman %>
   echo "Loading initrd ..."
   initrd  <%= $prefix %>/initrd
 }
