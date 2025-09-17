@@ -70,6 +70,9 @@
 # @param osversion
 #    Version of the operatimg system
 #
+# @param [String] foreman
+#    Flag for using foreman as master server
+#
 # @example
 #   pxe_install::tftp::host { 'namevar': }
 #
@@ -88,6 +91,7 @@ define pxe_install::tftp::host (
   Optional[String] $keymap      = undef,
   Optional[String] $loghost     = undef,
   Integer $logport              = 0,
+  String $foreman               ='n',
   Optional[String] $ks          = undef,
   Optional[String] $mirror_host = undef,
   Optional[String] $mirror_uri  = undef,
@@ -273,6 +277,7 @@ define pxe_install::tftp::host (
             mirror_host => $_mirror_host,
             mirror_uri  => $_mirror_uri,
             bootiso     => $bootiso,
+            foreman     => $foreman,
         }),
         *       => $file_data,
       }
