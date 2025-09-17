@@ -35,7 +35,7 @@ FOREMAN=${6:-n}
 
 if [ "${FOREMAN}" = "n" ]
 then
-	PEMASTER="pemaster.home.tom-krieger.de"
+  PEMASTER="pemaster.home.tom-krieger.de"
 else
   PEMASTER="foreman.home.tom-krieger.de"
 fi
