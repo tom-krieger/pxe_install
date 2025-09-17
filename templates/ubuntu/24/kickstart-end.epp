@@ -1,0 +1,14 @@
+  late-commands:
+  - echo "<%= $puppetenv %>" > /target/tmp/puppetenv
+  - echo "<%= $puppetrole %>" > /target/tmp/puppetrole
+  - echo "<%= $datacenter %>" > /target/tmp/datacenter
+  - rm -f /target/root/ubuntu-post
+  - wget -O /target/root/ubuntu-post http://<%= $reposerver %><%= $scripturl %>/ubuntu-post.sh
+  - echo "#!/bin/sh" >> /target/etc/rc.local
+  - echo "/root/ubuntu-post <%= $agent %> y <%= $puppetenv %> <%= $puppetrole %> <%= $datacenter %> <%= $foreman %>" >> /target/etc/rc.local
+  - echo "exit 0" >> /target/etc/rc.local
+  - echo " " >> /target/etc/rc.local
+  - chmod 0755 /target/etc/rc.local
+  - chmod 0755 /target/root/ubuntu-post
+  updates: all
+  version: 1

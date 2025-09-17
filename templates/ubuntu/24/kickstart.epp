@@ -1,0 +1,79 @@
+#cloud-config
+autoinstall:
+  reporting:
+    hook:
+      type: webhook
+      endpoint: https://curtain.home.tom-krieger.de/
+      level: DEBUG
+  early-commands:
+  - echo "<%= $puppetenv %>" > /tmp/puppetenv
+  - echo "<%= $puppetrole %>" > /tmp/puppetrole
+  - echo "<%= $datacenter %>" > /tmp/datacenter
+  refresh-installer:
+    update: true
+    channel: "stable/ubuntu-$REL"
+  apt:
+    disable_components: []
+    preserve_sources_list: false
+    mirror-selection:
+      primary:
+        - country-mirror
+        - arches: [amd64, i386]
+          uri: <%= $mirror %><%= $mirror_dir %>
+        - arches: [s390x, arm64, armhf, powerpc, ppc64el, riscv64]
+          uri: <%= $mirror_ports %><%= $mirror_ports_dir %>
+      geoip: true
+  drivers:
+    install: false
+  identity:
+    hostname: <%= $hostname %>
+    password: <%= $user['password'] %>
+    realname: <%= $user['fullname'] %>
+    username: <%= $user['username'] %>
+  kernel:
+    package: linux-generic
+  keyboard:
+    layout: <%= $keyboard %>
+    toggle: null
+    variant: ''
+  locale: <%= $locale %>
+  timezone: <%= $timezone %>
+  network:
+    ethernets:
+      <%= $ksdevice %>:
+        addresses:
+        - <%= $ip %>/<%= $netmask %>
+        gateway4: <%= $gateway %>
+        nameservers:
+          addresses:
+          <%- $dnslist.each |$dns| { -%>
+          - <%= $dns %>
+          <%- } -%>
+          search:
+          - home.tom-krieger.de
+    version: 2
+  source:
+    id: ubuntu-server
+    search_drivers: false
+  ssh:
+    allow-pw: true
+    authorized-keys: []
+    install-server: true
+  packages:
+  <%- if $boot_architecture == 'uefi' { -%>
+  - openssh-server 
+  - gnupg2 
+  - efibootmgr 
+  - grub-efi-amd64 
+  - grub-efi-amd64-signed 
+  - shim-signed
+  <%- } else { -%>
+  - openssh-server 
+  - gnupg2
+  <%- } -%>
+  - curl
+  - bash
+  - wget
+  - tar
+  - net-tools
+  storage:

@@ -260,13 +260,14 @@ define pxe_install::kickstart (
       }
 
       if $major >= '22' {
-        $template_start = 'pxe_install/ubuntu/22/kickstart.epp'
-        $template_partitioning = 'pxe_install/22/ubuntu/kickstart-partitioning.epp'
-        $template_finish = 'pxe_install/ubuntu/22/kickstart-end.epp'
-        $mirror_host = $pxe_install::mirrors['ubuntu22']['mirror_host']
-        $mirror_uri = $pxe_install::mirrors['ubuntu22']['mirror_uri']
-        $mirror_ports_host = $pxe_install::mirrors['ubuntu22']['mirror_ports_host']
-        $mirror_ports_uri = $pxe_install::mirrors['ubuntu22']['mirror_ports_uri']
+        $mirror_key = "ubuntu${major}"
+        $template_start = "pxe_install/ubuntu/${major}/kickstart.epp"
+        $template_partitioning = "pxe_install/${major}/ubuntu/kickstart-partitioning.epp"
+        $template_finish = "pxe_install/ubuntu/${major}/kickstart-end.epp"
+        $mirror_host = $pxe_install::mirrors[$mirror_key]['mirror_host']
+        $mirror_uri = $pxe_install::mirrors[$mirror_key]['mirror_uri']
+        $mirror_ports_host = $pxe_install::mirrors[$mirror_key]['mirror_ports_host']
+        $mirror_ports_uri = $pxe_install::mirrors[$mirror_key]['mirror_ports_uri']
       } else {
         $template_start = 'pxe_install/ubuntu/kickstart.epp'
         $template_partitioning = 'pxe_install/ubuntu/kickstart-partitioning.epp'

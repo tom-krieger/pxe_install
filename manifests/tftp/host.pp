@@ -245,7 +245,7 @@ define pxe_install::tftp::host (
       }
 
       $_part = $major >= '22' ? {
-        true  => 'pxe_install/ubuntu/22',
+        true  => "pxe_install/ubuntu/${major}",
         false => 'pxe_install/ubuntu',
       }
 
