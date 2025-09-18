@@ -193,6 +193,12 @@ function installOpenvoxPuppet () {
 	release=`cat /etc/os-release | grep VERSION_ID | cut -f 2 -d = | sed -e 's/"//g'`
 	curl -o /tmp/openvox8-release-ubuntu${release}.deb https://apt.voxpupuli.org/openvox8-release-ubuntu${release}.deb 
 	apt -y install /tmp/openvox8-release-ubuntu${release}.deb
+	apt update
+	apt -y install openvox-agent
+	if [ ! -f /usr/local/bin/puppet ]
+	then
+		ln -s /opt/puppetlabs/puppet/bin/puppet /usr/local/bin/puppet
+	fi
 	/usr/local/bin/puppet config set environment ${PUPPETENV} --section agent
 	/usr/local/bin/puppet config set --section main server ${PEMASTER}
 
