@@ -730,7 +730,7 @@ define pxe_install::kickstart (
       actkey        => $actkey,
       osversion     => $data['osversion'],
       bootiso       => $bootiso,
-      foreman           => $foreman,
+      foreman       => $foreman,
     }
   }
 }

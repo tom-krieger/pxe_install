@@ -203,6 +203,7 @@ function installOpenvoxPuppet () {
 	/usr/local/bin/puppet config set --section main server ${PEMASTER}
 
 	runPuppetAgent
+
 }
 
 #------------------------------------------------------------------------#
@@ -222,6 +223,7 @@ function installPePuppet () {
 	/usr/local/bin/puppet config set environment ${PUPPETENV} --section agent
 
 	runPuppetAgent
+
 }
 
 #------------------------------------------------------------------------#
