@@ -62,7 +62,6 @@ autoinstall:
   packages:
   <%- if $boot_architecture == 'uefi' { -%>
   - openssh-server 
-  - gnupg2 
   - efibootmgr 
   - grub-efi-amd64 
   - grub-efi-amd64-signed 
