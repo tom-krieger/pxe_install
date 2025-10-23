@@ -235,6 +235,11 @@ define pxe_install::kickstart (
     default => $defaults['keyboard'],
   }
 
+  $foreman = pxe_install::hash_key($parameter, 'foreman') ? {
+    true    => $parameter['foreman'],
+    default => 'n',
+  }
+
   case $ostype.downcase() {
     'debian': {
       $template_start = 'pxe_install/debian/kickstart.epp'
@@ -346,7 +351,7 @@ define pxe_install::kickstart (
         puppetrole         => $parameter['role'],
         datacenter         => $parameter['dc'],
         agent              => $parameter['agent'],
-        foreman            => $parameter['foreman'],
+        foreman            => $foreman,
         challenge_password => $challenge_password,
       }
 
@@ -430,11 +435,6 @@ define pxe_install::kickstart (
   $agent = pxe_install::hash_key($parameter, 'agent') ? {
     true    => $parameter['agent'],
     default => 'y',
-  }
-
-  $foreman = pxe_install::hash_key($parameter, 'foreman') ? {
-    true    => $parameter['foreman'],
-    default => 'n',
   }
 
   $rootpw = pxe_install::hash_key($data, 'rootpw') ? {
