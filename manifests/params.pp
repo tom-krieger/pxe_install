@@ -120,7 +120,7 @@ class pxe_install::params {
       },
       'grub64' => {
         'boot_architecture' => 'uefi',
-        'filename' => 'grub64.efi',
+        'filename' => 'grubx64.efi',
         'http' => true,
         'windows_support' => false,
       },
