@@ -170,6 +170,9 @@ YAML
 function runPuppetAgent () {
 	sleep 2
 
+	echo "Enabling Puppet agent"
+	log "Enabling Puppet agent"
+
 	systemctl enable puppet
 
 	while [ -f "/opt/puppetlabs/puppet/cache/state/agent_catalog_run.lock" ]
@@ -180,6 +183,9 @@ function runPuppetAgent () {
 	done
 
 	/usr/local/bin/puppet agent -t
+	ret=$?
+	echo "Puppet run finished with $ret"
+	log "Puppet run finished with $ret"
 }
 
 #------------------------------------------------------------------------#
@@ -188,6 +194,7 @@ function runPuppetAgent () {
 
 function installOpenvoxPuppet () {
 	log "installing OpenVox puppet"
+	echo "installing OpenVox puppet"
 
 	if [ -f /tmp/puppetenv ]
 	then
@@ -198,6 +205,7 @@ function installOpenvoxPuppet () {
 
 	osname=$(cat /etc/os-release | grep ^ID= | cut -f 2 -d = | sed -e 's/"//g' | tr '[:upper:]' '[:lower:]')
 	release=$(cat /etc/os-release | grep VERSION_ID | cut -f 2 -d = | sed -e 's/"//g')
+	version=8
 
 	if [ "${osname}" = "rhel" ]
 	then
@@ -208,15 +216,21 @@ function installOpenvoxPuppet () {
 	myrelease=$(echo $release | cut -f 1 -d '.')
 
 	echo "Downloading Openvox Release package for Redhat like OSes"
+	log "Downloading Openvox Release package for Redhat like OSes"
+	echo "/tmp/openvox${version}-release-${myosname}-${myrelease}.noarch.rpm https://yum.voxpupuli.org/openvox${version}-release-${myosname}-${myrelease}.noarch.rpm"
 	curl -o /tmp/openvox${version}-release-${myosname}-${myrelease}.noarch.rpm https://yum.voxpupuli.org/openvox${version}-release-${myosname}-${myrelease}.noarch.rpm
 	echo "Installing Openvox agent"
-	yum localinstall -y /tmp/openvox${version}-release-${myosname}-${myrelease}.noarch.rpm
+	log "Installing Openvox agent"
+	dnf localinstall -y /tmp/openvox${version}-release-${myosname}-${myrelease}.noarch.rpm
 	rm -f /tmp/openvox${version}-release-${myosname}-${myrelease}.noarch.rpm
-	yum -y install openvox-agent
+	dnf -y install openvox-agent
 	if [ ! -f /usr/local/bin/puppet ]
 	then
 		ln -s /opt/puppetlabs/puppet/bin/puppet /usr/local/bin/puppet
 	fi
+	
+	log "configutng puppet with env ${PUPPETENV} and master ${PEMASTER}"
+	echo "configutng puppet with env ${PUPPETENV} and master ${PEMASTER}"
 	/usr/local/bin/puppet config set environment ${PUPPETENV} --section agent
 	/usr/local/bin/puppet config set --section main server ${PEMASTER}
 
@@ -230,6 +244,7 @@ function installOpenvoxPuppet () {
 
 function installPePuppet () {
 	log "installing PE puppet"
+	echo "installing PE puppet"
 
 	curl -o /usr/local/share/ca-certificates/pe-master.crt https://repos.home.tom-krieger.de/pub/pe-master-puppet.crt
 	update-ca-certificates
@@ -237,24 +252,18 @@ function installPePuppet () {
 
 	createCrsAttributes
 
+	log "configutng puppet with env ${PUPPETENV} and master ${PEMASTER}"
+	echo "configutng puppet with env ${PUPPETENV} and master ${PEMASTER}"
 	curl -k https://${PEMASTER}:8140/packages/current/install.bash | sudo bash
 	/usr/local/bin/puppet config set environment ${PUPPETENV} --section agent
 
 	runPuppetAgent
-
 }
 
 #------------------------------------------------------------------------#
 # print a starting message
 #------------------------------------------------------------------------#
 
-tput clear >/dev/tty1
-tput cup 3 0 >/dev/tty1
-curpos=3
-echo "* starting postinstall bootstrap script" >/dev/tty1
-
-curpos=`expr $curpos + 1`
-tput cup $curpos 0 >/dev/tty1
 osname=`cat /etc/redhat-release | cut -d ' ' -f 1`
 oshelp=`cat /etc/redhat-release | cut -d ' ' -f 2` 
 if [ "$osname" = "CentOS" ] ; then
@@ -277,17 +286,15 @@ else
 fi
 
 log "Using install puppet = ${INSTALLPUPPET} and foreman = ${FOREMAN}"
+echo "Using install puppet = ${INSTALLPUPPET} and foreman = ${FOREMAN}"
 
 release=${release:0:1}
 echo "* $ostype release is $release" >/dev/tty1
 echo "$ostype release is $release"
 echo "Using install puppet = ${INSTALLPUPPET} and foreman = ${FOREMAN}"
 hostname
-hostname >/dev/tty1
 
-curpos=`expr $curpos + 1`
-tput cup $curpos 0 >/dev/tty1
-echo "* using logger $LOGGER" >/dev/tty1
+echo "* using logger $LOGGER"
 
 if [ "$release" = "8" ] ; then
 	/usr/bin/update-crypto-policies --set DEFAULT
@@ -311,10 +318,7 @@ cleanupRpmDbFiles
 echo "+----------------------------------------------------+"
 echo "+ updating to actual distri level with yum           +"
 echo "+----------------------------------------------------+"
-curpos=`expr $curpos + 1`
-tput cup $curpos 0 >/dev/tty1
-echo -n "* getting and installing all updates ... " >/dev/tty1
-echo "getting and installing all updates" >/dev/tty3
+log "getting and installing all updates"
 
 ret=0
 /usr/bin/yum check-update 
@@ -336,8 +340,6 @@ else
 	log "updates installed successfully"
 fi
 
-printReturn $ret $curpos
-
 #------------------------------------------------------------------------#
 # clean up
 #------------------------------------------------------------------------#
@@ -355,10 +357,7 @@ cleanupRpmDbFiles
 echo "+----------------------------------------------------+"
 echo "+ enabling sysrq                                     +"
 echo "+----------------------------------------------------+"
-curpos=`expr $curpos + 1`
-tput cup $curpos 0 >/dev/tty1
-echo -n "* enabling sysrq ... " >/dev/tty1
-echo "enabling sysrq" >/dev/tty3
+log "enabling sysrq"
 
 ret=0
 sed -i 's/kernel.sysrq = 0/kernel.sysrq = 1/' /etc/sysctl.conf
@@ -366,8 +365,6 @@ if [ "$?" != "0" ] ; then
 	echo "can't set sysrq=1"
 	ret=1
 fi
-
-printReturn $ret $curpos
 
 #------------------------------------------------------------------------#
 # install puppet
@@ -396,8 +393,6 @@ else
 	/usr/bin/yum clean all
 fi
 
-curpos=`expr $curpos + 1`
-tput cup $curpos 0 >/dev/tty1
-echo "* finished postinstall bootstrap script" >/dev/tty1
+echo "finished postinstall bootstrap script"
 
 exit 0
