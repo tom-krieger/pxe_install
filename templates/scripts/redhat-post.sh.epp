@@ -107,6 +107,10 @@ function printReturn () {
 #------------------------------------------------------------------------#
 
 function cleanupRpmDbFiles() {
+	echo "+---------------------------------------------------+"
+	echo "+ cleaning up                                       +"
+	echo "+---------------------------------------------------+"
+
 	[ -f /var/lib/rpm/__db.001 ] && /bin/rm /var/lib/rpm/__db.001
 	[ -f /var/lib/rpm/__db.002 ] && /bin/rm /var/lib/rpm/__db.002
 	[ -f /var/lib/rpm/__db.003 ] && /bin/rm /var/lib/rpm/__db.003
@@ -264,40 +268,53 @@ function installPePuppet () {
 }
 
 #------------------------------------------------------------------------#
-# print a starting message
+# Main section: print a starting message
 #------------------------------------------------------------------------#
 
-osname=`cat /etc/redhat-release | cut -d ' ' -f 1`
-oshelp=`cat /etc/redhat-release | cut -d ' ' -f 2` 
-if [ "$osname" = "CentOS" ] ; then
-	if [ "$oshelp" = "Linux" ] ; then
-		release=`cat /etc/redhat-release | cut -d ' ' -f 4`
-	else
-		release=`cat /etc/redhat-release | cut -d ' ' -f 3`
-	fi
-	ostype="CentOS"
-elif [ "$osname" == "AlmaLinux" ] ; then
-	if [ "$oshelp" = "Linux" ] ; then
-		release=`cat /etc/redhat-release | cut -d ' ' -f 4`
-	else
-		release=`cat /etc/redhat-release | cut -d ' ' -f 3`
-	fi
-	ostype="AlmaLinux"
-else
-	release=`cat /etc/redhat-release | cut -d ' ' -f 6`
-  ostype="Redhat"
-fi
+osname=$(cat /etc/redhat-release | cut -d ' ' -f 1)
+oshelp=$(cat /etc/redhat-release | cut -d ' ' -f 2) 
+
+case $osname in
+	"CentOS")
+		if [ "${oshelp}" = "Linux" ] ; then
+			release=$(cat /etc/redhat-release | cut -d ' ' -f 4)
+		else
+			release=$(cat /etc/redhat-release | cut -d ' ' -f 3)
+		fi
+		ostype="CentOS"
+		;;
+	"AlmaLinux")
+		if [ "$oshelp" = "Linux" ] ; then
+			release=$(cat /etc/redhat-release | cut -d ' ' -f 4)
+		else
+			release=$(cat /etc/redhat-release | cut -d ' ' -f 3)
+		fi
+		ostype="AlmaLinux"
+		;;
+	"Rocky")
+		if [ "$oshelp" = "Linux" ] ; then
+			release=$(cat /etc/redhat-release | cut -d ' ' -f 4)
+		else
+			release=$(cat /etc/redhat-release | cut -d ' ' -f 3)
+		fi
+		ostype="Rocky"
+		;;
+	*)
+		release=$(cat /etc/redhat-release | cut -d ' ' -f 6)
+  	ostype="Redhat"
+		;;
+esac
 
 log "Using install puppet = ${INSTALLPUPPET} and foreman = ${FOREMAN}"
 echo "Using install puppet = ${INSTALLPUPPET} and foreman = ${FOREMAN}"
 
 release=${release:0:1}
-echo "* $ostype release is $release" >/dev/tty1
-echo "$ostype release is $release"
+log "${ostype} release is ${release}"
+echo "${ostype} release is ${release}"
 echo "Using install puppet = ${INSTALLPUPPET} and foreman = ${FOREMAN}"
 hostname
 
-echo "* using logger $LOGGER"
+echo "using logger $LOGGER"
 
 if [ "$release" = "8" ] ; then
 	/usr/bin/update-crypto-policies --set DEFAULT
@@ -344,12 +361,8 @@ else
 fi
 
 #------------------------------------------------------------------------#
-# clean up
+# clean up rpm db files
 #------------------------------------------------------------------------#
-
-echo "+---------------------------------------------------+"
-echo "+ cleaning up                                       +"
-echo "+---------------------------------------------------+"
 
 cleanupRpmDbFiles
 
@@ -392,7 +405,7 @@ fi
 if [ $release -lt 8 ] ; then		
 	/usr/bin/yum clean all
 else
-	/usr/bin/dnf clean all && rm -rf /var/cache/dnf  && /usr/bin/dnf upgrade -y && /usr/bin/dnf update -y
+	/usr/bin/dnf clean all && rm -rf /var/cache/dnf  && /usr/bin/dnf update -y
 	/usr/bin/yum clean all
 fi
 
