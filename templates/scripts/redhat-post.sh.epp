@@ -113,6 +113,119 @@ function cleanupRpmDbFiles() {
 }
 
 #------------------------------------------------------------------------#
+# create csr_attributes file
+#------------------------------------------------------------------------#
+
+function createCrsAttributes () {
+	log "creatimg csr attributes"
+
+	if [ -f /tmp/puppetrole ]
+	then
+		PUPPETROLE=`cat /tmp/puppetrole`
+	fi
+
+	if [ -f /tmp/puppetenv ]
+	then
+		PUPPETENV=`cat /tmp/puppetenv`
+	fi
+
+	if [ -f /tmp/datacenter ]
+	then
+		DATACENTER=`cat /tmp/datacenter`
+	fi
+
+	if [ ! -d /etc/puppetlabs/puppet ]
+	then
+		echo "creating directory /etc/puppetlabs/puppet"
+		mkdir -p /etc/puppetlabs/puppet
+	fi
+
+	log "puppet environment ${PUPPETENV}, role ${PUPPETROLE}"
+
+	cat > /etc/puppetlabs/puppet/csr_attributes.yaml << YAML
+custom_attributes:
+    1.2.840.113549.1.9.7: <%= unwrap($challenge_password) %>
+extension_requests:
+    pp_image_name:  Ubuntu-${release}
+    pp_hostname: `hostname`
+    pp_datacenter: ${DATACENTER}
+    pp_role: ${PUPPETROLE}
+    pp_auth_role: ${PUPPETROLE}
+    pp_environment: ${PUPPETENV}
+YAML
+
+}
+
+#------------------------------------------------------------------------#
+# run puppet agent
+#------------------------------------------------------------------------#
+
+function runPuppetAgent () {
+	sleep 2
+
+	systemctl enable puppet
+
+	while [ -f "/opt/puppetlabs/puppet/cache/state/agent_catalog_run.lock" ]
+	do
+			echo "puppet run currently on the way ..."
+			log "puppet run currently on the way ..."
+			sleep 20
+	done
+
+	/usr/local/bin/puppet agent -t
+}
+
+#------------------------------------------------------------------------#
+# install openvox puppet
+#------------------------------------------------------------------------#
+
+function installOpenvoxPuppet () {
+	log "installing PE puppet"
+
+	if [ -f /tmp/puppetenv ]
+	then
+		PUPPETENV=`cat /tmp/puppetenv`
+	fi
+
+	createCrsAttributes
+
+	release=`cat /etc/os-release | grep VERSION_ID | cut -f 2 -d = | sed -e 's/"//g'`
+	curl -o /tmp/openvox8-release-ubuntu${release}.deb https://apt.voxpupuli.org/openvox8-release-ubuntu${release}.deb 
+	apt -y install /tmp/openvox8-release-ubuntu${release}.deb
+	apt update
+	apt -y install openvox-agent
+	if [ ! -f /usr/local/bin/puppet ]
+	then
+		ln -s /opt/puppetlabs/puppet/bin/puppet /usr/local/bin/puppet
+	fi
+	/usr/local/bin/puppet config set environment ${PUPPETENV} --section agent
+	/usr/local/bin/puppet config set --section main server ${PEMASTER}
+
+	runPuppetAgent
+
+}
+
+#------------------------------------------------------------------------#
+# install PE puppet
+#------------------------------------------------------------------------#
+
+function installPePuppet () {
+	log "installing PE puppet"
+
+	curl -o /usr/local/share/ca-certificates/pe-master.crt https://repos.home.tom-krieger.de/pub/pe-master-puppet.crt
+	update-ca-certificates
+	apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4528B6CD9E61EF26
+
+	createCrsAttributes
+
+	curl -k https://${PEMASTER}:8140/packages/current/install.bash | sudo bash
+	/usr/local/bin/puppet config set environment ${PUPPETENV} --section agent
+
+	runPuppetAgent
+
+}
+
+#------------------------------------------------------------------------#
 # print a starting message
 #------------------------------------------------------------------------#
 
@@ -142,7 +255,6 @@ echo "* $ostype release is $release" >/dev/tty1
 echo "$ostype release is $release"
 hostname
 hostname >/dev/tty1
-
 
 curpos=`expr $curpos + 1`
 tput cup $curpos 0 >/dev/tty1
@@ -232,60 +344,16 @@ printReturn $ret $curpos
 # install puppet
 #------------------------------------------------------------------------#
 
-if [ "$install_puppet" = "y" ] ; then
-	echo "+----------------------------------------------------+"
-	echo "+ installing puppet                                  +"
-	echo "+----------------------------------------------------+"
-	curpos=`expr $curpos + 1`
-	tput cup $curpos 0 >/dev/tty1
-	echo -n "* installing puppet ... " >/dev/tty1
-	echo "installing puppet" >/dev/tty3
+if [ "${INSTALLPUPPET}" = "y" ]
+then
 
-	/usr/bin/yum -y install curl net-tools
-	ret=$?
-	if [ "$ret" = "0" ] ; then
-		if [ -f /tmp/puppetrole ] ; then
-			puppetrole=`cat /tmp/puppetrole`
-		else
-			puppetrole="default"
-		fi
-
-		if [ -f /tmp/puppetenv ] ; then
-			puppetenv=`cat /tmp/puppetenv`
-		else
-			puppetenv="production"
-		fi
-		
-		if [ -f /tmp/datacenter ] ; then
-			datacenter=`cat /tmp/datacenter`
-		else
-			datacenter="none"
-		fi
-
-		if [ ! -d /etc/puppetlabs/puppet ]; then
-			echo "creating directory /etc/puppetlabs/puppet"
-			mkdir -p /etc/puppetlabs/puppet
-		fi
-
-		cat > /etc/puppetlabs/puppet/csr_attributes.yaml << YAML
-custom_attributes:
-    1.2.840.113549.1.9.7: <%= unwrap($challenge_password) %>
-extension_requests:
-    pp_image_name: CentOS-${release}
-    pp_hostname: `hostname`
-    pp_datacenter: $datacenter
-    pp_role: $puppetrole
-    pp_auth_role: $puppetrole
-    pp_environment: $puppetenv
-YAML
-		curl -k https://${PEMASTER}:8140/packages/current/install.bash | sudo bash
-		# puppet config set environment $puppetenv --section agent
+	if [ "${FOREMAN}" = "n" ]
+	then
+		installPePuppet
 	else
-		log "installation of curl rpm failed"
-		echo "installation of curl rpm failed"
+		installOpenvoxPuppet
 	fi
-		
-	printReturn $ret $curpos
+	
 fi
 
 #------------------------------------------------------------------------#
