@@ -27,7 +27,7 @@ INSTALLSERVER="<%= $reposerver %>"
 LOGGER="undef"
 INSTALLPUPPET=${1:-y}
 FOREMAN=${2:-n}
-\
+
 if [ "${FOREMAN}" = "n" ]
 then
   PEMASTER="pemaster.home.tom-krieger.de"
@@ -187,7 +187,7 @@ function runPuppetAgent () {
 #------------------------------------------------------------------------#
 
 function installOpenvoxPuppet () {
-	log "installing PE puppet"
+	log "installing OpenVox puppet"
 
 	if [ -f /tmp/puppetenv ]
 	then
@@ -196,11 +196,23 @@ function installOpenvoxPuppet () {
 
 	createCrsAttributes
 
-	release=`cat /etc/os-release | grep VERSION_ID | cut -f 2 -d = | sed -e 's/"//g'`
-	curl -o /tmp/openvox8-release-ubuntu${release}.deb https://apt.voxpupuli.org/openvox8-release-ubuntu${release}.deb 
-	apt -y install /tmp/openvox8-release-ubuntu${release}.deb
-	apt update
-	apt -y install openvox-agent
+	osname=$(cat /etc/os-release | grep ^ID= | cut -f 2 -d = | sed -e 's/"//g' | tr '[:upper:]' '[:lower:]')
+	release=$(cat /etc/os-release | grep VERSION_ID | cut -f 2 -d = | sed -e 's/"//g')
+
+	if [ "${osname}" = "rhel" ]
+	then
+		myosname="el"
+	else
+		myosname=$osname
+	fi
+	myrelease=$(echo $release | cut -f 1 -d '.')
+
+	echo "Downloading Openvox Release package for Redhat like OSes"
+	curl -o /tmp/openvox${version}-release-${myosname}-${myrelease}.noarch.rpm https://yum.voxpupuli.org/openvox${version}-release-${myosname}-${myrelease}.noarch.rpm
+	echo "Installing Openvox agent"
+	yum localinstall -y /tmp/openvox${version}-release-${myosname}-${myrelease}.noarch.rpm
+	rm -f /tmp/openvox${version}-release-${myosname}-${myrelease}.noarch.rpm
+	yum -y install openvox-agent
 	if [ ! -f /usr/local/bin/puppet ]
 	then
 		ln -s /opt/puppetlabs/puppet/bin/puppet /usr/local/bin/puppet
@@ -252,17 +264,24 @@ if [ "$osname" = "CentOS" ] ; then
 		release=`cat /etc/redhat-release | cut -d ' ' -f 3`
 	fi
 	ostype="CentOS"
+elif [ "$osname" == "AlmaLinux" ] ; then
+	if [ "$oshelp" = "Linux" ] ; then
+		release=`cat /etc/redhat-release | cut -d ' ' -f 4`
+	else
+		release=`cat /etc/redhat-release | cut -d ' ' -f 3`
+	fi
+	ostype="AlmaLinux"
 else
 	release=`cat /etc/redhat-release | cut -d ' ' -f 6`
   ostype="Redhat"
 fi
 
-log "Using install uppet = ${INSTALLPUPPET} and foreman = ${FOREMAN}"
+log "Using install puppet = ${INSTALLPUPPET} and foreman = ${FOREMAN}"
 
 release=${release:0:1}
 echo "* $ostype release is $release" >/dev/tty1
 echo "$ostype release is $release"
-echo "Using install uppet = ${INSTALLPUPPET} and foreman = ${FOREMAN}"
+echo "Using install puppet = ${INSTALLPUPPET} and foreman = ${FOREMAN}"
 hostname
 hostname >/dev/tty1
 
