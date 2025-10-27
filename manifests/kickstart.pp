@@ -191,6 +191,9 @@ define pxe_install::kickstart (
     'bios': {
       $scenario_data = $defaults['boot_scenarios']['bios']
     }
+    'efimac': {
+      $scenario_data = $defaults['boot_scenatios']['efi64mac']
+    }
     'uefi': {
       if $ostype.downcase() == 'windows' {
         $scenario_data = $defaults['boot_scenarios']['ipxe']

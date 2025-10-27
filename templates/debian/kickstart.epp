@@ -6,6 +6,7 @@ d-i preseed/early_command string \
 	echo "<%= $puppetrole %>" > /tmp/puppetrole ; \
 	echo "<%= $datacenter %>" > /tmp/datacenter ; \
 	echo "<%= $agent %>" > /tmp/install_agent ; \
+	echo "<%= $foreman %>" > /tmp/foreman
 	umount /media || true
 
 ###############################################################################

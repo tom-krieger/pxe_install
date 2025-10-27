@@ -36,6 +36,7 @@ d-i preseed/late_command string \
 	if [ -f /tmp/puppetrole ] ; then cp /tmp/puppetrole /target/etc/puppetlabs/puppet/ ; else echo "No puppetrole found!" ; fi ; \
 	if [ -f /tmp/datacenter ] ; then cp /tmp/datacenter /target/etc/puppetlabs/puppet/ ; else echo "No datacenter found!" ; fi ; \
 	if [ -f /tmp/install_agent ] ; then cp /tmp/install_agent /target/etc/puppetlabs/puppet/ ; else echo "No install_agent found!" ; fi ; \
+	if [ -f /tmp/foreman ] ; then cp /tmp/foreman /target/etc/puppetlabs/puppet ; else echo "No foreman found" ; fi ; \
 	in-target apt-get -y install curl bash init-system-helpers ; \
 	in-target rm -f /etc/init.d/debian-post ; \
 	in-target curl -o /root/debian-post http://<%= $reposerver %><%= $scripturl %>/debian-post.sh ; \

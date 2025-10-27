@@ -25,12 +25,8 @@ PEMASTERIP="<%= $puppetmasterip %>"
 INSTALLSERVERIP="<%= $reposerverip %>"
 INSTALLSERVER="<%= $reposerver %>"
 LOGGER="undef"
-
-if [ "$#" = "1" ] ; then
-	install_puppet=$1
-else
-	install_puppet="y"
-fi
+INSTALLPUPPET=${1:-y}
+FOREMAN=${2:-n}
 
 if [ -x "/usr/bin/logger" ] ; then
 	LOGGER="/usr/bin/logger"
