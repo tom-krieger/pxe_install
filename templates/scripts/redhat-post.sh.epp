@@ -27,6 +27,13 @@ INSTALLSERVER="<%= $reposerver %>"
 LOGGER="undef"
 INSTALLPUPPET=${1:-y}
 FOREMAN=${2:-n}
+\
+if [ "${FOREMAN}" = "n" ]
+then
+  PEMASTER="pemaster.home.tom-krieger.de"
+else
+  PEMASTER="foreman.home.tom-krieger.de"
+fi
 
 if [ -x "/usr/bin/logger" ] ; then
 	LOGGER="/usr/bin/logger"
@@ -250,9 +257,12 @@ else
   ostype="Redhat"
 fi
 
+log "Using install uppet = ${INSTALLPUPPET} and foreman = ${FOREMAN}"
+
 release=${release:0:1}
 echo "* $ostype release is $release" >/dev/tty1
 echo "$ostype release is $release"
+echo "Using install uppet = ${INSTALLPUPPET} and foreman = ${FOREMAN}"
 hostname
 hostname >/dev/tty1
 
