@@ -207,7 +207,10 @@ function installOpenvoxPuppet () {
 	release=$(cat /etc/os-release | grep VERSION_ID | cut -f 2 -d = | sed -e 's/"//g')
 	version=8
 
-	if [ "${osname}" = "rhel" ]
+	if [ "${osname}" = "almalinux" ]
+	then
+		myosname="el"
+	elif [ "${osname}" = "rhel" ]
 	then
 		myosname="el"
 	else
@@ -228,7 +231,7 @@ function installOpenvoxPuppet () {
 	then
 		ln -s /opt/puppetlabs/puppet/bin/puppet /usr/local/bin/puppet
 	fi
-	
+
 	log "configutng puppet with env ${PUPPETENV} and master ${PEMASTER}"
 	echo "configutng puppet with env ${PUPPETENV} and master ${PEMASTER}"
 	/usr/local/bin/puppet config set environment ${PUPPETENV} --section agent
